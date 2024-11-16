@@ -208,6 +208,8 @@ import {
   vehicleMfgModelVariant,
   vehicleMfgModelVariantData,
   vehicleMfgModelVariantPriceData,
+  cKycApi,
+  verifyInspectionApi
 } from "../controller/apiauthentication/quoteProposalApi.js";
 
 // GET TATA AIG AUTH TOKEN CALL
@@ -299,6 +301,8 @@ router.get("/taig/pc/policy/plan", policyPlans);
 // Quote post data
 router.post("/taig/motor/quote", quoteApi);
 router.post("/taig/motor/proposal", proposalApi);
+router.post("/taig/motor/ckyc", cKycApi);
+router.post("/taig/motor/verify/inspection", verifyInspectionApi);
 
 router.put("/api/emp/update/:id", uploadFile, updateEmployee);
 router.delete("/emp/api/:id", deleteEmployee);

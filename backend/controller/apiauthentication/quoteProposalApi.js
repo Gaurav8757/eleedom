@@ -14,6 +14,10 @@ const {
   TATA_AIG_4_WHEELER_PREV_INSURER,
   TATA_AIG_4_WHEELER_FINANCIER,
   TATA_AIG_4_WHEELER_POLICY_PLAN,
+  TATA_AIG_4_WHEELER_CKYC_URL,
+  TATA_AIG_4_WHEELER_XAPI_KEY,
+  TATA_AIG_4_WHEELER_VIS_URL,
+  TATA_AIG_4_WHEELER_VIS_KEY
 } = process.env;
 
 const quoteApi = async (req, res) => {
@@ -50,14 +54,65 @@ const proposalApi = async (req, res) => {
         },
       }
     );
-
     if (response.data.status === 200) {
-      return response?.data;
+      return res.json(response?.data);
     } else {
-      return response?.data;
+      return res.json(response?.data);
     }
   } catch (error) {
-    return res.json(error.response?.data?.message);
+    return res.json(error.response?.data);
+  }
+};
+
+const cKycApi = async (req, res) => {
+  const { authorization } = req.headers;
+  const datas = req.body; // Extract data from the request body
+  const { product } = req.query;
+  try {
+    const response = await axios.post(`${TATA_AIG_4_WHEELER_CKYC_URL}`, datas, {
+      headers: {
+        Authorization: `${authorization}`,
+        "x-api-key": `${TATA_AIG_4_WHEELER_XAPI_KEY}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        product, // Pass the pin as a query parameter
+      },
+    });
+    if (response.data.status === 200) {
+      console.log(response.data);
+      return res.json(response?.data);
+    } else {
+      return res.json(response?.data);
+    }
+  } catch (error) {
+    return res.json(error.response?.data);
+  }
+};
+
+const verifyInspectionApi = async (req, res) => {
+  const { authorization } = req.headers;
+  const datas = req.body; // Extract data from the request body
+  const { product } = req.query;
+  try {
+    const response = await axios.post(`${TATA_AIG_4_WHEELER_VIS_URL}`, datas, {
+      headers: {
+        Authorization: `${authorization}`,
+        "x-api-key": `${TATA_AIG_4_WHEELER_VIS_KEY}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        product, // Pass the pin as a query parameter
+      },
+    });
+    if (response.data.status === 200) {
+      console.log(response.data);
+      return res.json(response?.data);
+    } else {
+      return res.json(response?.data);
+    }
+  } catch (error) {
+    return res.json(error.response?.data);
   }
 };
 
@@ -320,4 +375,6 @@ export {
   prevInsurer,
   financier,
   policyPlans,
+  cKycApi,
+  verifyInspectionApi,
 };

@@ -1,16 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import Data from "../Data.jsx";
+import Data from "../../Data.jsx";
 
-function Proposer({ onSubmitProposal, quoteResponses }) {
-  console.log(quoteResponses[0].data);
-
+function Proposer({ onSubmit, quoteResponses, financier }) {
   const [errors, setErrors] = useState({});
   const [showConfirmSave, setShowConfirmSave] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const quote = quoteResponses[0].data;
   // const quote2 = quoteResponses[0];
-  // console.log(quote2);
 
   const [formData, setFormData] = useState({
     proposer_gender: "",
@@ -53,23 +50,18 @@ function Proposer({ onSubmitProposal, quoteResponses }) {
     carriedOutBy: "",
     __finalize: "",
   });
-console.log(formData);
 
-const validatePAN = (pan) => {
-  // Regex for PAN validation
-  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
-
-  if (!pan) {
-    return "PAN is required.";
-  }
-
-  if (!panRegex.test(pan)) {
-    return "Invalid PAN format (ABCDE1234F)!";
-  }
-
-  return ""; // No error
-};
-
+  const validatePAN = (pan) => {
+    // Regex for PAN validation
+    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+    // if (!pan) {
+    //   return "PAN is required.";
+    // }
+    if (!panRegex.test(pan)) {
+      return "Invalid PAN format (ABCDE1234F)!";
+    }
+    return ""; // No error
+  };
 
   const validateStep = (stepNumber) => {
     const newErrors = {};
@@ -94,6 +86,23 @@ const validatePAN = (pan) => {
       }
       if (!formData.proposer_add2) {
         newErrors["proposer_add2"] = "required";
+        isValid = false;
+      }
+      if (!formData.nominee_name) {
+        newErrors["nominee_name"] = "required";
+        isValid = false;
+      }
+      if (!formData.nominee_relation) {
+        newErrors["nominee_relation"] = "required";
+        isValid = false;
+      }
+      if (!formData.nominee_age) {
+        newErrors["nominee_age"] = "required";
+        isValid = false;
+      }
+    } else if (stepNumber === 2) {
+      if (!formData.declaration) {
+        newErrors["declaration"] = "required";
         isValid = false;
       }
     }
@@ -129,30 +138,42 @@ const validatePAN = (pan) => {
 
   // Handle changes in input fields
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if(name === "proposer_pan"){
+    const { name, value, checked } = e.target;
+    if (name === "proposer_pan") {
       const updatedValue = value.toUpperCase().slice(0, 10);
       setFormData((prevData) => ({
         ...prevData,
         [name]: updatedValue,
       }));
-        // Validate PAN dynamically
-    const error = validatePAN(updatedValue);
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: error,
-    }));
-      // setFormData({
-      //   ...formData,
-      //   [name]: value ? value.toUpperCase() : value,
-      // });
-    }else{
+      // Validate PAN dynamically
+      const error = validatePAN(updatedValue);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: error,
+      }));
+    } else if (name === "proposer_occupation") {
+      const updatedValue = value.toUpperCase();
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: updatedValue,
+      }));
+    } else if (name === "nominee_age") {
+      setFormData({
+        ...formData,
+        [name]: Number(value),
+      });
+    } else if (name === "declaration") {
+      // Ensure the value is set to "Yes" when checked, otherwise empty
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: checked ? "Yes" : "",
+      }));
+    } else {
       setFormData({
         ...formData,
         [name]: value,
       });
     }
-  
   };
 
   const renderStep = () => {
@@ -389,13 +410,10 @@ const validatePAN = (pan) => {
                   <input
                     name="proposer_dob"
                     type="date"
-                    min={1700}
+                    min={1800}
                     max={2100}
                     value={formData.proposer_dob}
                     onChange={handleChange}
-                    onInput={(e) => {
-                      e.target.value = e.target.value.replace(/[^0-9]/g, ""); // Only allows numbers
-                    }}
                     className={`${
                       errors["proposer_dob"] ? "border-red-500" : "border-none"
                     }
@@ -442,10 +460,10 @@ const validatePAN = (pan) => {
                 )}
               </div>
 
-              {formData.proposer_occupation === "Others" && (
+              {formData.proposer_occupation === "OTHER" && (
                 <div>
                   <h1 className="text-sm text-start md:text-base font-semibold space-x-2">
-                    Others
+                    Occupation
                   </h1>
                   <div className="flex">
                     <input
@@ -461,71 +479,72 @@ const validatePAN = (pan) => {
                 </div>
               )}
 
-{[
-  "quote_no",
-  "proposal_id",
-  "product_id",
-  "proposer_add1",
-  "proposer_add2",
-  "proposer_add3",
-  "proposer_pincode",
-  "proposer_pan", // Include PAN in the inputs list
-  "proposer_annual",
-  "proposer_gstin",
-  "vehicle_chassis",
-  "vehicle_engine",
-  "vehicle_puc_expiry",
-  "vehicle_puc",
-  "vehicle_puc_declaration",
-  "nominee_name",
-  "nominee_relation",
-  "nominee_age",
-].map((pro, index) => (
-  <div key={index} className="flex flex-col mb-4">
-    <h1 className="text-sm text-start md:text-base font-medium space-x-2 md:space-x-4">
-      {pro
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (char) => char.toUpperCase())}
-    </h1>
-    <div className="flex">
-      <input
-        name={pro}
-        type="text"
-        value={formData[pro]}
-        onChange={handleChange}
-        readOnly={[
-          "quote_no",
-          "proposal_id",
-          "product_id",
-          "proposer_mobile",
-          "proposer_pincode",
-        ].includes(pro)}
-        className={`items-center border text-base md:text-inherit p-1.5 shadow-inner rounded ${
-          [
-            "quote_no",
-            "proposal_id",
-            "product_id",
-            "proposer_mobile",
-            "proposer_pincode",
-          ].includes(pro)
-            ? "bg-gray-200 font-semibold"
-            : "bg-slate-100"
-        } ${
-          pro === "proposer_pan" && errors[pro]
-            ? "border-red-500 text-red-500"
-            : "border-none"
-        }`}
-      />
-    </div>
-    {errors[pro] && (
-      <p className="text-red-500 text-sm text-start md:text-base">
-        {errors[pro]}
-      </p>
-    )}
-  </div>
-))}
-
-        
+              {[
+                "quote_no",
+                "proposal_id",
+                "product_id",
+                "proposer_add1",
+                "proposer_add2",
+                "proposer_add3",
+                "proposer_pincode",
+                "proposer_pan", // Include PAN in the inputs list
+                "proposer_annual",
+                "proposer_gstin",
+                "vehicle_chassis",
+                "vehicle_engine",
+                "vehicle_puc_expiry",
+                "vehicle_puc",
+                "vehicle_puc_declaration",
+                "nominee_name",
+                "nominee_relation",
+                "nominee_age",
+              ].map((pro, index) => (
+                <div key={index} className="flex flex-col mb-4">
+                  <h1 className="text-sm text-start md:text-base font-medium space-x-2 md:space-x-4">
+                    {pro
+                      .replace(/_/g, " ")
+                      .replace(/\b\w/g, (char) => char.toUpperCase())}
+                  </h1>
+                  <div className="flex">
+                    <input
+                      name={pro}
+                      type="text"
+                      value={formData[pro]}
+                      onChange={handleChange}
+                      readOnly={[
+                        "quote_no",
+                        "proposal_id",
+                        "product_id",
+                        "proposer_mobile",
+                        "proposer_pincode",
+                      ].includes(pro)}
+                      className={`items-center border text-base md:text-inherit p-1.5 shadow-inner rounded ${
+                        [
+                          "quote_no",
+                          "proposal_id",
+                          "product_id",
+                          "proposer_mobile",
+                          "proposer_pincode",
+                        ].includes(pro)
+                          ? "bg-gray-200 font-semibold"
+                          : "bg-slate-100"
+                      } ${
+                        pro === "proposer_pan" ||
+                        pro === "nominee_name" ||
+                        pro === "nominee_age" ||
+                        (pro === "nominee_relation" && errors[pro])
+                          ? "border-red-500 text-red-500"
+                          : "border-none"
+                      }`}
+                    />
+                  </div>
+                  {errors[pro] && (
+                    <p className="text-red-500 text-sm text-start md:text-base">
+                      {errors[pro]}
+                    </p>
+                  )}
+                </div>
+              ))}
 
               <div>
                 <h1 className="text-sm text-start md:text-base space-x-2 font-semibold">
@@ -579,11 +598,18 @@ const validatePAN = (pan) => {
                     <option className="font-semibold" value="">
                       Select Name
                     </option>
-                    {Data.financier_name.map((finname, idx) => (
-                      <option key={idx} value={finname}>
-                        {finname}
-                      </option>
-                    ))}
+                    {financier
+                      .sort((a, b) =>
+                        a.txt_financier_name.localeCompare(b.txt_financier_name)
+                      )
+                      .map((data) => (
+                        <option
+                          key={data.num_financier_cd}
+                          value={data.txt_financier_name}
+                        >
+                          {data.txt_financier_name}
+                        </option>
+                      ))}
                   </select>
                 </div>
                 {errors["financier_name"] && (
@@ -605,45 +631,59 @@ const validatePAN = (pan) => {
                 "pre_insurer_no",
                 "appointee_name",
                 "appointee_relation",
-               
-              ].map((data, idx) => (
-                <div key={idx} className="flex flex-col mb-4">
-                  <h1 className="text-sm text-start md:text-base font-medium space-x-2 md:space-x-4 pb-0.5">
-                    {/* {field.replace(/_/g, " ")} */}
-                    {data
-                      .replace(/_/g, " ")
-                      .replace(/\b\w/g, (char) => char.toUpperCase())}
-                  </h1>
-                  <div className="flex">
-                    <input
-                      name={data}
-                      type="text"
-                      value={formData[data]}
-                      onChange={handleChange}
-                      placeholder={data
+              ]
+                .filter((data) => {
+                  // Show only pre_insurer_name and pre_insurer_no if the condition matches
+                  if (
+                    quote.business_type === "Rollover" &&
+                    quote.business_type_no === "03"
+                  ) {
+                    return (
+                      data === "pre_insurer_name" || data === "pre_insurer_no"
+                    );
+                  }
+                  // Otherwise, exclude pre_insurer_name and pre_insurer_no
+                  return (
+                    data !== "pre_insurer_name" && data !== "pre_insurer_no"
+                  );
+                })
+                .map((data, idx) => (
+                  <div key={idx} className="flex flex-col mb-4">
+                    <h1 className="text-sm text-start md:text-base font-medium space-x-2 md:space-x-4 pb-0.5">
+                      {data
                         .replace(/_/g, " ")
                         .replace(/\b\w/g, (char) => char.toUpperCase())}
-                      className="items-center border-none text-base md:text-inherit p-1.5 shadow-inner bg-slate-100 rounded hover:text-gray-600 hover:bg-gray-100"
-                    />
+                    </h1>
+                    <div className="flex">
+                      <input
+                        name={data}
+                        type="text"
+                        value={formData[data]}
+                        onChange={handleChange}
+                        placeholder={data
+                          .replace(/_/g, " ")
+                          .replace(/\b\w/g, (char) => char.toUpperCase())}
+                        className="items-center border-none text-base md:text-inherit p-1.5 shadow-inner bg-slate-100 rounded hover:text-gray-600 hover:bg-gray-100"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
 
-              {["carriedOutBy", "declaration"].map((data, idx) => (
-                <div key={idx} className="flex flex-col mb-4">
-                  <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
+              {["carriedOutBy"].map((data, idx) => (
+                <div key={idx} className="flex flex-col mb-2">
+                  <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 ">
                     {/* {field.replace(/_/g, " ")} */}
                     {data
                       .replace(/_/g, " ")
                       .replace(/\b\w/g, (char) => char.toUpperCase())}
                   </h1>
-                  <div className="flex p-1 md:px-3">
+                  <div className="flex p- md:px-3">
                     <select
                       name={data}
                       type="text"
                       value={formData[data]}
                       onChange={handleChange}
-                      className="items-center border-none cursor-pointer text-base md:text-inherit md:p-2 p-1.5 shadow-inner bg-slate-100 rounded hover:text-gray-600 hover:bg-gray-100"
+                      className="items-center border-none cursor-pointer text-base md:text-inherit  p-1.5 shadow-inner bg-slate-100 rounded hover:text-gray-600 hover:bg-gray-100"
                     >
                       <option key={idx} value="">
                         Select{" "}
@@ -661,6 +701,29 @@ const validatePAN = (pan) => {
                 </div>
               ))}
             </div>
+            <div className="flex justify-start mx-2">
+              <input
+                type="checkbox"
+                name="declaration"
+                id="declaration-checkbox"
+                className="hidden peer"
+                checked={formData.declaration === "Yes"}
+                onChange={handleChange}
+              />
+              <label
+                htmlFor="declaration-checkbox"
+                className={`${
+                  errors["declaration"] ? "border-red-500" : ""
+                } flex w-6 h-6 my-auto mr-4 justify-center  shadow-inner text-gray-500 bg-slate-100 border border-red-500 rounded cursor-pointer peer-checked:border-blue-600 peer-checked:bg-gradient-to-t from-blue-700 to-blue-600 peer-checked:text-white hover:text-gray-600 hover:bg-gray-100`}
+              >
+                <div className=" text-xs my-auto font-semibold capitalize">
+                  {formData.declaration}
+                </div>
+              </label>{" "}
+              <span className="my-auto text-lg font-bold font-serif">
+                I declare that I provide correct details.
+              </span>
+            </div>
           </div>
         );
     }
@@ -668,7 +731,7 @@ const validatePAN = (pan) => {
 
   // Handle form submission
   const handleSubmit = () => {
-    onSubmitProposal(formData); // Pass data to the parent component
+    onSubmit(formData); // Pass data to the parent component
   };
 
   const handleConvert = () => {
@@ -755,7 +818,7 @@ const validatePAN = (pan) => {
               className="flex justify-center gap-2 border-b-[4px] active:border-b-[2px]  active:translate-y-[2px] items-center shadow-xl text-lg bg-slate-100 backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:bg-green-800 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:px-8 md:py-2 px-3 py-1  overflow-hidden rounded group"
               type="submit"
             >
-              Proceed to cKYC
+              Submit
             </button>
           </div>
         )}

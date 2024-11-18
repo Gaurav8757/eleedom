@@ -192,7 +192,7 @@ import ind from "./indorshForm/indorForms.js";
 import formsClaimed from "./formsClaimed/formsClaimed.js";
 import dailyVisited from "./dailyVisits/daily.router.js";
 import verifyAdmin from "../controller/verifyToken/verifyTokenId.js";
-import getTokens from "../controller/apiauthentication/apiauth.controller.js";
+import getTokens from "../controller/tataAig/apiauth.controller.js";
 import {
   financier,
   pincode,
@@ -210,7 +210,7 @@ import {
   vehicleMfgModelVariantPriceData,
   cKycApi,
   verifyInspectionApi
-} from "../controller/apiauthentication/quoteProposalApi.js";
+} from "../controller/tataAig/quoteProposalApi.js";
 
 // GET TATA AIG AUTH TOKEN CALL
 router.get("/tataaig/auth/details", getTokens);
@@ -298,7 +298,7 @@ router.get("/taig/pc/financier", financier);
 // policy bundle
 router.get("/taig/pc/policy/plan", policyPlans);
 
-// Quote post data
+// Quote/Proposal/ckyc/inspection/ post data
 router.post("/taig/motor/quote", quoteApi);
 router.post("/taig/motor/proposal", proposalApi);
 router.post("/taig/motor/ckyc", cKycApi);

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import Data from "../Data.jsx";
+import Data from "../../Data.jsx";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/high-res.css";
 import { toast } from "react-toastify";
@@ -372,7 +372,7 @@ function QuoteForm({
         return [false, false, false, false]; // No indices are disabled by default
     }
   };
-  
+
   // Max lengths for each part
   const getMaxLengths = () => {
     switch (registrationType) {
@@ -520,7 +520,6 @@ function QuoteForm({
       setFormData({
         ...formData,
         [name]: value,
-        // __finalize: "0",
       });
     }
   };
@@ -919,7 +918,7 @@ function QuoteForm({
                             }   flex md:py-1 py-2 w-1/2 rounded uppercase text-center bg-slate-100 shadow-inner text-xl font-bold`}
                             placeholder={getPlaceholders()[index]}
                             maxLength={getMaxLengths()[index]}
-                            readOnly = {getDisabled()[index]}
+                            readOnly={getDisabled()[index]}
                             value={part}
                             onChange={(e) =>
                               handleInputChange(
@@ -1049,7 +1048,7 @@ function QuoteForm({
                 )}
               </div>
 
-              <div>
+              <div className="mt-4">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Vehicle Mfr
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1082,7 +1081,7 @@ function QuoteForm({
                   </p>
                 )}
               </div>
-              <div>
+              <div className="mt-4">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Vehicle Model
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1116,7 +1115,7 @@ function QuoteForm({
                 )}
               </div>
 
-              <div>
+              <div className="mt-4">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Vehicle Variant
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1151,7 +1150,7 @@ function QuoteForm({
               </div>
 
               {formData.business_type_no === "03" && (
-                <div>
+                <div className="mt-4">
                   <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                     Prev. Policy NCB
                     <span className="text-red-500 font-extrabold"> *</span>
@@ -1176,7 +1175,7 @@ function QuoteForm({
                 </div>
               )}
               {formData.business_type_no === "03" && (
-                <div>
+                <div className="mt-4">
                   <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                     Prev. Pol Protect NCB
                     <span className="text-red-500 font-extrabold"> *</span>
@@ -1202,7 +1201,7 @@ function QuoteForm({
               )}
 
               {formData.business_type_no === "03" && (
-                <div>
+                <div className="mt-4">
                   <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                     Prev. CNG/LPG
                     {/* <span className="text-red-500 font-extrabold"> *</span> */}
@@ -1225,7 +1224,7 @@ function QuoteForm({
                 </div>
               )}
 
-              <div>
+              <div className="mt-4">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Cover
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1338,11 +1337,11 @@ function QuoteForm({
       case 2:
         return (
           <div className="space-y-3">
-            <div className="grid lg:grid-cols-10 grid-cols-4 text-sm md:text-base text-gray-500 bg-blue-100 p-2 gap-8 rounded">
+            <div className="grid lg:grid-cols-10 grid-cols-4 text-sm text-gray-500 bg-blue-100 p-2 gap-8 rounded">
               {fieldMappings.map((field, index) => (
                 <p key={index} className="flex flex-col">
                   {field.label}
-                  <span className="text-black font-medium pt-2">
+                  <span className="text-black font-medium pt-1">
                     {field.value || "N/A"}
                   </span>
                 </p>
@@ -1755,11 +1754,11 @@ function QuoteForm({
       case 3:
         return (
           <div className="space-y-3">
-            <div className="grid lg:grid-cols-10 grid-cols-4 text-sm md:text-base text-gray-500 bg-blue-100 p-2 gap-8 rounded">
+            <div className="grid lg:grid-cols-10 grid-cols-4 text-sm text-gray-500 bg-blue-100 p-2 gap-8 rounded">
               {fieldMappings.map((field, index) => (
                 <p key={index} className="flex flex-col">
                   {field.label}
-                  <span className="text-black font-medium pt-2">
+                  <span className="text-black font-medium pt-1">
                     {field.value || "N/A"}
                   </span>
                 </p>
@@ -1881,16 +1880,18 @@ function QuoteForm({
                     {Data.policyBundles?.map((plan) => (
                       <option
                         key={plan.motor_plan_opted_no}
-                        value={plan.motor_plan_opted_no} className="whitespace-nowrap"
+                        value={plan.motor_plan_opted_no}
+                        className="whitespace-nowrap"
                       >
                         {plan.motor_plan_opted}
                       </option>
                     ))}
                   </select>
                   <div className="flex justify-center mt-2">
-                   
                     <ul className="list-none list-inside text-start text-sm text-gray-600">
-                    <span className="font-bold text-lg tracking-wider">AddOns</span>
+                      <span className="font-bold text-lg tracking-wider">
+                        AddOns
+                      </span>
                       {selectedPlan.cover?.map((item, index) => (
                         <li key={index} className="mt-1 font-mono">
                           {item}
@@ -1912,11 +1913,11 @@ function QuoteForm({
       case 4:
         return (
           <div className="space-y-3">
-            <div className="grid lg:grid-cols-10 grid-cols-4 text-sm md:text-base text-gray-500 bg-blue-100 p-2 gap-8 rounded">
+            <div className="grid lg:grid-cols-10 grid-cols-4 text-sm text-gray-500 bg-blue-100 p-2 gap-8 rounded">
               {fieldMappings.map((field, index) => (
                 <p key={index} className="flex flex-col">
                   {field.label}
-                  <span className="text-black font-medium pt-2">
+                  <span className="text-black font-medium pt-1">
                     {field.value || "N/A"}
                   </span>
                 </p>

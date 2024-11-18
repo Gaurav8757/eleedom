@@ -206,7 +206,7 @@ import VisitReport from "./admin/admincomponents/VisitReport/VisitReport.jsx";
 import Dvr from "./branches/DVR/Dvr.jsx";
 import ReconAdvisor from "./admin/admincomponents/MasterForm/ReconAdvisor/ReconAdvisor.jsx";
 import AllCompanyName from "./advisor/API/Companies/AllCompanyName.jsx";
-import AllMotorInsurances from "./advisor/Motor/AllMotorInsurances.jsx";
+import AllMotorInsurances from "./advisor/API/TataAIG/Motor/AllMotorInsurances.jsx";
 import AdvResetPassword from "./advisor/AdvResetPassword.jsx";
 
 const router = createBrowserRouter(

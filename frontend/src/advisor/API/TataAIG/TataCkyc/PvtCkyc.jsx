@@ -194,6 +194,38 @@ function PvtCkyc({ proposalResponses, onSubmit }) {
           </div>
         </div>
       )}
+      {}
+      <div className="flex-grow overflow-auto p-6">
+        <div className="max-w-md mx-auto space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="picture">Upload Image</label>
+            <input
+              id="picture"
+              type="file"
+              // onChange={handleFileChange}
+              accept=".jpg,.png,.pdf"
+            />
+          </div>
+          {/* <button onClick={handleUpload} disabled={!file} className="w-full">
+
+            <Upload className="mr-2 h-4 w-4" /> Upload
+          </button> */}
+          <p className="text-sm text-muted-foreground">
+            Allowed file type: jpg/png/pdf, Maximum size limit of 10MB for each
+            file
+          </p>
+          <div className="flex items-center space-x-2">
+            <checkbox id="declaration" />
+            <label
+              htmlFor="declaration"
+              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              I hereby declare that I do not possess a PAN Card and will submit
+              Form 60.
+            </label>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

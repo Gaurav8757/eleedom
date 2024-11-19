@@ -50,6 +50,13 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
     carriedOutBy: "",
     __finalize: "",
   });
+    // Calculate 18 years ago date
+    const today = new Date();
+    const eighteenYearsAgo = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate()
+    ).toISOString().split("T")[0];
 
   const validatePAN = (pan) => {
     // Regex for PAN validation
@@ -410,8 +417,7 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                   <input
                     name="proposer_dob"
                     type="date"
-                    min={1800}
-                    max={2100}
+                    max={eighteenYearsAgo}
                     value={formData.proposer_dob}
                     onChange={handleChange}
                     className={`${
@@ -441,7 +447,7 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                       errors["proposer_occupation"]
                         ? "border-red-500 text-red-500"
                         : "border-none"
-                    }items-center text-base md:text-inherit font-semibold md:p-1 p-1 ps-2 shadow-inner text-gray-500 bg-slate-100 rounded cursor-pointer  hover:text-gray-600 hover:bg-gray-100`}
+                    }flex md:w-60 items-center text-base md:text-inherit font-semibold md:p-1 p-1 ps-2 shadow-inner text-gray-500 bg-slate-100 rounded cursor-pointer  hover:text-gray-600 hover:bg-gray-100`}
                   >
                     <option className="font-semibold" value="">
                       Select Occupation
@@ -529,10 +535,10 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                           ? "bg-gray-200 font-semibold"
                           : "bg-slate-100"
                       } ${
-                        pro === "proposer_pan" ||
+                       ( pro === "proposer_pan" ||
                         pro === "nominee_name" ||
                         pro === "nominee_age" ||
-                        (pro === "nominee_relation" && errors[pro])
+                        pro === "nominee_relation" && errors[pro])
                           ? "border-red-500 text-red-500"
                           : "border-none"
                       }`}
@@ -759,7 +765,7 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
 
   return (
     <>
-      <div className="max-w-full border shadow-inner md:p-4 p-2 bg-slate-50  isolation-auto border-none Z-10  relative rounded group">
+      <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-slate-50  isolation-auto border-none Z-10  relative rounded group">
         <div className={`${step > 1 ? "mb-6" : "mb-8"}`}>
           <div className="flex justify-between items-center">
             <span className="md:text-lg text-sm">Step {step} of 2</span>

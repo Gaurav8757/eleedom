@@ -1874,7 +1874,7 @@ function QuoteForm({
                     onChange={handleChange}
                     className={`${
                       errors["motor_plan_opted_no"] ? "border-red-500 " : ""
-                    } flex w-[110px] p-2 border-none font-mono bg-gray-200 shadow-inner rounded-md cursor-pointer`}
+                    } flex w-[120px] p-2 border-none font-mono bg-gray-200 shadow-inner rounded cursor-pointer`}
                   >
                     <option value="">Select Plan</option>
                     {Data.policyBundles?.map((plan) => (
@@ -1968,7 +1968,7 @@ function QuoteForm({
   return (
     <>
       {/* <form> */}
-      <div className="max-w-full border shadow-inner md:p-4 p-2 bg-slate-50  isolation-auto border-none Z-10  relative rounded group">
+      <div className="max-w-full border shadow-inner md:p-4 p-2 bg-slate-50 tracking-wide isolation-auto border-none Z-10  relative rounded group">
         <div className={`${step > 1 ? "mb-6" : "mb-8"}`}>
           <div className="flex justify-between items-center">
             <span className="md:text-lg text-sm">Step {step} of 4</span>

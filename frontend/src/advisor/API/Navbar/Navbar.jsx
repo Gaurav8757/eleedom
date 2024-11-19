@@ -55,9 +55,6 @@ function Navbar({
           setTimer(remainingTime);
           startTimer();
         }
-        //  else{
-        //   handleSessionExpiry();
-        // }
       }
     };
 
@@ -88,7 +85,7 @@ function Navbar({
 
   return (
     <nav className="bg-white shadow-md fixed w-full top-0 z-10">
-      <div className="container mx-auto flex justify-between items-center p-2">
+      <div className="container mx-auto flex justify-between items-center p-2 ">
         <div className="text-xl font-bold">
           <img
             className="md:w-20 md:h-20 w-16 h-16 shadow-inner"
@@ -96,7 +93,7 @@ function Navbar({
             alt={insuranceName}
           />
         </div>
-        <div className="container-flex flex justify-between">
+        <div className="container-flex flex justify-between tracking-wide">
           {subCategories ? (
             <select
               value={selectedOption}

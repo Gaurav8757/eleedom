@@ -13,6 +13,7 @@ import PvtCkyc from "../TataCkyc/PvtCkyc.jsx";
 function AllMotorInsurances() {
   const [selectedOption, setSelectedOption] = useState("");
   const [showProposer, setShowProposer] = useState(false);
+  const [showCkyc, setShowCkyc] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(true);
   const [menuItems, setMenuItems] = useState({});
   const [selectedSubOption, setSelectedSubOption] = useState("");
@@ -30,14 +31,19 @@ function AllMotorInsurances() {
   // const [variantData, setVariantData] = useState([]);
   // const [variantToVariantData, setVariantToVariantData] = useState({});
   const qresp = quoteResponses ? quoteResponses.data[0].quote_stage : "";
-  // console.log(quoteResponses.data);
+  const proresp = proposalResponses
+    ? proposalResponses.data[0].proposal_stage
+    : "";
 
-  // console.log(proposalResponses);
-  console.log(ckycResponses);
   // const navigate = useNavigate();
   const handleBackToQuote = () => {
     setShowQuoteForm(true);
     setShowProposer(false);
+  };
+
+  const handleBackToProposal = () => {
+    setShowProposer(true);
+    setShowCkyc(false);
   };
   // Handle SubOption change
   const handleSubOptionChange = (index) => {
@@ -319,7 +325,10 @@ function AllMotorInsurances() {
         setShowQuoteForm(true);
         setShowProposer(false);
       } else {
-        toast.error(response.data.message_txt);
+        if(response.data.message_txt){
+          toast.error(`${response.data.message_txt}`);
+        }
+        toast.error(response.data.message);
       }
     } catch (error) {
       toast.error(
@@ -329,7 +338,6 @@ function AllMotorInsurances() {
   };
 
   const handleSetAuthTokenToProposal = async (formData) => {
-
     const headers = {
       Authorization: `${token}`,
       "Content-Type": "application/json",
@@ -345,8 +353,15 @@ function AllMotorInsurances() {
       if (response.data.status === 200) {
         toast.success(`${response.data.message_txt}`);
         setPropResponses(response.data);
+        if (response.data.message_txt === "Proposal submitted successfully") {
+          setShowCkyc(true);
+          setShowProposer(false);
+        }
       } else {
-        toast.error(`${response.data.message_txt}`);
+        if(response.data.message_txt){
+          toast.error(`${response.data.message_txt}`);
+        }
+        toast.error(`${response.data.message}`);
       }
     } catch (error) {
       toast.error(
@@ -358,8 +373,6 @@ function AllMotorInsurances() {
   };
 
   const handleSetAuthTokenToCkyc = async (formData) => {
-    console.log(formData);
-
     const headers = {
       Authorization: `${token}`,
       "Content-Type": "application/json",
@@ -369,20 +382,26 @@ function AllMotorInsurances() {
         `${VITE_DATA}/taig/motor/ckyc`,
         formData,
         {
-          headers,
+          headers
         }
       );
       if (response.data.status === 200) {
         toast.success(`${response.data.message_txt}`);
         setCkycResponses(response.data);
       } else {
-        toast.error(`${response.data.message_txt}`);
+        if(response.data.message_txt){
+          toast.error(`${response.data.message_txt}`);
+        }
+        toast.error(`${response.data.message}`);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error to complete cKYC");
+      toast.error(error.response?.data?.message_txt || "Error to complete cKYC");
       // handleSessionExpiry();
     }
   };
+
+  console.log(ckycResponses);
+  
   // const handleSessionExpiry = () => {
   //   sessionStorage.removeItem("auth_access_token");
   //   sessionStorage.removeItem("auth_expires_in");
@@ -436,66 +455,101 @@ function AllMotorInsurances() {
             Check={<Check className="font-bold" />}
             MoveRight={<MoveRight width={20} />}
           />
-        )} */}
+            )}  */}
 
+            {/* proposer */}
             {qresp === "completed" &&
-            showProposer &&
-            quoteResponses?.status === 200 &&
-            quoteResponses?.message_txt ===
-              "Quotation converted to proposal successfully" ? (
-              <>
-                <div className="flex mb-3">
-                  <button
-                    onClick={handleBackToQuote}
-                    type="button"
-                    className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 14 10"
+              showProposer &&
+              quoteResponses?.status === 200 &&
+              quoteResponses?.message_txt ===
+                "Quotation converted to proposal successfully" && (
+                <>
+                  <div className="flex mb-3">
+                    <button
+                      onClick={handleBackToQuote}
+                      type="button"
+                      className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13 5H1m0 0l4-4M1 5l4 4"
-                      />
-                    </svg>
-                    <span className="px-2">Back to Quote</span>
-                  </button>
-                </div>
-                <Proposer
-                  onSubmit={handleSetAuthTokenToProposal}
-                  token={uatToken}
-                  quoteResponses={quoteResponses.data}
-                  financier={financier}
-                />
-                <PvtCkyc
-                  onSubmit={handleSetAuthTokenToCkyc}
-                  proposalResponses={proposalResponses.data}
-                />
-              </>
-            ) : (
-              selectedOption &&
-              showQuoteForm && (
-                <QuoteForm
-                  onSubmit={(data) => {
-                    handleSetAuthTokenToQuote(data);
-                  }}
-                  handle={handleSubOptionChange}
-                  vehMake={vehMake}
-                  model={model}
-                  variant={variant}
-                  rtolist={rtolist}
-                  onSelectedVeh={handleSelectedModel}
-                  onSelectedModel={handleSelectedVariant}
-                  handleRtoData={handleRtoData}
-                />
-              )
+                      <svg
+                        className="w-5 h-5"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 14 10"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 5H1m0 0l4-4M1 5l4 4"
+                        />
+                      </svg>
+                      <span className="px-2">Back to Quote</span>
+                    </button>
+                  </div>
+                  <Proposer
+                    onSubmit={handleSetAuthTokenToProposal}
+                    token={uatToken}
+                    quoteResponses={quoteResponses.data}
+                    financier={financier}
+                  />
+                </>
+              )}
+
+            {/* ckyc */}
+            {proresp === "completed" &&
+              showCkyc &&
+              proposalResponses?.status === 200 &&
+              proposalResponses?.message_txt ===
+                "Proposal submitted successfully" && (
+                <>
+                  <div className="flex mb-3">
+                    <button
+                      onClick={handleBackToProposal}
+                      type="button"
+                      className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 14 10"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 5H1m0 0l4-4M1 5l4 4"
+                        />
+                      </svg>
+                      <span className="px-2">Back to Proposal</span>
+                    </button>
+                  </div>
+                  <PvtCkyc
+                    onSubmit={handleSetAuthTokenToCkyc}
+                    proposalResponses={proposalResponses.data}
+                  />
+                </>
+              )}
+
+            {/* quotes */}
+            {selectedOption && showQuoteForm && (
+              <QuoteForm
+                onSubmit={(data) => {
+                  handleSetAuthTokenToQuote(data);
+                }}
+                handle={handleSubOptionChange}
+                vehMake={vehMake}
+                model={model}
+                variant={variant}
+                rtolist={rtolist}
+                onSelectedVeh={handleSelectedModel}
+                onSelectedModel={handleSelectedVariant}
+                handleRtoData={handleRtoData}
+              />
             )}
           </main>
         </>

@@ -65,9 +65,9 @@ const proposalApi = async (req, res) => {
 };
 
 const cKycApi = async (req, res) => {
+  let url = req.originalUrl.match(/\/([^/]+)\/([^/]+)/);
   const { authorization } = req.headers;
-  const datas = req.body; // Extract data from the request body
-  const { product } = req.query;
+  const datas = req.body; // Extract data from the request bodY
   try {
     const response = await axios.post(`${TATA_AIG_4_WHEELER_CKYC_URL}`, datas, {
       headers: {
@@ -76,11 +76,10 @@ const cKycApi = async (req, res) => {
         "Content-Type": "application/json",
       },
       params: {
-        product, // Pass the pin as a query parameter
+        product: url[2], // Pass the pin as a query parameter
       },
     });
     if (response.data.status === 200) {
-      console.log(response.data);
       return res.json(response?.data);
     } else {
       return res.json(response?.data);

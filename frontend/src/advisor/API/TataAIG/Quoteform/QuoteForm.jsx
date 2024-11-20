@@ -1352,7 +1352,6 @@ function QuoteForm({
               <div>
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Salutation
-                  {/* <span className="text-red-500 font-extrabold"> *</span> */}
                 </h1>
                 <div className="flex p-1 md:px-3">
                   <select
@@ -1381,15 +1380,16 @@ function QuoteForm({
                   </h1>
                   <div className="flex p-1 md:px-3">
                     <input
-                      name="proposer_fname"
+                    onChange={handleChange}
+                    name="proposer_fname"
                       type="text"
                       value={formData.proposer_fname}
-                      onChange={handleChange}
                       className={`${
                         errors["proposer_fname"]
                           ? "border-red-500"
                           : "border-none"
-                      } items-cente w-5/6 text-base md:text-lg md:p-1 p-1 shadow-inner  bg-slate-100 rounded hover:text-gray-600 hover:bg-gray-100`}
+                      }   
+                      items-cente w-5/6 text-base md:text-lg md:p-1 p-1 shadow-inner  bg-slate-100 rounded hover:text-gray-600 hover:bg-gray-100`}
                     />
                   </div>
                   {errors["proposer_fname"] && (
@@ -1401,7 +1401,6 @@ function QuoteForm({
                 <div className="flex flex-col">
                   <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                     M Name
-                    {/* <span className="text-red-500 font-extrabold"> *</span> */}
                   </h1>
                   <div className="flex p-1 md:px-3">
                     <input
@@ -1520,7 +1519,7 @@ function QuoteForm({
                 )}
               </div>
 
-              <div className="mt-4">
+              <div className="">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Tyre Secure Options
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1551,7 +1550,7 @@ function QuoteForm({
                 )}
               </div>
 
-              <div className="mt-4">
+              <div className="">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Engine Secure Options
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1582,7 +1581,7 @@ function QuoteForm({
                 )}
               </div>
 
-              <div className="mt-4">
+              <div className="">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Pa Owner Declaration
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1613,7 +1612,7 @@ function QuoteForm({
                 )}
               </div>
 
-              <div className="mt-4">
+              <div className="">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Voluntary Amount
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1646,7 +1645,7 @@ function QuoteForm({
                 "load_imported",
                 "load_tuition",
               ].map((field, index) => (
-                <div key={index} className="flex flex-col mt-4">
+                <div key={index} className="flex flex-col mt-8">
                   <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                     {/* {field.replace(/_/g, " ")} */}
                     {field
@@ -1677,7 +1676,7 @@ function QuoteForm({
                 </div>
               ))}
 
-              <div className="mt-4">
+              <div className="mt-8">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   No_of_Claims_NCB
                   <span className="text-red-500 font-extrabold"> *</span>
@@ -1724,7 +1723,7 @@ function QuoteForm({
                 "pa_unnamed_no",
                 "pa_unnamed_si",
                 "pa_named",
-                "pa_unnamed_csi",
+               
               ].map((field, index) => (
                 <div key={index} className="flex flex-col mt-4">
                   <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
@@ -1831,6 +1830,7 @@ function QuoteForm({
               )}
 
               {[
+                 "pa_unnamed_csi",
                 "franchise_days",
                 "pa_paid_no",
                 "pa_paid_si",

@@ -28,12 +28,6 @@ function AllMotorInsurances() {
   const [loading, setLoading] = useState(true);
   const [financier, setFinancier] = useState([]);
   const [ckycResponses, setCkycResponses] = useState("");
-  // const [variantData, setVariantData] = useState([]);
-  // const [variantToVariantData, setVariantToVariantData] = useState({});
-  const qresp = quoteResponses ? quoteResponses.data[0].quote_stage : "";
-  const proresp = proposalResponses
-    ? proposalResponses.data[0].proposal_stage
-    : "";
 
   // const navigate = useNavigate();
   const handleBackToQuote = () => {
@@ -314,7 +308,8 @@ function AllMotorInsurances() {
         // Move to Proposer component on success
         if (
           response.data.message_txt ===
-          "Quotation converted to proposal successfully"
+            "Quotation converted to proposal successfully" &&
+          response.data.status === 200
         ) {
           setShowQuoteForm(false);
           setShowProposer(true);
@@ -325,7 +320,7 @@ function AllMotorInsurances() {
         setShowQuoteForm(true);
         setShowProposer(false);
       } else {
-        if(response.data.message_txt){
+        if (response.data.message_txt) {
           toast.error(`${response.data.message_txt}`);
         }
         toast.error(response.data.message);
@@ -353,12 +348,17 @@ function AllMotorInsurances() {
       if (response.data.status === 200) {
         toast.success(`${response.data.message_txt}`);
         setPropResponses(response.data);
-        if (response.data.message_txt === "Proposal submitted successfully") {
+        if (
+          response.data.message_txt === "Proposal submitted successfully" &&
+          response.data.status === 200
+        ) {
           setShowCkyc(true);
           setShowProposer(false);
         }
       } else {
-        if(response.data.message_txt){
+        if (response.data.message_txt) {
+          // console.log(response.data);
+          
           toast.error(`${response.data.message_txt}`);
         }
         toast.error(`${response.data.message}`);
@@ -373,6 +373,12 @@ function AllMotorInsurances() {
   };
 
   const handleSetAuthTokenToCkyc = async (formData) => {
+    const newFormData = structuredClone(formData);
+    if (formData.id_type === "PAN") {
+      delete newFormData.req_id;
+      delete newFormData.dob;
+      delete newFormData.gender;
+
     const headers = {
       Authorization: `${token}`,
       "Content-Type": "application/json",
@@ -380,28 +386,34 @@ function AllMotorInsurances() {
     try {
       const response = await axios.post(
         `${VITE_DATA}/taig/motor/ckyc`,
-        formData,
+        newFormData,
         {
-          headers
+          headers,
         }
       );
       if (response.data.status === 200) {
         toast.success(`${response.data.message_txt}`);
         setCkycResponses(response.data);
+        // if(ckycResponses?.status === 200 && ckycResponses?.message_txt === "successfully completed"){
+
+        // }
       } else {
-        if(response.data.message_txt){
+        if (response.data.message_txt) {
           toast.error(`${response.data.message_txt}`);
         }
         toast.error(`${response.data.message}`);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message_txt || "Error to complete cKYC");
+      toast.error(
+        error.response?.data?.message_txt || "Error to complete cKYC"
+      );
       // handleSessionExpiry();
     }
+  }
   };
 
-  console.log(ckycResponses);
-  
+  // console.log(ckycResponses);
+
   // const handleSessionExpiry = () => {
   //   sessionStorage.removeItem("auth_access_token");
   //   sessionStorage.removeItem("auth_expires_in");
@@ -449,111 +461,104 @@ function AllMotorInsurances() {
             selectedSubOption={selectedSubOption}
           />
           <Asidebar />
-          <main className="md:mt-28 mt-16 flex flex-col ml-20 mr-2 ">
-            {/* {selectedOption && (
+        </>
+      )}
+      <main className="md:mt-28 mt-16 flex flex-col ml-20 mr-2 ">
+        {/* {selectedOption && (
           <VehicleRegistrationNo
             Check={<Check className="font-bold" />}
             MoveRight={<MoveRight width={20} />}
           />
             )}  */}
 
-            {/* proposer */}
-            {qresp === "completed" &&
-              showProposer &&
-              quoteResponses?.status === 200 &&
-              quoteResponses?.message_txt ===
-                "Quotation converted to proposal successfully" && (
-                <>
-                  <div className="flex mb-3">
-                    <button
-                      onClick={handleBackToQuote}
-                      type="button"
-                      className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 14 10"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M13 5H1m0 0l4-4M1 5l4 4"
-                        />
-                      </svg>
-                      <span className="px-2">Back to Quote</span>
-                    </button>
-                  </div>
-                  <Proposer
-                    onSubmit={handleSetAuthTokenToProposal}
-                    token={uatToken}
-                    quoteResponses={quoteResponses.data}
-                    financier={financier}
+        {/* proposer */}
+        {showProposer && (
+          <>
+            <div className="flex mb-3">
+              <button
+                onClick={handleBackToQuote}
+                type="button"
+                className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <svg
+                  className="w-5 h-5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 10"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 5H1m0 0l4-4M1 5l4 4"
                   />
-                </>
-              )}
+                </svg>
+                <span className="px-2">Back to Quote</span>
+              </button>
+            </div>
+            <Proposer
+              onSubmit={handleSetAuthTokenToProposal}
+              token={uatToken}
+              quoteResponses={quoteResponses.data}
+              financier={financier}
+            />
+          </>
+        )}
 
-            {/* ckyc */}
-            {proresp === "completed" &&
-              showCkyc &&
-              proposalResponses?.status === 200 &&
-              proposalResponses?.message_txt ===
-                "Proposal submitted successfully" && (
-                <>
-                  <div className="flex mb-3">
-                    <button
-                      onClick={handleBackToProposal}
-                      type="button"
-                      className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 14 10"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M13 5H1m0 0l4-4M1 5l4 4"
-                        />
-                      </svg>
-                      <span className="px-2">Back to Proposal</span>
-                    </button>
-                  </div>
-                  <PvtCkyc
-                    onSubmit={handleSetAuthTokenToCkyc}
-                    proposalResponses={proposalResponses.data}
+        {/* ckyc */}
+        {showCkyc && (
+          <>
+            <div className="flex mb-3">
+              <button
+                onClick={handleBackToProposal}
+                type="button"
+                className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <svg
+                  className="w-5 h-5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 10"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 5H1m0 0l4-4M1 5l4 4"
                   />
-                </>
-              )}
+                </svg>
+                <span className="px-2">Back to Proposal</span>
+              </button>
+            </div>
+            <PvtCkyc
+              onSubmit={handleSetAuthTokenToCkyc}
+              proposalResponses={proposalResponses.data}
+              // ownResponse = {ckycResponses}
+            />
+          </>
+        )}
 
-            {/* quotes */}
-            {selectedOption && showQuoteForm && (
-              <QuoteForm
-                onSubmit={(data) => {
-                  handleSetAuthTokenToQuote(data);
-                }}
-                handle={handleSubOptionChange}
-                vehMake={vehMake}
-                model={model}
-                variant={variant}
-                rtolist={rtolist}
-                onSelectedVeh={handleSelectedModel}
-                onSelectedModel={handleSelectedVariant}
-                handleRtoData={handleRtoData}
-              />
-            )}
-          </main>
-        </>
-      )}
+        {/* quotes */}
+        {selectedOption && showQuoteForm && (
+          <QuoteForm
+            onSubmit={(data) => {
+              handleSetAuthTokenToQuote(data);
+            }}
+            handle={handleSubOptionChange}
+            vehMake={vehMake}
+            model={model}
+            variant={variant}
+            rtolist={rtolist}
+            onSelectedVeh={handleSelectedModel}
+            onSelectedModel={handleSelectedVariant}
+            handleRtoData={handleRtoData}
+          />
+        )}
+      </main>
     </>
   );
 }

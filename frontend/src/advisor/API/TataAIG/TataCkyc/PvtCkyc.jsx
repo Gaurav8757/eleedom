@@ -1,16 +1,17 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-function PvtCkyc({ proposalResponses, onSubmit }) {
+function PvtCkyc({ proposalResponses, onSubmit, ownResponse }) {
   // const [errors, setErrors] = useState({});
   const proposal = proposalResponses[0] || "";
+console.log(ownResponse);
 
   const [formData, setFormData] = useState({
     proposal_no: proposal.proposal_no || "", //proposalResponses.proposal_no
     id_type: "PAN",
     id_num: "",
     req_id: "",
-    // gender: "",
-    // dob: "",
+    gender: "",
+    dob: "",
   });
 
   const validatePAN = (pan) => {
@@ -127,6 +128,7 @@ function PvtCkyc({ proposalResponses, onSubmit }) {
                 value={formData.id_num}
                 onChange={handleChange}
                 placeholder="Enter PAN No."
+                disabled = {ownResponse.data.ckyc_remarks === "OK"}
                 className="items-center text-base md:text-inherit shadow-inner p-1.5 bg-gray-100 text-black font-medium rounded border-none active:border-none"
               />
             </div>
@@ -136,6 +138,7 @@ function PvtCkyc({ proposalResponses, onSubmit }) {
               onClick={handleConvert}
               className="flex justify-center border-b-[4px] active:border-b-[2px]  active:translate-y-[2px] items-center shadow-xl text-base bg-slate-100 backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:bg-green-800 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:py-2 px-3 py-1 overflow-hidden rounded group"
               type="submit"
+              disabled= {ownResponse.data.ckyc_remarks === "OK"}
             >
               Submit
             </button>

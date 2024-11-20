@@ -244,7 +244,7 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                         errors["proposer_fname"]
                           ? "border-red-500"
                           : "border-none"
-                      } items-cente w-5/6 text-base md:text-lg md:p-1 p-1 shadow-inner  bg-slate-100 rounded  hover:text-gray-600 hover:bg-gray-100`}
+                      } items-cente w-5/6 text-base md:text-lg p-1 shadow-inner  bg-slate-100 rounded  hover:text-gray-600 hover:bg-gray-100`}
                     />
                   </div>
                   {errors["proposer_fname"] && (
@@ -317,7 +317,7 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                       errors["proposer_email"]
                         ? "border-red-500"
                         : "border-none"
-                    } items-center  text-base md:text-lg md:p-1 p-1 shadow-inner  bg-slate-100 rounded cursor-pointer  hover:text-gray-600 hover:bg-gray-100`}
+                    } items-center  text-base md:text-lg md:p-1 p-1 shadow-inner  bg-slate-100 rounded   hover:text-gray-600 hover:bg-gray-100`}
                   />
                 </div>
                 {errors["proposer_email"] && (

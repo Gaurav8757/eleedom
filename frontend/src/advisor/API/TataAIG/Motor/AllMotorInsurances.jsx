@@ -10,6 +10,7 @@ import Proposer from "../Proposer/Proposer.jsx";
 import VITE_DATA from "../../../../config/config.jsx";
 import PvtCkyc from "../TataCkyc/PvtCkyc.jsx";
 
+
 function AllMotorInsurances() {
   const [selectedOption, setSelectedOption] = useState("");
   const [showProposer, setShowProposer] = useState(false);
@@ -28,6 +29,8 @@ function AllMotorInsurances() {
   const [loading, setLoading] = useState(true);
   const [financier, setFinancier] = useState([]);
   const [ckycResponses, setCkycResponses] = useState("");
+  // const [quoteDataToCkyc, setQuoteDataToCkyc] = useState("");
+  
 
   // const navigate = useNavigate();
   const handleBackToQuote = () => {
@@ -354,6 +357,7 @@ function AllMotorInsurances() {
         ) {
           setShowCkyc(true);
           setShowProposer(false);
+          
         }
       } else {
         if (response.data.message_txt) {
@@ -394,9 +398,7 @@ function AllMotorInsurances() {
       if (response.data.status === 200) {
         toast.success(`${response.data.message_txt}`);
         setCkycResponses(response.data);
-        // if(ckycResponses?.status === 200 && ckycResponses?.message_txt === "successfully completed"){
-
-        // }
+      
       } else {
         if (response.data.message_txt) {
           toast.error(`${response.data.message_txt}`);
@@ -536,11 +538,17 @@ function AllMotorInsurances() {
             </div>
             <PvtCkyc
               onSubmit={handleSetAuthTokenToCkyc}
-              proposalResponses={proposalResponses.data}
-              // ownResponse = {ckycResponses}
+              proposalResponses={proposalResponses?.data}
+              ownResponse = {ckycResponses?.data}
+              token = {token}
             />
           </>
         )}
+
+        {/* Payment by pan responses */}
+       
+         
+        
 
         {/* quotes */}
         {selectedOption && showQuoteForm && (

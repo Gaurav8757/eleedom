@@ -50,13 +50,15 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
     carriedOutBy: "",
     __finalize: "",
   });
-    // Calculate 18 years ago date
-    const today = new Date();
-    const eighteenYearsAgo = new Date(
-      today.getFullYear() - 18,
-      today.getMonth(),
-      today.getDate()
-    ).toISOString().split("T")[0];
+  // Calculate 18 years ago date
+  const today = new Date();
+  const eighteenYearsAgo = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate()
+  )
+    .toISOString()
+    .split("T")[0];
 
   const validatePAN = (pan) => {
     // Regex for PAN validation
@@ -95,18 +97,18 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
         newErrors["proposer_add2"] = "required";
         isValid = false;
       }
-      if (!formData.nominee_name) {
-        newErrors["nominee_name"] = "required";
-        isValid = false;
-      }
-      if (!formData.nominee_relation) {
-        newErrors["nominee_relation"] = "required";
-        isValid = false;
-      }
-      if (!formData.nominee_age) {
-        newErrors["nominee_age"] = "required";
-        isValid = false;
-      }
+      // if (!formData.nominee_name) {
+      //   newErrors["nominee_name"] = "required";
+      //   isValid = false;
+      // }
+      // if (!formData.nominee_relation) {
+      //   newErrors["nominee_relation"] = "required";
+      //   isValid = false;
+      // }
+      // if (!formData.nominee_age) {
+      //   newErrors["nominee_age"] = "required";
+      //   isValid = false;
+      // }
     } else if (stepNumber === 2) {
       if (!formData.declaration) {
         newErrors["declaration"] = "required";
@@ -502,7 +504,6 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                 "vehicle_puc",
                 "vehicle_puc_declaration",
                 "nominee_name",
-                "nominee_relation",
                 "nominee_age",
               ].map((pro, index) => (
                 <div key={index} className="flex flex-col mb-4">
@@ -535,10 +536,9 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                           ? "bg-gray-200 font-semibold"
                           : "bg-slate-100"
                       } ${
-                       ( pro === "proposer_pan" ||
+                        pro === "proposer_pan" ||
                         pro === "nominee_name" ||
-                        pro === "nominee_age" ||
-                        pro === "nominee_relation" && errors[pro])
+                        (pro === "nominee_age" && errors[pro])
                           ? "border-red-500 text-red-500"
                           : "border-none"
                       }`}
@@ -551,6 +551,39 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                   )}
                 </div>
               ))}
+
+              <div>
+                <h1 className="text-sm text-start md:text-base space-x-2 font-semibold">
+                  Nominee Relation
+                  <span className="text-red-500 font-extrabold"> *</span>
+                </h1>
+                <div className="flex">
+                  <select
+                    name="nominee_relation"
+                    value={formData.nominee_relation}
+                    onChange={handleChange}
+                    className={`${
+                      errors["nominee_relation"]
+                        ? "border-red-500 text-red-500"
+                        : "border-none"
+                    }items-center md:w-4/5 text-base md:text-inherit font-semibold md:p-1 p-1 ps-2 shadow-inner text-gray-500 bg-slate-100 rounded cursor-pointer  hover:text-gray-600 hover:bg-gray-100`}
+                  >
+                    <option className="font-semibold" value="">
+                      Select Relation
+                    </option>
+                    {Data.nomineeRelationships.map((ocp, idx) => (
+                      <option key={idx} value={ocp}>
+                        {ocp}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {errors["nominee_relation"] && (
+                  <p className="text-red-500 text-sm text-start  md:text-base md:px-4">
+                    {errors["nominee_relation"]}
+                  </p>
+                )}
+              </div>
 
               <div>
                 <h1 className="text-sm text-start md:text-base space-x-2 font-semibold">

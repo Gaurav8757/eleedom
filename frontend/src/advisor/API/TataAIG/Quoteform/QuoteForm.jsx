@@ -234,18 +234,18 @@ function QuoteForm({
         // You can add further validations for regno_2, regno_3, etc., if required
       }
     } else if (stepNumber === 2) {
-      if (!formData.proposer_email) {
-        newErrors["proposer_email"] = "required";
-        isValid = false;
-      }
-      if (!formData.proposer_fname) {
-        newErrors["proposer_fname"] = "required";
-        isValid = false;
-      }
-      if (!formData.proposer_lname) {
-        newErrors["proposer_lname"] = "required";
-        isValid = false;
-      }
+      // if (!formData.proposer_email) {
+      //   newErrors["proposer_email"] = "required";
+      //   isValid = false;
+      // }
+      // if (!formData.proposer_fname) {
+      //   newErrors["proposer_fname"] = "required";
+      //   isValid = false;
+      // }
+      // if (!formData.proposer_lname) {
+      //   newErrors["proposer_lname"] = "required";
+      //   isValid = false;
+      // }
       if (!phone) {
         newErrors["phone"] = "required";
         isValid = false;
@@ -1349,7 +1349,7 @@ function QuoteForm({
             </div>
             <div className="grid md:grid-cols-5 grid-cols-2 gap-4">
               {/*  Prev Policy Type */}
-              <div>
+              {/* <div>
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
                   Salutation
                 </h1>
@@ -1470,7 +1470,7 @@ function QuoteForm({
                     {errors["proposer_email"]}
                   </p>
                 )}
-              </div>
+              </div> */}
 
               <div className="flex flex-col">
                 <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
@@ -2040,7 +2040,7 @@ function QuoteForm({
             <h3 className="text-lg font-semibold mb-8">
               {`Are you sure you want to `}
               <span className="text-blue-600 font-medium">_finalize</span>
-              {` ${formData.proposer_fname} ${formData.proposer_lname} quote?`}
+             {` quote?`}
             </h3>
             <div className="flex justify-end space-x-4">
               <button
@@ -2072,7 +2072,7 @@ function QuoteForm({
             <h3 className="text-lg mb-8">
               {`Are you sure you want to `}
               <span className="text-blue-600 font-medium">save</span>
-              {` ${formData.proposer_fname} ${formData.proposer_lname} quote?`}
+              {` quote?`}
             </h3>
             <div className="flex justify-end space-x-4">
               <button

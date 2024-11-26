@@ -17,7 +17,12 @@ const {
   TATA_AIG_4_WHEELER_CKYC_URL,
   TATA_AIG_4_WHEELER_XAPI_KEY,
   TATA_AIG_4_WHEELER_VIS_URL,
-  TATA_AIG_4_WHEELER_VIS_KEY
+  TATA_AIG_4_WHEELER_VIS_KEY,
+  TATA_AIG_4_WHEELER_PAYMENT_URL,
+  TATA_AIG_4_WHEELER_PAYMENT_KEY,
+  TATA_AIG_4_WHEELER_VERIFY_PAYMENT_URL,
+  TATA_AIG_4_WHEELER_FORM60_URL,
+  TATA_AIG_4_WHEELER_FORM60_KEY
 } = process.env;
 
 const quoteApi = async (req, res) => {
@@ -89,10 +94,36 @@ const cKycApi = async (req, res) => {
   }
 };
 
+const formSixtyApi = async (req, res) => {
+  const { authorization } = req.headers;
+  const datas = req.body; // Extract data from the request body
+  console.log(datas.doc_base64);
+  
+  try {
+    const response = await axios.post(`${TATA_AIG_4_WHEELER_FORM60_URL}`, datas, {
+      headers: {
+        Authorization: `${authorization}`,
+        "x-api-key": `${TATA_AIG_4_WHEELER_FORM60_KEY}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        product: req.query.product, // Pass the pin as a query parameter
+      },
+    });
+    
+    if (response.data.status === 200) {
+      return res.json(response?.data);
+    } else {
+      return res.json(response?.data);
+    }
+  } catch (error) {
+    return  res.json(error.response?.data);
+  }
+};
+
 const verifyInspectionApi = async (req, res) => {
   const { authorization } = req.headers;
   const datas = req.body; // Extract data from the request body
-  const { product } = req.query;
   try {
     const response = await axios.post(`${TATA_AIG_4_WHEELER_VIS_URL}`, datas, {
       headers: {
@@ -105,7 +136,6 @@ const verifyInspectionApi = async (req, res) => {
       },
     });
     if (response.data.status === 200) {
-      console.log(response.data);
       return res.json(response?.data);
     } else {
       return res.json(response?.data);
@@ -114,6 +144,64 @@ const verifyInspectionApi = async (req, res) => {
     return res.json(error.response?.data);
   }
 };
+
+
+
+
+
+
+const makePayment = async (req, res) => {
+  let url = req.originalUrl.match(/\/([^/]+)\/([^/]+)/);
+  const { authorization } = req.headers;
+  const datas = req.body; // Extract data from the request body
+  const { product } = req.query;
+  try {
+    const response = await axios.post(`${TATA_AIG_4_WHEELER_PAYMENT_URL}`, datas, {
+      headers: {
+        Authorization: `${authorization}`,
+        "x-api-key": `${TATA_AIG_4_WHEELER_PAYMENT_KEY}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        product: url[2], // Pass the pin as a query parameter
+      },
+    });
+    if (response.data.status === 200) {
+      return res.json(response?.data);
+    } else {
+      return res.json(response?.data);
+    }
+  } catch (error) {
+    return res.json(error.response?.data);
+  }
+};
+
+const verifyPayment = async (req, res) => {
+  const { authorization } = req.headers;
+  const datas = req.body; // Extract data from the request body
+  const { product } = req.query;
+  try {
+    const response = await axios.post(`${TATA_AIG_4_WHEELER_VERIFY_PAYMENT_URL}`, datas, {
+      headers: {
+        Authorization: `${authorization}`,
+        "x-api-key": `${TATA_AIG_4_WHEELER_PAYMENT_KEY}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        product, // Pass the pin as a query parameter
+      },
+    });
+    if (response.data.status === 200) {
+      return res.json(response?.data);
+    } else {
+      return res.json(response?.data);
+    }
+  } catch (error) {
+    return res.json(error.response?.data);
+  }
+};
+
+
 
 const vehicleMfg = async (req, res) => {
   const uatToken = req.headers.authorization;
@@ -375,5 +463,8 @@ export {
   financier,
   policyPlans,
   cKycApi,
+  formSixtyApi,
   verifyInspectionApi,
+  makePayment,
+  verifyPayment
 };

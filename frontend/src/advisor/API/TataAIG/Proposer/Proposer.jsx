@@ -802,7 +802,7 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
         <div className={`${step > 1 ? "mb-6" : "mb-8"}`}>
           <div className="flex justify-between items-center">
             <span className="md:text-lg text-sm">Step {step} of 2</span>
-            <h2 className="md:text-2xl text-base font-bold">
+            <h2 className="md:text-2xl text-base bg-gradient-to-l bg-clip-text from-indigo-600 to-blue-500 font-bold">
               {step > 2 ? "Proposer Preview" : "Proposer Information"}
             </h2>
             <div className="flex space-x-2">

@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import PaymentTaig from "../Payment/PaymentTaig.jsx";
-function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token }) {
-  // const [errors, setErrors] = useState({});
+function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token, setFormSixtyState }) {
+  const [errors, setErrors] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const proposal = proposalResponses[0] || "";
   const [formData, setFormData] = useState({
@@ -13,6 +13,7 @@ function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token }) {
     gender: "",
     dob: "",
   });
+  console.log(ownResponse);
 
   const validatePAN = (pan) => {
     // Regex for PAN validation
@@ -21,22 +22,22 @@ function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token }) {
     //   alert("PAN is required."
     // }
     if (!panRegex.test(pan)) {
-      return "Invalid PAN format (ABCDE1234F)!";
+      setErrors("Invalid PAN format (ABCDE1234F)!");
+    } else {
+      setErrors("");
     }
-    return ""; // No error
   };
   const [showConfirmation, setShowConfirmation] = useState(false);
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "id_num") {
       const updatedValue = value.toUpperCase().slice(0, 10);
       // Validate PAN dynamically
-      const error = validatePAN(updatedValue);
+      validatePAN(updatedValue);
       setFormData((prevData) => ({
         ...prevData,
-        [name]: updatedValue || error,
+        [name]: updatedValue,
       }));
     } else {
       setFormData((prevState) => ({
@@ -81,7 +82,7 @@ function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token }) {
   }, [ownResponse]);
 
   const renderStep = () => {
-    return (
+    return !ownResponse?.req_id ? (
       <div className="space-y-2 my-8">
         <div className="text-sm md:text-base px-4 text-gray-500 rounded">
           <div className="flex flex-col">
@@ -98,27 +99,34 @@ function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token }) {
                 placeholder="Enter PAN No."
                 className={`${
                   ownResponse?.verified
-                    ? "bg-slate-100 text-slate-400"
+                    ? "bg-slate-100 text-black"
                     : "bg-gray-100 text-black"
                 } items-center text-base md:text-inherit shadow-inner p-1.5 font-medium rounded border-none active:border-none`}
-                disabled={ownResponse?.verified}
+                disabled={ownResponse?.verified || ownResponse?.req_id}
               />
               <button
                 onClick={handleConvert}
                 className={`${
-                  ownResponse?.verified
+                  ownResponse?.verified || ownResponse?.req_id
                     ? "bg-green-700 text-gray-50 cursor-not-allowed"
                     : "bg-gray-100 text-black active:border-b-[2px]  active:translate-y-[2px] before:bg-green-800 hover:text-gray-50 "
                 }  justify-center border-b-[4px]  items-center shadow-xl text-base backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:py-2 px-3 py-1 overflow-hidden rounded group`}
                 type="submit"
-                disabled={ownResponse?.verified}
+                disabled={ownResponse?.verified || ownResponse?.req_id}
               >
                 {ownResponse?.verified ? "Verified" : "Submit"}
               </button>
             </div>
+            {errors && (
+              <span className="text-red-600 text-start">{errors}</span>
+            )}
           </div>
         </div>
       </div>
+    ) : (
+      <span className="text-red-600 text-lg font-medium text-start">
+        {`Now! You can able to use only Form60. `} <span>&#x2193;</span>
+      </span>
     );
   };
 
@@ -134,51 +142,61 @@ function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token }) {
         </div>
         {renderStep()}
         <div>
-        {ownResponse?.verified && (<>
-          <div className="flex flex-col max-w-lg mt-10 mx-3 bg-white border border-gray-200 rounded-t-lg shadow text-slate-500">
-            <span className="text-lg flex text-start text-white p-3 bg-blue-600 tracking-wider font-medium space-x-2 mb-2 ">
-              {sessionStorage.getItem("selectedOption")}
-            </span>
-            <div className="p-3">
-              <>
-                <h1 className="text-sm text-center tracking-wider font-medium space-x-2 mb-2 relative">
-                  Premium (Including GST)
-                </h1>
-                <span className=" text-lg tracking-wide text-black font-semibold">
-                  ₹ {proposal.premium_value}
+          {ownResponse?.verified && (
+            <>
+              <div className="flex flex-col max-w-lg mt-10 mx-3 bg-white border border-gray-200 rounded-t-lg shadow text-slate-500">
+                <span className="text-lg flex text-start text-white p-3 bg-blue-600 tracking-wider font-medium space-x-2 mb-2 ">
+                  {sessionStorage.getItem("selectedOption")}
                 </span>
-              </>
-              <hr className="my-4" />
-              <>
-                <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
-                  Insured Name:  <span className="text-black font-bold">{ownResponse?.result?.customer_name} </span>
-                </h1>
-                <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
-                  Proposal Number:{" "}
-                  <span className="text-black font-bold">{formData.proposal_no}</span>
-                </h1>
-                <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
-                  Quotation Number:{" "}
-                  <span className="text-black font-bold">{proposal.quote_no}</span>
-                </h1>
-              </>
-            </div>
-          </div>
-          <PaymentTaig  ckycResponses = {ownResponse} proposalResponses = {proposal} token = {token}/>
-          </> )}
+                <div className="p-3">
+                  <>
+                    <h1 className="text-sm text-center tracking-wider font-medium space-x-2 mb-2 relative">
+                      Premium (Including GST)
+                    </h1>
+                    <span className=" text-lg tracking-wide text-black font-semibold">
+                      ₹ {proposal.premium_value}
+                    </span>
+                  </>
+                  <hr className="my-4" />
+                  <>
+                    <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
+                      Insured Name:{" "}
+                      <span className="text-black font-bold">
+                        {ownResponse?.result?.customer_name}{" "}
+                      </span>
+                    </h1>
+                    <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
+                      Proposal Number:{" "}
+                      <span className="text-black font-bold">
+                        {formData.proposal_no}
+                      </span>
+                    </h1>
+                    <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
+                      Quotation Number:{" "}
+                      <span className="text-black font-bold">
+                        {proposal.quote_no}
+                      </span>
+                    </h1>
+                  </>
+                </div>
+              </div>
+              <PaymentTaig
+                ckycResponses={ownResponse}
+                proposalResponses={proposal}
+                token={token}
+              />
+            </>
+          )}
         </div>
-        
       </div>
 
-
-     
       {/* if pan not verified then show FORM60 */}
-      {!ownResponse?.verified && (
+      {!ownResponse?.verified && (!formData.id_num || ownResponse?.req_id) && (
         <div className="my-4 flex justify-start">
           <span>
             Don&apos;t have a PAN?{" "}
-            <button className="text-blue-800 font-semibold tracking-wide">
-              Upload Form 60
+            <button onClick={()=> setFormSixtyState(prev=>!prev)} className="text-blue-800 font-semibold tracking-wide">
+              Upload Form60
             </button>
           </span>
         </div>

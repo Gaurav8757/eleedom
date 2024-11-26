@@ -9,7 +9,7 @@ import QuoteForm from "../Quoteform/QuoteForm.jsx";
 import Proposer from "../Proposer/Proposer.jsx";
 import VITE_DATA from "../../../../config/config.jsx";
 import PvtCkyc from "../TataCkyc/PvtCkyc.jsx";
-
+import FormSixty from "../../Companies/FormSixty.jsx";
 
 function AllMotorInsurances() {
   const [selectedOption, setSelectedOption] = useState("");
@@ -29,8 +29,11 @@ function AllMotorInsurances() {
   const [loading, setLoading] = useState(true);
   const [financier, setFinancier] = useState([]);
   const [ckycResponses, setCkycResponses] = useState("");
+  const [panReqId, setPanReqId] = useState("");
+  const [formSixtyResponses, setFormSixtyResponses] = useState("");
+  const [formSixtyState, setFormSixtyState] = useState(false);
   // const [quoteDataToCkyc, setQuoteDataToCkyc] = useState("");
-  
+  console.log(panReqId);
 
   // const navigate = useNavigate();
   const handleBackToQuote = () => {
@@ -357,12 +360,11 @@ function AllMotorInsurances() {
         ) {
           setShowCkyc(true);
           setShowProposer(false);
-          
         }
       } else {
         if (response.data.message_txt) {
           // console.log(response.data);
-          
+
           toast.error(`${response.data.message_txt}`);
         }
         toast.error(`${response.data.message}`);
@@ -383,37 +385,75 @@ function AllMotorInsurances() {
       delete newFormData.dob;
       delete newFormData.gender;
 
+      const headers = {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      };
+      try {
+        const response = await axios.post(
+          `${VITE_DATA}/taig/motor/ckyc`,
+          newFormData,
+          {
+            headers,
+          }
+        );
+        if (response.data.status === 200) {
+          toast.success(`${response.data.message_txt}`);
+          setCkycResponses(response?.data);
+        } else if (
+          response.data.status === 400 &&
+          response.data.message_txt ===
+            "CKYC not completed. Please retry with another id"
+        ) {
+          setPanReqId(response?.data.req_id);
+          toast.success(`${response.data.message_txt}`);
+        } else {
+          if (response.data.message_txt) {
+            toast.error(`${response.data.message_txt}`);
+          }
+          toast.error(`${response.data.message}`);
+        }
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message_txt || "Error to complete cKYC"
+        );
+        // handleSessionExpiry();
+      }
+    }
+  };
+
+  const handleFormSixty = async (formData) => {
+    // console.log(formData.doc_base64);
     const headers = {
       Authorization: `${token}`,
       "Content-Type": "application/json",
     };
     try {
       const response = await axios.post(
-        `${VITE_DATA}/taig/motor/ckyc`,
-        newFormData,
+        `${VITE_DATA}/taig/motor/form/sixty`,
+        formData,
         {
           headers,
         }
       );
       if (response.data.status === 200) {
         toast.success(`${response.data.message_txt}`);
-        setCkycResponses(response.data);
-      
+        setFormSixtyResponses(response?.data);
       } else {
         if (response.data.message_txt) {
           toast.error(`${response.data.message_txt}`);
+          console.log(response.data);
         }
-        toast.error(`${response.data.message}`);
+        // toast.error(`${response.data.message}`);
       }
     } catch (error) {
       toast.error(
-        error.response?.data?.message_txt || "Error to complete cKYC"
+        error.response?.data?.message_txt || "Error to upload Form60"
       );
       // handleSessionExpiry();
     }
-  }
+    console.log(formSixtyResponses);
   };
-
   // console.log(ckycResponses);
 
   // const handleSessionExpiry = () => {
@@ -539,32 +579,46 @@ function AllMotorInsurances() {
             <PvtCkyc
               onSubmit={handleSetAuthTokenToCkyc}
               proposalResponses={proposalResponses?.data}
-              ownResponse = {ckycResponses?.data}
-              token = {token}
+              ownResponse={ckycResponses?.data}
+              token={token}
+              setFormSixtyState = {setFormSixtyState}
             />
+           
           </>
+        )}
+        {formSixtyState && (
+ <FormSixty
+ proposalResponses={proposalResponses?.data}
+ onSubmitFormSixty={handleFormSixty}
+/>
         )}
 
         {/* Payment by pan responses */}
-       
-         
-        
 
         {/* quotes */}
         {selectedOption && showQuoteForm && (
-          <QuoteForm
-            onSubmit={(data) => {
-              handleSetAuthTokenToQuote(data);
-            }}
-            handle={handleSubOptionChange}
-            vehMake={vehMake}
-            model={model}
-            variant={variant}
-            rtolist={rtolist}
-            onSelectedVeh={handleSelectedModel}
-            onSelectedModel={handleSelectedVariant}
-            handleRtoData={handleRtoData}
-          />
+          <>
+            <QuoteForm
+              onSubmit={(data) => {
+                handleSetAuthTokenToQuote(data);
+              }}
+              handle={handleSubOptionChange}
+              vehMake={vehMake}
+              model={model}
+              variant={variant}
+              rtolist={rtolist}
+              onSelectedVeh={handleSelectedModel}
+              onSelectedModel={handleSelectedVariant}
+              handleRtoData={handleRtoData}
+            />
+         
+            {/* <PvtCkyc
+          onSubmit={handleSetAuthTokenToCkyc}
+          proposalResponses={proposalResponses?.data}
+          ownResponse = {ckycResponses?.data}
+          token = {token}
+        /> */}
+          </>
         )}
       </main>
     </>

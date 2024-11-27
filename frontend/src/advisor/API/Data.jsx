@@ -370,7 +370,7 @@ const Data = {
   pre_pol_ncb: [0, 20, 25, 35, 45, 50, 55, 65],
   ncb_no_of_claims: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   marital_status: ["Single", "Married", "Divorced", "Separated", "Widowed"],
-  id_type: ["AADHAAR", "CKYC", "CIN", "DL", "PAN", "PASSPORT", "VOTERID"],
+  id_type: ["AADHAAR", "CKYC", "CIN", "DL", "PASSPORT", "VOTERID"],
 
 
   GeneralInsurance: [

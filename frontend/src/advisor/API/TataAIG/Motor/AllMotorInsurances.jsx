@@ -9,17 +9,19 @@ import QuoteForm from "../Quoteform/QuoteForm.jsx";
 import Proposer from "../Proposer/Proposer.jsx";
 import VITE_DATA from "../../../../config/config.jsx";
 import PvtCkyc from "../TataCkyc/PvtCkyc.jsx";
-import FormSixty from "../../Companies/FormSixty.jsx";
+import FormSixty from "../Form60/FormSixty.jsx";
+import { useAppContext } from "../../../../context/Context.jsx";
+import PopupAllKyc from "../TataCkyc/PopupAllKyc.jsx";
+import AadhaarKyc from "../TataCkyc/Aadhaar/AadhaarKyc.jsx";
 
 function AllMotorInsurances() {
+  const { state, dispatch } = useAppContext();
   const [selectedOption, setSelectedOption] = useState("");
   const [showProposer, setShowProposer] = useState(false);
   const [showCkyc, setShowCkyc] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(true);
   const [menuItems, setMenuItems] = useState({});
   const [selectedSubOption, setSelectedSubOption] = useState("");
-  const [quoteResponses, setQuoteResponses] = useState("");
-  const [proposalResponses, setPropResponses] = useState("");
   const [token, setToken] = useState("");
   const [uatToken, setUatToken] = useState("");
   const [vehMake, setVehMake] = useState([]);
@@ -28,11 +30,8 @@ function AllMotorInsurances() {
   const [rtolist, setRtoList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [financier, setFinancier] = useState([]);
-  const [ckycResponses, setCkycResponses] = useState("");
   const [panReqId, setPanReqId] = useState("");
-  const [formSixtyResponses, setFormSixtyResponses] = useState("");
   const [formSixtyState, setFormSixtyState] = useState(false);
-  // const [quoteDataToCkyc, setQuoteDataToCkyc] = useState("");
   console.log(panReqId);
 
   // const navigate = useNavigate();
@@ -309,8 +308,10 @@ function AllMotorInsurances() {
       );
       if (response.data.status === 200) {
         toast.success(`${response.data.message_txt}`);
-        setQuoteResponses(response.data);
-
+        dispatch({
+          type: "SET_TATA_PRIVATE_CAR_QUOTES",
+          payload: response.data.data[0],
+        });
         // Move to Proposer component on success
         if (
           response.data.message_txt ===
@@ -353,7 +354,10 @@ function AllMotorInsurances() {
       );
       if (response.data.status === 200) {
         toast.success(`${response.data.message_txt}`);
-        setPropResponses(response.data);
+        dispatch({
+          type: "SET_TATA_PRIVATE_CAR_PROPOSER",
+          payload: response.data.data[0],
+        });
         if (
           response.data.message_txt === "Proposal submitted successfully" &&
           response.data.status === 200
@@ -363,8 +367,6 @@ function AllMotorInsurances() {
         }
       } else {
         if (response.data.message_txt) {
-          // console.log(response.data);
-
           toast.error(`${response.data.message_txt}`);
         }
         toast.error(`${response.data.message}`);
@@ -399,14 +401,18 @@ function AllMotorInsurances() {
         );
         if (response.data.status === 200) {
           toast.success(`${response.data.message_txt}`);
-          setCkycResponses(response?.data);
+          dispatch({
+            type: "SET_TATA_PRIVATE_CAR_CKYC",
+            payload: response.data.data,
+          });
         } else if (
           response.data.status === 400 &&
           response.data.message_txt ===
             "CKYC not completed. Please retry with another id"
         ) {
+          // OPEN AADHAAR POPUP DIRECTLY, USE SEPARATE CONTEXT HERE
           setPanReqId(response?.data.req_id);
-          toast.success(`${response.data.message_txt}`);
+          toast.error(`${response.data.message_txt}`);
         } else {
           if (response.data.message_txt) {
             toast.error(`${response.data.message_txt}`);
@@ -423,7 +429,6 @@ function AllMotorInsurances() {
   };
 
   const handleFormSixty = async (formData) => {
-    // console.log(formData.doc_base64);
     const headers = {
       Authorization: `${token}`,
       "Content-Type": "application/json",
@@ -436,15 +441,20 @@ function AllMotorInsurances() {
           headers,
         }
       );
-      if (response.data.status === 200) {
+      if (
+        response.data.status === 200 &&
+        response.data.message_txt === "Succesfully uploaded"
+      ) {
         toast.success(`${response.data.message_txt}`);
-        setFormSixtyResponses(response?.data);
+        dispatch({
+          type: "SET_TATA_PRIVATE_CAR_FORM60",
+          payload: response.data.data,
+        });
       } else {
         if (response.data.message_txt) {
           toast.error(`${response.data.message_txt}`);
-          console.log(response.data);
         }
-        // toast.error(`${response.data.message}`);
+        toast.error(`${response.data.message}`);
       }
     } catch (error) {
       toast.error(
@@ -452,7 +462,6 @@ function AllMotorInsurances() {
       );
       // handleSessionExpiry();
     }
-    console.log(formSixtyResponses);
   };
   // console.log(ckycResponses);
 
@@ -465,6 +474,8 @@ function AllMotorInsurances() {
   //   sessionStorage.removeItem("uat_token_received_at");
   //   navigate("/advisor/home/insurance");
   // };
+
+  const [isPopupKycOpen, setIsPopupKycOpen] = useState(true);
 
   return (
     <>
@@ -543,7 +554,6 @@ function AllMotorInsurances() {
             <Proposer
               onSubmit={handleSetAuthTokenToProposal}
               token={uatToken}
-              quoteResponses={quoteResponses.data}
               financier={financier}
             />
           </>
@@ -578,20 +588,22 @@ function AllMotorInsurances() {
             </div>
             <PvtCkyc
               onSubmit={handleSetAuthTokenToCkyc}
-              proposalResponses={proposalResponses?.data}
-              ownResponse={ckycResponses?.data}
               token={token}
-              setFormSixtyState = {setFormSixtyState}
+              setFormSixtyState={setFormSixtyState}
             />
-           
           </>
         )}
-        {formSixtyState && (
- <FormSixty
- proposalResponses={proposalResponses?.data}
- onSubmitFormSixty={handleFormSixty}
-/>
-        )}
+        {/* form 60 */}
+        {formSixtyState && <FormSixty onSubmitFormSixty={handleFormSixty} />}
+
+        {/* pan failed, ckyc with another id  */}
+        {panReqId && <AadhaarKyc panReqId={panReqId}/>}
+
+        {/* on successful responses form60 context get open popup */}
+        <PopupAllKyc
+          isOpen={state.tata.privateCar.form60.success && isPopupKycOpen}
+          toggleModal={() => setIsPopupKycOpen(false)}
+        />
 
         {/* Payment by pan responses */}
 
@@ -611,13 +623,6 @@ function AllMotorInsurances() {
               onSelectedModel={handleSelectedVariant}
               handleRtoData={handleRtoData}
             />
-         
-            {/* <PvtCkyc
-          onSubmit={handleSetAuthTokenToCkyc}
-          proposalResponses={proposalResponses?.data}
-          ownResponse = {ckycResponses?.data}
-          token = {token}
-        /> */}
           </>
         )}
       </main>

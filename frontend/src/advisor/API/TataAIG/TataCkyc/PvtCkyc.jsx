@@ -1,10 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import PaymentTaig from "../Payment/PaymentTaig.jsx";
-function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token, setFormSixtyState }) {
+import { useAppContext } from "../../../../context/Context.jsx";
+function PvtCkyc({onSubmit, token, setFormSixtyState }) {
+  const {state} = useAppContext();
   const [errors, setErrors] = useState("");
   const [showPopup, setShowPopup] = useState(false);
-  const proposal = proposalResponses[0] || "";
+  const proposal = state.tata.privateCar.proposer;
+  const ownResponse = state.tata.privateCar.ckyc;
+  console.log(ownResponse)
   const [formData, setFormData] = useState({
     proposal_no: proposal.proposal_no || "", //proposalResponses.proposal_no
     id_type: "PAN",
@@ -13,7 +17,6 @@ function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token, setFormSixty
     gender: "",
     dob: "",
   });
-  console.log(ownResponse);
 
   const validatePAN = (pan) => {
     // Regex for PAN validation
@@ -66,11 +69,6 @@ function PvtCkyc({ proposalResponses, onSubmit, ownResponse, token, setFormSixty
     if (ownResponse?.verified) {
       // Automatically display the popup
       setShowPopup(true);
-
-      // Set ckyc_number and req_id
-      // setCkycNumber(ownResponse.result?.ckyc_number);
-      // setReqId(ownResponse.result?.req_id);
-
       // Auto-close popup after 5 seconds
       const timer = setTimeout(() => {
         setShowPopup(false);

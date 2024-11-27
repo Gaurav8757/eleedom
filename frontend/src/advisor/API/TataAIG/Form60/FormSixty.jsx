@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
+import { useAppContext } from "../../../../context/Context";
 /* eslint-disable react/prop-types */
-function FormSixty({ proposalResponses, onSubmitFormSixty }) {
-  const proposal = proposalResponses[0] || "";
-  console.log(proposal);
-  // console.log(onSubmitFormSixty);
-
+function FormSixty({ onSubmitFormSixty }) {
+  const { state } = useAppContext();
+  const proposal = state.tata.privateCar.proposer;
   const [dragOver, setDragOver] = useState(false);
   const [formData, setFormData] = useState({
     proposal_no: proposal.proposal_no || "",
@@ -47,7 +46,6 @@ function FormSixty({ proposalResponses, onSubmitFormSixty }) {
 
     reader.onload = (event) => {
       const base64String = event.target.result.split("base64,")[1];
-      console.log(base64String);
       if (normalizedDocType === "unknown") {
         toast.error("Unsupported file type. Allowed: PDF, Images (JPG/PNG).");
         return;
@@ -181,20 +179,20 @@ function FormSixty({ proposalResponses, onSubmitFormSixty }) {
           onChange={handleFileUpload}
           accept="image/jpeg, image/png, application/pdf"
         />
-        
-      <div className="flex items-center gap-3">
-        <input
-          className="flex text-start border cursor-pointer border-gray-600 outline-none peer focus:ring-0  focus:border-blue-700 checked:border-none rounded h-6 w-6"
-          type="checkbox"
-          checked={check}
-          onChange={handleChange}
-        />
-        <span className="font-medium tracking-wide">
-          {" "}
-          I hereby declare that I do not possess a PAN Card and will submit
-          Form60.{" "}
-        </span>
-      </div>
+
+        <div className="flex items-center gap-3">
+          <input
+            className="flex text-start border cursor-pointer border-gray-600 outline-none peer focus:ring-0  focus:border-blue-700 checked:border-none rounded h-6 w-6"
+            type="checkbox"
+            checked={check}
+            onChange={handleChange}
+          />
+          <span className="font-medium tracking-wide">
+            {" "}
+            I hereby declare that I do not possess a PAN Card and will submit
+            Form60.{" "}
+          </span>
+        </div>
         <div className="flex justify-center items-center">
           <button
             onClick={handleSubmit}
@@ -208,7 +206,6 @@ function FormSixty({ proposalResponses, onSubmitFormSixty }) {
           </button>
         </div>
       </div>
-
     </div>
   );
 }

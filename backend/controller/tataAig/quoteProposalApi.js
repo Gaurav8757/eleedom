@@ -95,6 +95,7 @@ const cKycApi = async (req, res) => {
 };
 
 const formSixtyApi = async (req, res) => {
+  let url = req.originalUrl.match(/\/([^/]+)\/([^/]+)/);
   const { authorization } = req.headers;
   const datas = req.body; // Extract data from the request body
   console.log(datas.doc_base64);
@@ -107,7 +108,7 @@ const formSixtyApi = async (req, res) => {
         "Content-Type": "application/json",
       },
       params: {
-        product: req.query.product, // Pass the pin as a query parameter
+        product: url[2], // Pass the pin as a query parameter
       },
     });
     
@@ -120,6 +121,8 @@ const formSixtyApi = async (req, res) => {
     return  res.json(error.response?.data);
   }
 };
+
+
 
 const verifyInspectionApi = async (req, res) => {
   const { authorization } = req.headers;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 
 import { ToastContainer } from "react-toastify";
@@ -208,6 +208,7 @@ import ReconAdvisor from "./admin/admincomponents/MasterForm/ReconAdvisor/ReconA
 import AllCompanyName from "./advisor/API/Companies/AllCompanyName.jsx";
 import AllMotorInsurances from "./advisor/API/TataAIG/Motor/AllMotorInsurances.jsx";
 import AdvResetPassword from "./advisor/AdvResetPassword.jsx";
+import { AppProvider, useAppContext } from "./context/Context";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -650,19 +651,81 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
-    <ToastContainer
-      position="top-right"
-      autoClose={2000}
-      limit={9}
-      hideProgressBar={false}
-      newestOnTop
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss={false}
-      draggable
-      pauseOnHover
-      theme="colored"
-    />
+    <AppProvider>
+      <RouterProvider router={router} />
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        limit={9}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+      <State/>
+    </AppProvider>
   </React.StrictMode>
 );
+
+
+
+
+// Modal Component
+// eslint-disable-next-line react/prop-types
+const Modal = ({ isVisible, onClose, contextData }) => {
+  if (!isVisible) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+    >
+      <div className="bg-white p-5 rounded-md shadow-lg max-w-3xl w-full max-h-full overflow-y-auto">
+        <h2 className="text-xl font-bold mb-4">Context Data</h2>
+        <pre className="bg-gray-100 p-3 rounded-md overflow-auto">
+          {JSON.stringify(contextData, null, 2)}
+        </pre>
+        <button
+          onClick={onClose}
+          className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Main Component
+function State(){
+  const { state } = useAppContext(); // Accessing the context data
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleOpenModal = () => setModalVisible(true);
+  const handleCloseModal = () => setModalVisible(false);
+
+  return (
+    <>
+      {/* Modal */}
+      <Modal
+        isVisible={isModalVisible}
+        onClose={handleCloseModal}
+        contextData={state}
+      />
+
+      {/* Button */}
+      <div className="fixed right-5 bottom-5">
+        <button
+          onClick={handleOpenModal}
+          className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+        >
+          Show Data
+        </button>
+      </div>
+    </>
+  );
+};
+

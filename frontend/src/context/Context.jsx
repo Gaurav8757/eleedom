@@ -1,15 +1,109 @@
-/* eslint-disable react/prop-types */
-// Context.js
-import { createContext, useContext } from 'react';
+import { createContext, useReducer, useContext } from "react";
 
-const HomesectionContext = createContext();
+// Initial state
+const initialState = {
+  tata: {
+    privateCar: {
+      quotes: {},
+      proposer: {},
+      ckyc: {},
+      form60: {},
+      otherKyc:{},
+      aadhaarOtp: {},
+      payment: {},
+    },
+  },
+  magmaHDI: {},
+};
 
-const HomesectionProvider = ({ children, initialHomesection }) => (
-  <HomesectionContext.Provider value={initialHomesection}>
-    {children}
-  </HomesectionContext.Provider>
-);
+// Reducer function
+const appReducer = (state, action) => {
+  switch (action.type) {
+    case "SET_TATA_PRIVATE_CAR_QUOTES":
+      return {
+        ...state,
+        tata: {
+          ...state.tata,
+          privateCar: { ...state.tata.privateCar, quotes: action.payload },
+        },
+      };
+    case "SET_TATA_PRIVATE_CAR_PROPOSER":
+      return {
+        ...state,
+        tata: {
+          ...state.tata,
+          privateCar: { ...state.tata.privateCar, proposer: action.payload },
+        },
+      };
 
-const useHomesection = () => useContext(HomesectionContext);
+    case "SET_TATA_PRIVATE_CAR_CKYC":
+      return {
+        ...state,
+        tata: {
+          ...state.tata,
+          privateCar: { ...state.tata.privateCar, ckyc: action.payload },
+        },
+      };
 
-export { HomesectionProvider, useHomesection };
+    case "SET_TATA_PRIVATE_CAR_PAYMENT":
+      return {
+        ...state,
+        tata: {
+          ...state.tata,
+          privateCar: { ...state.tata.privateCar, payment: action.payload },
+        },
+      };
+      case "SET_TATA_PRIVATE_CAR_FORM60":
+        return {
+          ...state,
+          tata: {
+            ...state.tata,
+            privateCar: { ...state.tata.privateCar, form60: action.payload },
+          },
+        };
+        case "SET_TATA_PRIVATE_CAR_OTHERKYC":
+        return {
+          ...state,
+          tata: {
+            ...state.tata,
+            privateCar: { ...state.tata.privateCar, otherKyc: action.payload },
+          },
+        };
+        case "SET_TATA_PRIVATE_CAR_AADHAAR_OTP":
+          return {
+            ...state,
+            tata: {
+              ...state.tata,
+              privateCar: { ...state.tata.privateCar, aadhaarOtp: action.payload },
+            },
+          };
+
+    default:
+      throw new Error(`Unknown action type: ${action.type}`);
+  }
+};
+
+// Create context
+const AppContext = createContext();
+
+// Context Provider component
+// eslint-disable-next-line react/prop-types
+export const AppProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(appReducer, initialState);
+
+  return (
+    <AppContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+// Custom hook to use the context
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error("useAppContext must be used within an AppProvider");
+  }
+  return context;
+};

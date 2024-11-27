@@ -1,13 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import Data from "../../Data.jsx";
+import { useAppContext } from "../../../../context/Context.jsx";
 
-function Proposer({ onSubmit, quoteResponses, financier }) {
+function Proposer({ onSubmit, financier }) {
+  const { state } = useAppContext();
+  const quote = state.tata.privateCar.quotes;
   const [errors, setErrors] = useState({});
   const [showConfirmSave, setShowConfirmSave] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const quote = quoteResponses[0].data;
-  // const quote2 = quoteResponses[0];
 
   const [formData, setFormData] = useState({
     proposer_gender: "",
@@ -16,7 +17,7 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
     proposer_mname: "",
     proposer_lname: "",
     proposer_email: "",
-    proposer_mobile: quote.mobile_no || "",
+    proposer_mobile: quote?.data.mobile_no || "",
     proposer_salutation: "",
     proposer_add1: "",
     proposer_add2: "",
@@ -39,14 +40,14 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
     nominee_age: 0, // Assuming this is a number, default to 0
     appointee_name: "",
     appointee_relation: "",
-    proposal_id: quote.proposal_id || "",
-    product_id: quote.product_id || "",
+    proposal_id: quote?.data.proposal_id || "",
+    product_id: quote?.data.product_id || "",
     declaration: "",
     vehicle_chassis: "",
     vehicle_engine: "",
     proposer_fullname: "",
-    proposer_pincode: quote.proposer_pincode || "",
-    quote_no: quote.quote_no || "",
+    proposer_pincode: quote?.data.proposer_pincode || "",
+    quote_no: quote?.data.quote_no || "",
     carriedOutBy: "",
     __finalize: "",
   });
@@ -200,7 +201,7 @@ function Proposer({ onSubmit, quoteResponses, financier }) {
                   <input
                     type="text"
                     name="policy_id"
-                    value={quote.policy_id}
+                    value={quote?.data.policy_id}
                     className="items-center text-base md:text-inherit shadow-inner p-1.5 bg-gray-200 font-semibold rounded border-none"
                     readOnly
                   />

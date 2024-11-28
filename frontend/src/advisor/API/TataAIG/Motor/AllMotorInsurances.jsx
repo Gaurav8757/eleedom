@@ -8,11 +8,10 @@ import Navbar from "../../Navbar/Navbar.jsx";
 import QuoteForm from "../Quoteform/QuoteForm.jsx";
 import Proposer from "../Proposer/Proposer.jsx";
 import VITE_DATA from "../../../../config/config.jsx";
-import PvtCkyc from "../TataCkyc/PvtCkyc.jsx";
+import PvtCkyc from "../TataCkyc/PAN/PvtCkyc.jsx";
 import FormSixty from "../Form60/FormSixty.jsx";
 import { useAppContext } from "../../../../context/Context.jsx";
 import PopupAllKyc from "../TataCkyc/PopupAllKyc.jsx";
-import AadhaarKyc from "../TataCkyc/Aadhaar/AadhaarKyc.jsx";
 
 function AllMotorInsurances() {
   const { state, dispatch } = useAppContext();
@@ -30,10 +29,9 @@ function AllMotorInsurances() {
   const [rtolist, setRtoList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [financier, setFinancier] = useState([]);
-  const [panReqId, setPanReqId] = useState("");
+  // const [panReqId, setPanReqId] = useState("");
   const [formSixtyState, setFormSixtyState] = useState(false);
-  console.log(panReqId);
-
+  const [isPopupKycOpen, setIsPopupKycOpen] = useState(true);
   // const navigate = useNavigate();
   const handleBackToQuote = () => {
     setShowQuoteForm(true);
@@ -44,6 +42,12 @@ function AllMotorInsurances() {
     setShowProposer(true);
     setShowCkyc(false);
   };
+
+  const handleForwardToCkyc = () => {
+    setShowProposer(false);
+    setShowCkyc(true);
+  };
+
   // Handle SubOption change
   const handleSubOptionChange = (index) => {
     const selectedOption = menuItems[index];
@@ -258,33 +262,6 @@ function AllMotorInsurances() {
     loadData();
   }, []);
 
-  // VARIANT DATA
-  // const handleSelectedVariantData = async (data) => {
-  //   if (!uatToken) {
-  //     toast.error("Not Authorized yet.. Try again!");
-  //     return;
-  //   }
-  //   try {
-  //     const response = await axios.get(
-  //       `${VITE_DATA}/taig/pc/mfg/model/variant/${variantToVariantData.code}/${variantToVariantData.name}/${data.code}/${data.name}`,
-  //       {
-  //         headers: {
-  //           Authorization: `${uatToken}`,
-  //         },
-  //       }
-  //     );
-  //     console.log(response.data);
-  //     if (response.data.status === 0) {
-  //       setVariantData(response?.data?.data);
-  //     } else {
-  //       toast.error(response.data?.txt);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error(`${error.response?.data?.txt || "An error occurred"}`);
-  //   }
-  // };
-
   // Fetch data and handle sessionStorage for state persistence
   useEffect(() => {
     const storedSubOption = sessionStorage.getItem("selectedSubOption");
@@ -411,7 +388,7 @@ function AllMotorInsurances() {
             "CKYC not completed. Please retry with another id"
         ) {
           // OPEN AADHAAR POPUP DIRECTLY, USE SEPARATE CONTEXT HERE
-          setPanReqId(response?.data.req_id);
+          // setPanReqId(response?.data.req_id);
           toast.error(`${response.data.message_txt}`);
         } else {
           if (response.data.message_txt) {
@@ -475,8 +452,6 @@ function AllMotorInsurances() {
   //   navigate("/advisor/home/insurance");
   // };
 
-  const [isPopupKycOpen, setIsPopupKycOpen] = useState(true);
-
   return (
     <>
       {" "}
@@ -527,7 +502,7 @@ function AllMotorInsurances() {
         {/* proposer */}
         {showProposer && (
           <>
-            <div className="flex mb-3">
+            <div className="flex  justify-between mb-3">
               <button
                 onClick={handleBackToQuote}
                 type="button"
@@ -550,6 +525,31 @@ function AllMotorInsurances() {
                 </svg>
                 <span className="px-2">Back to Quote</span>
               </button>
+              {state.tata.privateCar.ckyc.verified && (
+                <button
+                  onClick={handleForwardToCkyc}
+                  type="button"
+                  className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  {" "}
+                  <span className="px-2">Forward to CKYC</span>
+                  <svg
+                    className="w-5 h-5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 10"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M1 5h12m0 0l-4 4m4-4l-4-4"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
             <Proposer
               onSubmit={handleSetAuthTokenToProposal}
@@ -596,12 +596,10 @@ function AllMotorInsurances() {
         {/* form 60 */}
         {formSixtyState && <FormSixty onSubmitFormSixty={handleFormSixty} />}
 
-        {/* pan failed, ckyc with another id  */}
-        {panReqId && <AadhaarKyc panReqId={panReqId}/>}
-
         {/* on successful responses form60 context get open popup */}
         <PopupAllKyc
           isOpen={state.tata.privateCar.form60.success && isPopupKycOpen}
+          token={token}
           toggleModal={() => setIsPopupKycOpen(false)}
         />
 

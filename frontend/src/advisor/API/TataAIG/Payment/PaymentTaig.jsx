@@ -4,8 +4,13 @@ import { useState } from "react";
 import VITE_DATA from "../../../../config/config.jsx";
 import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useAppContext } from "../../../../context/Context.jsx";
 
-function PaymentTaig({ ckycResponses, proposalResponses, token }) {
+function PaymentTaig({ token }) {
+  const { state } = useAppContext();
+  const proposal = state.tata.privateCar.proposer;
+  const ownResponse = state.tata.privateCar.ckyc;
+
   const [formData, setFormData] = useState({
     payment_mode: "onlinePayment",
     deposit_in: "Bank",
@@ -13,12 +18,12 @@ function PaymentTaig({ ckycResponses, proposalResponses, token }) {
     payer_type: "Customer",
     payer_id: "",
     payer_relationship: "",
-    payer_pan_no: ckycResponses?.id_num || "",
-    payer_name: ckycResponses?.result.customer_name || "",
+    payer_pan_no: ownResponse?.id_num || "",
+    payer_name: ownResponse?.result.customer_name || "",
     email: "mr.gaurav@gmail.com",
     mobile_no: "9687687768",
-    pan_no: ckycResponses?.id_num || "",
-    payment_id: [proposalResponses?.payment_id] || [],
+    pan_no: ownResponse?.id_num || "",
+    payment_id: [proposal?.payment_id] || [],
     returnurl: "https://www.eleedomimf.com/advisor/tata_aig/motor",
   });
 
@@ -105,7 +110,7 @@ function PaymentTaig({ ckycResponses, proposalResponses, token }) {
             </svg>
           </button>
         </CopyToClipboard>
-        <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs font-semibold py-1 px-2 rounded-md shadow-lg top-full mt-1">
+        <div className="absolute text-nowrap hidden group-hover:block bg-gray-800 text-white text-xs font-semibold py-1 px-2 rounded-md shadow-lg top-full mt-1">
           {copySuccess ? "Copied!" : "Copy to Clipboard"}
         </div>
       </div>
@@ -113,48 +118,94 @@ function PaymentTaig({ ckycResponses, proposalResponses, token }) {
   };
 
   return (
-    <div className="flex flex-col mx-3 my-10">
-      <h2 className="text-base text-start tracking-wider font-medium">
-        Online Payment
-      </h2>
-      <div className="flex flex-col max-w-sm justify-start">
-        <div className="flex flex-col items-start">
-          <input
-            id="pay-checkbox"
-            type="checkbox"
-            className="hidden peer"
-            checked={isChecked}
-            onChange={handleCheckboxChange}
-          />
-          <label
-            htmlFor="pay-checkbox"
-            className={`flex w-8 h-8 my-3 p-4  justify-center shadow-inner text-gray-500 bg-slate-100 border border-red-500 rounded cursor-pointer 
-            peer-checked:border-blue-600 peer-checked:bg-gradient-to-t from-blue-700 to-blue-600 peer-checked:text-white hover:text-gray-600 hover:bg-gray-100`}
+    <div className="flex flex-col ">
+      {ownResponse?.verified && (
+        <>
+          {" "}
+          <h1 className="text-xl tracking-wider font-medium">Make Payment</h1>
+          <div
+            className={`${
+              ownResponse?.verified ? "mt-4" : "mt-10"
+            } flex flex-col max-w-lg mx-3 bg-white border border-gray-200 rounded-t-lg shadow text-slate-500`}
           >
-            {" "}
-            <div className="flex items-center text-lg font-semibold capitalize">
-              {isChecked ? "Yes" : ""}{" "}
+            <span className="text-lg flex text-start text-white p-3 bg-blue-600 tracking-wider font-medium space-x-2 mb-2 ">
+              {sessionStorage.getItem("selectedOption")}
+            </span>
+            <div className="p-3">
+              <>
+                <h1 className="text-sm text-center tracking-wider font-medium space-x-2 mb-2 relative">
+                  Premium (Including GST)
+                </h1>
+                <span className=" text-lg tracking-wide text-black font-semibold">
+                  ₹ {proposal.premium_value}
+                </span>
+              </>
+              <hr className="my-4" />
+              <>
+                <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
+                  Insured Name:{" "}
+                  <span className="text-black font-bold">
+                    {ownResponse?.result?.customer_name}{" "}
+                  </span>
+                </h1>
+                <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
+                  Proposal Number:{" "}
+                  <span className="text-black font-bold">
+                    {proposal.proposal_no}
+                  </span>
+                </h1>
+                <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
+                  Quotation Number:{" "}
+                  <span className="text-black font-bold">
+                    {proposal.quote_no}
+                  </span>
+                </h1>
+              </>
             </div>
-          </label>
-          <span className="text-lg font-bold font-serif">
-            I confirm the payment details.
-          </span>
-          <div className="flex justify-between  items-center mt-8">
-            <button
-              className={`transition-all text-lg bg-green-600 text-white font-mono font-bold px-4 py-1.5 mr-5 rounded-md border-green-700 border-b-[4px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[2px] active:text-black`}
-              onClick={() => {
-                if (paymentLink) {
-                  window.open(paymentLink, "_blank"); // Open payment link in a new tab
-                }
-              }}
-              disabled={!isChecked || !paymentLink} // Disable if unchecked or no link
-            >
-              Make Payment
-            </button>
-            {PaymentLinkButton({ paymentLink })}
+          </div>{" "}
+          <div className="flex flex-col my-auto justify-start">
+            <h2 className="text-xl  mx-3 text-start mt-20 m-4 tracking-wider font-medium">
+              Online Payment
+            </h2>
+
+            <div className="flex max-w-sm justify-start space-x-4 items-center">
+              <input
+                id="pay-checkbox"
+                type="checkbox"
+                className="hidden peer"
+                checked={isChecked}
+                onChange={handleCheckboxChange}
+              />
+              <label
+                htmlFor="pay-checkbox"
+                className={`flex w-6 h-6 p-2  items-center justify-center shadow-inner text-gray-500 bg-slate-100 border border-red-500 rounded cursor-pointer 
+            peer-checked:border-blue-600 peer-checked:bg-gradient-to-t from-blue-700 to-blue-600 peer-checked:text-white hover:text-gray-600 hover:bg-gray-100`}
+              >
+                <div className="flex items-center text-xs font-semibold capitalize">
+                  {isChecked ? "Yes" : ""}{" "}
+                </div>
+              </label>
+              <span className="text-base font-semibold tracking-wider font-serif">
+                I confirm the payment details.
+              </span>
+            </div>
+            <div className="flex justify-start m-4 items-center mt-8">
+              <button
+                className={`transition-all text-lg bg-green-600 text-white font-mono font-bold px-4 py-1.5 mr-5 rounded-md border-green-700 border-b-[4px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[2px] active:text-black`}
+                onClick={() => {
+                  if (paymentLink) {
+                    window.open(paymentLink, "_blank"); // Open payment link in a new tab
+                  }
+                }}
+                disabled={!isChecked || !paymentLink} // Disable if unchecked or no link
+              >
+                Make Payment
+              </button>
+              {PaymentLinkButton({ paymentLink })}
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

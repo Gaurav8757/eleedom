@@ -212,7 +212,8 @@ import {
   verifyInspectionApi,
   makePayment,
   verifyPayment,
-  formSixtyApi
+  formSixtyApi,
+  aadhaarOtpApi
 } from "../controller/tataAig/quoteProposalApi.js";
 
 // GET TATA AIG AUTH TOKEN CALL
@@ -305,6 +306,7 @@ router.get("/taig/pc/policy/plan", policyPlans);
 router.post("/taig/motor/quote", quoteApi);
 router.post("/taig/motor/proposal", proposalApi);
 router.post("/taig/motor/ckyc", cKycApi);
+router.post("/taig/motor/verify/passkey", aadhaarOtpApi);
 router.post("/taig/motor/form/sixty", formSixtyApi);
 router.post("/taig/motor/verify/inspection", verifyInspectionApi);
 router.post("/taig/motor/initiate/pay", makePayment);

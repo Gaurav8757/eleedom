@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import PaymentTaig from "../Payment/PaymentTaig.jsx";
-import { useAppContext } from "../../../../context/Context.jsx";
+import PaymentTaig from "../../Payment/PaymentTaig.jsx";
+import { useAppContext } from "../../../../../context/Context.jsx";
+import AadhaarKyc from "../Aadhaar/AadhaarKyc.jsx";
 function PvtCkyc({onSubmit, token, setFormSixtyState }) {
   const {state} = useAppContext();
   const [errors, setErrors] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const proposal = state.tata.privateCar.proposer;
   const ownResponse = state.tata.privateCar.ckyc;
-  console.log(ownResponse)
   const [formData, setFormData] = useState({
     proposal_no: proposal.proposal_no || "", //proposalResponses.proposal_no
     id_type: "PAN",
@@ -17,6 +17,7 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
     gender: "",
     dob: "",
   });
+
 
   const validatePAN = (pan) => {
     // Regex for PAN validation
@@ -121,75 +122,36 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
           </div>
         </div>
       </div>
-    ) : (
-      <span className="text-red-600 text-lg font-medium text-start">
-        {`Now! You can able to use only Form60. `} <span>&#x2193;</span>
-      </span>
+    ) : ( ownResponse.req_id && !ownResponse.verified &&(
+      // <span className="text-red-600 text-lg font-medium text-start">
+      //   {`Now! You can able to use only Form60. `} <span>&#x2193;</span>
+       
+      // </span>
+       <AadhaarKyc  token = {token} />
+    )
     );
   };
 
   return (
     <>
-      <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-slate-50  isolation-auto border-none Z-10  relative rounded group">
+      <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-white isolation-auto border-none Z-10  relative rounded group">
         <div className={"mb-0"}>
           <div className="flex justify-center items-center">
             <h2 className="md:text-2xl tracking-wide text-base font-semibold">
-              {"cKYC"}
+              {!ownResponse.req_id ? "cKYC" : ""}
             </h2>
           </div>
         </div>
         {renderStep()}
         <div>
           {ownResponse?.verified && (
-            <>
-              <div className="flex flex-col max-w-lg mt-10 mx-3 bg-white border border-gray-200 rounded-t-lg shadow text-slate-500">
-                <span className="text-lg flex text-start text-white p-3 bg-blue-600 tracking-wider font-medium space-x-2 mb-2 ">
-                  {sessionStorage.getItem("selectedOption")}
-                </span>
-                <div className="p-3">
-                  <>
-                    <h1 className="text-sm text-center tracking-wider font-medium space-x-2 mb-2 relative">
-                      Premium (Including GST)
-                    </h1>
-                    <span className=" text-lg tracking-wide text-black font-semibold">
-                      ₹ {proposal.premium_value}
-                    </span>
-                  </>
-                  <hr className="my-4" />
-                  <>
-                    <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
-                      Insured Name:{" "}
-                      <span className="text-black font-bold">
-                        {ownResponse?.result?.customer_name}{" "}
-                      </span>
-                    </h1>
-                    <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
-                      Proposal Number:{" "}
-                      <span className="text-black font-bold">
-                        {formData.proposal_no}
-                      </span>
-                    </h1>
-                    <h1 className="text-sm text-start tracking-wider font-medium space-x-2 mb-2 relative">
-                      Quotation Number:{" "}
-                      <span className="text-black font-bold">
-                        {proposal.quote_no}
-                      </span>
-                    </h1>
-                  </>
-                </div>
-              </div>
-              <PaymentTaig
-                ckycResponses={ownResponse}
-                proposalResponses={proposal}
-                token={token}
-              />
-            </>
+              <PaymentTaig token={token} />
           )}
         </div>
       </div>
 
       {/* if pan not verified then show FORM60 */}
-      {!ownResponse?.verified && (!formData.id_num || ownResponse?.req_id) && (
+      {!ownResponse?.verified &&  !ownResponse?.req_id && (!formData.id_num) && (
         <div className="my-4 flex justify-start">
           <span>
             Don&apos;t have a PAN?{" "}

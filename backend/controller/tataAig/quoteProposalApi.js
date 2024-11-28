@@ -22,7 +22,9 @@ const {
   TATA_AIG_4_WHEELER_PAYMENT_KEY,
   TATA_AIG_4_WHEELER_VERIFY_PAYMENT_URL,
   TATA_AIG_4_WHEELER_FORM60_URL,
-  TATA_AIG_4_WHEELER_FORM60_KEY
+  TATA_AIG_4_WHEELER_FORM60_KEY,
+  TATA_AIG_4_WHEELER_AADHAAR_OTP_URL,
+  TATA_AIG_4_WHEELER_AADHAAR_OTP_KEY
 } = process.env;
 
 const quoteApi = async (req, res) => {
@@ -94,12 +96,37 @@ const cKycApi = async (req, res) => {
   }
 };
 
+const aadhaarOtpApi = async (req, res) => {
+  let url = req.originalUrl.match(/\/([^/]+)\/([^/]+)/);
+  const { authorization } = req.headers;
+  const datas = req.body; // Extract data from the request body
+  try {
+    const response = await axios.post(`${TATA_AIG_4_WHEELER_AADHAAR_OTP_URL}`, datas, {
+      headers: {
+        Authorization: `${authorization}`,
+        "x-api-key": `${TATA_AIG_4_WHEELER_AADHAAR_OTP_KEY}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        product: url[2], // Pass the pin as a query parameter
+      },
+    });
+    
+    if (response.data.status === 200) {
+      return res.json(response?.data);
+    } else {
+      return res.json(response?.data);
+    }
+  } catch (error) {
+    return  res.json(error.response?.data);
+  }
+};
+
+
 const formSixtyApi = async (req, res) => {
   let url = req.originalUrl.match(/\/([^/]+)\/([^/]+)/);
   const { authorization } = req.headers;
   const datas = req.body; // Extract data from the request body
-  console.log(datas.doc_base64);
-  
   try {
     const response = await axios.post(`${TATA_AIG_4_WHEELER_FORM60_URL}`, datas, {
       headers: {
@@ -121,8 +148,6 @@ const formSixtyApi = async (req, res) => {
     return  res.json(error.response?.data);
   }
 };
-
-
 
 const verifyInspectionApi = async (req, res) => {
   const { authorization } = req.headers;
@@ -147,10 +172,6 @@ const verifyInspectionApi = async (req, res) => {
     return res.json(error.response?.data);
   }
 };
-
-
-
-
 
 
 const makePayment = async (req, res) => {
@@ -203,7 +224,6 @@ const verifyPayment = async (req, res) => {
     return res.json(error.response?.data);
   }
 };
-
 
 
 const vehicleMfg = async (req, res) => {
@@ -469,5 +489,6 @@ export {
   formSixtyApi,
   verifyInspectionApi,
   makePayment,
-  verifyPayment
+  verifyPayment,
+  aadhaarOtpApi
 };

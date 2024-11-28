@@ -10,11 +10,12 @@ import VoterKyc from "./VoterID/VoterKyc";
 import CinKyc from "./CIN/CinKyc";
 
 // eslint-disable-next-line react/prop-types
-function PopupAllKyc({ isOpen, toggleModal }) {
+function PopupAllKyc({ isOpen, toggleModal, token }) {
   const [selectedID, setSelectedID] = useState("");
   const { state } = useAppContext();
   const formSixty = state.tata.privateCar.form60;
-  const Id = formSixty?.req_id?.split("form60")[0];
+  
+  const Id = formSixty?.req_id?.split("_")[0];
 
   return (
     <div
@@ -48,7 +49,7 @@ function PopupAllKyc({ isOpen, toggleModal }) {
             Please help us with the following details to accelerate your kyc
             process!
           </p>
-          <p className="my-5 font-medium  text-start ml-0.5 uppercase">
+          <p className="my-5 font-medium  text-start ml-0.5 capitalize ">
             PAN : {Id}
           </p>
           {Id && (
@@ -56,9 +57,9 @@ function PopupAllKyc({ isOpen, toggleModal }) {
               Form60 Uploaded Successfully!
             </p>
           )}
-          <p className="px-3 border text-blue-800 border-blue-600 py-4 border-l-4 rounded-md  font-medium  text-start ml-0.5 captitalize">
+          {/* <p className="px-3 border text-blue-800 border-blue-600 py-4 border-l-4 rounded-md  font-medium  text-start ml-0.5 captitalize">
             Form60 Uploaded Successfully!
-          </p>
+          </p> */}
         </div>
 
         <div className="my-8 text-start">
@@ -82,12 +83,12 @@ function PopupAllKyc({ isOpen, toggleModal }) {
 
         {/* ####################################################################  AADHAAR  ################################################################################## */}
 
-        {selectedID === "AADHAAR" && <AadhaarKyc selectedID={selectedID} />}
-        {selectedID === "DL" && <DlKyc selectedID={selectedID} />}
-        {selectedID === "VOTERID" && <VoterKyc selectedID={selectedID} />}
-        {selectedID === "PASSPORT" && <PassportKyc selectedID={selectedID} />}
-        {selectedID === "CKYC" && <VoterID selectedID={selectedID} />}
-        {selectedID === "CIN" && <CinKyc selectedID={selectedID} />}
+        {selectedID === "AADHAAR" && <AadhaarKyc selectedID={selectedID} token={token} />}
+        {selectedID === "DL" && <DlKyc selectedID={selectedID} token={token}/>}
+        {selectedID === "VOTERID" && <VoterKyc selectedID={selectedID} token={token}/>}
+        {selectedID === "PASSPORT" && <PassportKyc selectedID={selectedID} token={token}/>}
+        {selectedID === "CKYC" && <VoterID selectedID={selectedID} token={token}/>}
+        {selectedID === "CIN" && <CinKyc selectedID={selectedID} token={token}/>}
       </div>
     </div>
   );

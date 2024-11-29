@@ -121,7 +121,7 @@ function AadhaarKyc({ selectedID, token }) {
       // handleSessionExpiry();
     }
   };
-  console.log(state.tata.privateCar);
+ 
 
   const handleConvert = () => {
     setShowConfirmation(true);

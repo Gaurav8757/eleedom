@@ -1,7 +1,7 @@
 import { AiOutlineClose } from "react-icons/ai";
 import { useAppContext } from "../../../../context/Context";
 import Data from "../../Data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AadhaarKyc from "./Aadhaar/AadhaarKyc";
 import DlKyc from "./DL/DlKyc";
 import VoterID from "./VoterID/VoterKyc";
@@ -14,9 +14,15 @@ function PopupAllKyc({ isOpen, toggleModal, token }) {
   const [selectedID, setSelectedID] = useState("");
   const { state } = useAppContext();
   const formSixty = state.tata.privateCar.form60;
-  
+  const ckyc = state.tata.privateCar.ckyc;
   const Id = formSixty?.req_id?.split("_")[0];
-
+  useEffect(() => {
+    // Auto-check whenever `verified` changes
+    if (ckyc.verified) {
+      toggleModal(); // Close popup
+    }
+  }, [ckyc.verified, toggleModal]);
+  console.log(state.tata.privateCar);
   return (
     <div
       className={`fixed ${
@@ -27,7 +33,7 @@ function PopupAllKyc({ isOpen, toggleModal, token }) {
     >
       <div
         className={`bg-white max-w-3xl w-full p-4 rounded-lg shadow-lg transform transition-transform duration-300 ${
-            isOpen ? "scale-100 " : "scale-90 "
+          isOpen ? "scale-100 " : "scale-90 "
         }`}
       >
         {/* Header */}
@@ -83,12 +89,22 @@ function PopupAllKyc({ isOpen, toggleModal, token }) {
 
         {/* ####################################################################  AADHAAR  ################################################################################## */}
 
-        {selectedID === "AADHAAR" && <AadhaarKyc selectedID={selectedID} token={token} />}
-        {selectedID === "DL" && <DlKyc selectedID={selectedID} token={token}/>}
-        {selectedID === "VOTERID" && <VoterKyc selectedID={selectedID} token={token}/>}
-        {selectedID === "PASSPORT" && <PassportKyc selectedID={selectedID} token={token}/>}
-        {selectedID === "CKYC" && <VoterID selectedID={selectedID} token={token}/>}
-        {selectedID === "CIN" && <CinKyc selectedID={selectedID} token={token}/>}
+        {selectedID === "AADHAAR" && (
+          <AadhaarKyc selectedID={selectedID} token={token} />
+        )}
+        {selectedID === "DL" && <DlKyc selectedID={selectedID} token={token} />}
+        {selectedID === "VOTERID" && (
+          <VoterKyc selectedID={selectedID} token={token} />
+        )}
+        {selectedID === "PASSPORT" && (
+          <PassportKyc selectedID={selectedID} token={token} />
+        )}
+        {selectedID === "CKYC" && (
+          <VoterID selectedID={selectedID} token={token} />
+        )}
+        {selectedID === "CIN" && (
+          <CinKyc selectedID={selectedID} token={token} />
+        )}
       </div>
     </div>
   );

@@ -594,7 +594,7 @@ function AllMotorInsurances() {
           </>
         )}
         {/* form 60 */}
-        {formSixtyState && <FormSixty onSubmitFormSixty={handleFormSixty} />}
+        {formSixtyState && <FormSixty onSubmitFormSixty={handleFormSixty} setFormSixtyState = {setFormSixtyState} />}
 
         {/* on successful responses form60 context get open popup */}
         <PopupAllKyc

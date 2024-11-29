@@ -3,9 +3,10 @@ import { AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useAppContext } from "../../../../context/Context";
 /* eslint-disable react/prop-types */
-function FormSixty({ onSubmitFormSixty }) {
+function FormSixty({ onSubmitFormSixty, setFormSixtyState }) {
   const { state } = useAppContext();
   const proposal = state.tata.privateCar.proposer;
+  const ckyc = state.tata.privateCar.ckyc;
   const [dragOver, setDragOver] = useState(false);
   const [formData, setFormData] = useState({
     proposal_no: proposal.proposal_no || "",
@@ -14,6 +15,15 @@ function FormSixty({ onSubmitFormSixty }) {
     doc_base64: "",
   });
 
+  useEffect(() => {
+    // Auto-check whenever `verified` changes
+    if (ckyc.verified) {
+      setFormSixtyState(false); // Close popup
+    }
+  }, [ckyc.verified, setFormSixtyState]);
+
+
+  
   const [fileName, setFileName] = useState("");
   const [docs, setDocs] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);

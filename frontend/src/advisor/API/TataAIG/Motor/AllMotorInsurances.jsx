@@ -559,9 +559,12 @@ function AllMotorInsurances() {
           </>
         )}
 
-        {/* ckyc */}
-        {showCkyc && (
+        {/* verify inspection as popup */}
+      
+        {/* ckyc */} 
+        {showCkyc &&  (
           <>
+          
             <div className="flex mb-3">
               <button
                 onClick={handleBackToProposal}
@@ -594,7 +597,12 @@ function AllMotorInsurances() {
           </>
         )}
         {/* form 60 */}
-        {formSixtyState && <FormSixty onSubmitFormSixty={handleFormSixty} setFormSixtyState = {setFormSixtyState} />}
+        {formSixtyState && (
+          <FormSixty
+            onSubmitFormSixty={handleFormSixty}
+            setFormSixtyState={setFormSixtyState}
+          />
+        )}
 
         {/* on successful responses form60 context get open popup */}
         <PopupAllKyc

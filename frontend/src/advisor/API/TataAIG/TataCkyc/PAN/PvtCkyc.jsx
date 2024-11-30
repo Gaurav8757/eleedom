@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import PaymentTaig from "../../Payment/PaymentTaig.jsx";
 import { useAppContext } from "../../../../../context/Context.jsx";
 import AadhaarKyc from "../Aadhaar/AadhaarKyc.jsx";
+// import InspectionStatus from "../../VerifyInspection/InspectionStatus.jsx";
 function PvtCkyc({onSubmit, token, setFormSixtyState }) {
   const {state} = useAppContext();
   const [errors, setErrors] = useState("");
@@ -134,6 +135,9 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
 
   return (
     <>
+      {/* {proposal.stage === "nstp" && (
+            <InspectionStatus token={token} />
+          )} */}
       <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-white isolation-auto border-none Z-10  relative rounded group">
         <div className={"mb-0"}>
           <div className="flex justify-center items-center">

@@ -6,7 +6,17 @@ export default {
     "./node_modules/flowbite/**/*.js"
   ],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        blink: "blink 2s infinite",
+      },
+      keyframes: {
+        blink: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0" },
+        },
+      },
+    },
   },
   plugins: [
     import('flowbite/plugin')

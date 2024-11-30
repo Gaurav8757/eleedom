@@ -6,6 +6,7 @@ const initialState = {
     privateCar: {
       quotes: {},
       proposer: {},
+      vInsStatus:{},
       ckyc: {},
       form60: {},
       otherKyc:{},
@@ -69,6 +70,14 @@ const appReducer = (state, action) => {
             privateCar: { ...state.tata.privateCar, otherKyc: action.payload },
           },
         };
+        case "SET_TATA_PRIVATE_CAR_INSPECTION_STATUS":
+          return {
+            ...state,
+            tata: {
+              ...state.tata,
+              privateCar: { ...state.tata.privateCar, vInsStatus: action.payload },
+            },
+          };
         case "SET_TATA_PRIVATE_CAR_AADHAAR_OTP":
           return {
             ...state,

@@ -152,6 +152,7 @@ const formSixtyApi = async (req, res) => {
 const verifyInspectionApi = async (req, res) => {
   const { authorization } = req.headers;
   const datas = req.body; // Extract data from the request body
+  
   try {
     const response = await axios.post(`${TATA_AIG_4_WHEELER_VIS_URL}`, datas, {
       headers: {
@@ -159,11 +160,9 @@ const verifyInspectionApi = async (req, res) => {
         "x-api-key": `${TATA_AIG_4_WHEELER_VIS_KEY}`,
         "Content-Type": "application/json",
       },
-      params: {
-        product, // Pass the pin as a query parameter
-      },
     });
-    if (response.data.status === 200) {
+  
+    if (response.data) {
       return res.json(response?.data);
     } else {
       return res.json(response?.data);

@@ -21,7 +21,7 @@ function PaymentTaig({ token }) {
     payer_pan_no: ownResponse?.id_num || "",
     payer_name: ownResponse?.result.customer_name || "",
     email: "mr.gaurav@gmail.com",
-    mobile_no: "9687687768",
+    mobile_no: proposal?.mobile_no || "",
     pan_no: ownResponse?.id_num || "",
     payment_id: [proposal?.payment_id] || [],
     returnurl: "https://www.eleedomimf.com/advisor/tata_aig/motor",
@@ -51,7 +51,12 @@ function PaymentTaig({ token }) {
         };
         const response = await axios.post(
           `${VITE_DATA}/taig/motor/initiate/pay`,
-          formData,
+          {
+            ...formData,
+            pan_no: ownResponse.id_type !== "PAN" ? "" : formData.pan_no,
+            payer_pan_no:
+              ownResponse.id_type !== "PAN" ? "" : formData.payer_pan_no,
+          },
           { headers }
         );
         const { data } = response;

@@ -2,17 +2,8 @@ import UserCarousel from "../../models/user_carousel/usercarouselSchema.js";
 
 export const firstUserCarousel = async (req, res) => {
   try {
-    const { usercarousel_title, usercarousel_desc, usercarousel_link } =
+    const { usercarousel_title, usercarousel_desc, usercarousel_link, usercarousel_upload } =
       req.body;
-    // Check if a file is provided in the request
-    const usercarousel_upload =
-      req.files &&
-      req.files["usercarousel_upload"] &&
-      req.files["usercarousel_upload"][0]
-        ?  `${req.protocol}://${req.get('host')}/uploads/`+
-          req.files["usercarousel_upload"][0].filename
-        : null;
-
     // Check if the carousel with the given carousellink already exists
     const linkExist = await UserCarousel.findOne({ usercarousel_link });
     if (linkExist) {
@@ -61,16 +52,6 @@ export const updateCarousel = async (req, res) => {
   try {
     const carouselId = req.params.id;
     const carouselData = req.body;
-
-    // Handle file upload if present
-    const usercarousel_upload =
-      req.files &&
-      req.files["usercarousel_upload"] &&
-      req.files["usercarousel_upload"][0]
-        ? `${req.protocol}://${req.get('host')}/uploads/` +
-          req.files["usercarousel_upload"][0].filename
-        : null;
-
     // Check if the carousel exists before attempting to update
     const existingCarousel = await UserCarousel.findById(carouselId);
 
@@ -79,11 +60,6 @@ export const updateCarousel = async (req, res) => {
         status: "Carousel not found",
         message: "The specified Carousel ID does not exist in the database",
       });
-    }
-
-    // If a new file is uploaded, add it to the carousel data
-    if (usercarousel_upload) {
-      carouselData.usercarousel_upload = usercarousel_upload;
     }
 
     // Perform the update

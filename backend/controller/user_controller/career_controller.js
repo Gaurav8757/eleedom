@@ -1,20 +1,14 @@
 import Career from "../../models/user_models/careers.js";
 
 export const userApplyForm = async (req, res) => {
+  const data = req.body;
+  
+ if(!data){
+  return res.status(400).json({message: "No any parameters passed to user apply form."});
+ }
     try {
-      const { name, email, mobile, branch, address, qualification, applyDate, level, position } = req.body;
        // Check if a file is provided in the request
-    const pdfs =
-    req.files &&
-    req.files["pdf"] &&
-    req.files["pdf"][0]
-      ?  `${req.protocol}://${req.get('host')}/uploads/`+
-        req.files["pdf"][0].filename
-      : null;
-      // Create a new branch
-      const newFormFilled = new Career({
-        name, email, mobile, branch, address, qualification, applyDate, level, position, pdfs
-      });
+      const newFormFilled = new Career(data);
       // Save the new branch to the database
       await newFormFilled.save();
       return res.status(201).json({
@@ -25,7 +19,6 @@ export const userApplyForm = async (req, res) => {
       });
     } catch (err) {
       return res.status(400).json({
-        status: "Error During Submit....!",
         message: err.message,
       });
     }

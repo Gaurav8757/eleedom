@@ -124,10 +124,6 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
         </div>
       </div>
     ) : ( ownResponse.req_id && !ownResponse.verified &&(
-      // <span className="text-red-600 text-lg font-medium text-start">
-      //   {`Now! You can able to use only Form60. `} <span>&#x2193;</span>
-       
-      // </span>
        <AadhaarKyc  token = {token} />
     )
     );

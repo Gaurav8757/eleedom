@@ -42,7 +42,7 @@ const Carousel = () => {
       >
         {APIData.map((obj, idx) => (
           <SwiperSlide key={idx} className="flex justify-self-stretch  container-fluid">
-            <NavLink to="#" className="  container-fluid justify-self-stretch  ">
+            <NavLink to={obj.usercarousel_link} className="  container-fluid justify-self-stretch  ">
               <img 
                 src={obj.usercarousel_upload}
                 // srcSet={`${obj.usercarousel_upload} 420w, ${obj.usercarousel_upload} 768w, ${obj.usercarousel_upload} 1200w`}

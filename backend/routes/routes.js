@@ -213,7 +213,8 @@ import {
   makePayment,
   verifyPayment,
   formSixtyApi,
-  aadhaarOtpApi
+  aadhaarOtpApi,
+  motorPolicyDownload
 } from "../controller/tataAig/quoteProposalApi.js";
 
 // GET TATA AIG AUTH TOKEN CALL
@@ -256,12 +257,12 @@ router.delete("/dashboard/api/:id", deleteBranch);
 router.post("/forgot/branch/pass", forgotBranchPassword);
 router.post("/branch/pass/:id/:token", branchPasswordReset);
 // COMPANY
-router.post("/dashboard/addcompany", uploadFile, addCompany);
+router.post("/dashboard/addcompany", addCompany);
 router.get("/api/company/company-list", viewCompanies);
 router.get("/api/company/health-list", viewHealthInsuranceCompanies);
 router.get("/api/company/motor-list", viewMotorInsuranceCompanies);
 router.get("/api/company/nonmotor-list", viewNonMotorInsuranceCompanies);
-router.put("/api/company/updatecomp/:id", uploadFile, updateCompany);
+router.put("/api/company/updatecomp/:id", updateCompany);
 router.delete("/company/api/:id", deleteCompany);
 // add or view employee
 router.post("/dashboard/addemployee", uploadFile, addempRegister);
@@ -311,6 +312,7 @@ router.post("/taig/motor/form/sixty", formSixtyApi);
 router.post("/taig/motor/verify/inspection", verifyInspectionApi);
 router.post("/taig/motor/initiate/pay", makePayment);
 router.post("/taig/motor/verif/pay", verifyPayment);
+router.get("/taig/motor/download/policy/:encrypted_policy_id", motorPolicyDownload);
 
 router.put("/api/emp/update/:id", uploadFile, updateEmployee);
 router.delete("/emp/api/:id", deleteEmployee);

@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
+
 function CareersView() {
     const [APIData, setAPIData] = useState([]);
 
@@ -48,7 +49,7 @@ function CareersView() {
   return (
     <section className="container-fluid relative h-screen p-0 sm:ml-48 bg-white">
     <h1 className="flex justify-center text-3xl text-blue-700 font-semibold w-full py-4">Job Application List&apos;s</h1>
-    <div className="container-fluid  justify-center p-2 border-gray-200 border-dashed rounded-lg bg-slate-200">
+    <div className="container-fluid  justify-center p-2 border-gray-200 border-dashed rounded-lg bg-slate-100">
       <div className="inline-block min-w-full w-full py-0 ">
         <div className="inline-block min-w-full w-full py-0 overflow-x-auto">
           <table className="min-w-full text-center text-sm font-light">
@@ -106,9 +107,11 @@ function CareersView() {
                       
                         <NavLink
                           to={data.pdfs}
+                            download={`${data.name}.pdf`}
                           target="_blank"
                           rel="noopener noreferrer" className="flex justify-center">
-                          <img src="/downloading.png" alt="view" className="w-8"/>
+                         
+                          <img src="/pdfdownload.png" alt="view"  className="w-8"/>
                         </NavLink>
                       
                     </td>

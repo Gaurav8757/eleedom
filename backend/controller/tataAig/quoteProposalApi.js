@@ -24,7 +24,9 @@ const {
   TATA_AIG_4_WHEELER_FORM60_URL,
   TATA_AIG_4_WHEELER_FORM60_KEY,
   TATA_AIG_4_WHEELER_AADHAAR_OTP_URL,
-  TATA_AIG_4_WHEELER_AADHAAR_OTP_KEY
+  TATA_AIG_4_WHEELER_AADHAAR_OTP_KEY,
+  TATA_AIG_4_WHEELER_POLICY_DOWNLOAD_URL,
+  TATA_AIG_4_WHEELER_DOWNLOAD_KEY
 } = process.env;
 
 const quoteApi = async (req, res) => {
@@ -177,7 +179,6 @@ const makePayment = async (req, res) => {
   let url = req.originalUrl.match(/\/([^/]+)\/([^/]+)/);
   const { authorization } = req.headers;
   const datas = req.body; // Extract data from the request body
-  const { product } = req.query;
   try {
     const response = await axios.post(`${TATA_AIG_4_WHEELER_PAYMENT_URL}`, datas, {
       headers: {
@@ -200,9 +201,9 @@ const makePayment = async (req, res) => {
 };
 
 const verifyPayment = async (req, res) => {
+  let url = req.originalUrl.match(/\/([^/]+)\/([^/]+)/);
   const { authorization } = req.headers;
   const datas = req.body; // Extract data from the request body
-  const { product } = req.query;
   try {
     const response = await axios.post(`${TATA_AIG_4_WHEELER_VERIFY_PAYMENT_URL}`, datas, {
       headers: {
@@ -211,7 +212,7 @@ const verifyPayment = async (req, res) => {
         "Content-Type": "application/json",
       },
       params: {
-        product, // Pass the pin as a query parameter
+        product: url[2], // Pass the pin as a query parameter
       },
     });
     if (response.data.status === 200) {
@@ -224,6 +225,33 @@ const verifyPayment = async (req, res) => {
   }
 };
 
+const motorPolicyDownload = async (req, res) => {
+  const { authorization } = req.headers;
+  const {encrypted_policy_id}  = req.params; // Extract the policy number from the request body
+
+
+  if (!encrypted_policy_id) {
+    return res.status(400).json({
+      error: true,
+      message: "Policy number is required",
+    });
+  }
+  try {
+    const response = await axios.get(`${TATA_AIG_4_WHEELER_POLICY_DOWNLOAD_URL}/${encrypted_policy_id}`, {
+      headers: {
+        Authorization: `${authorization}`,
+        "x-api-key": `${TATA_AIG_4_WHEELER_DOWNLOAD_KEY}`,
+      },
+    });
+    if (response?.status === 200) {
+      return res.json(response?.data);
+    } else {
+      return res.json(response?.data);   
+    }
+  } catch (error) {
+    return res.json(error.response?.data);
+  }
+};
 
 const vehicleMfg = async (req, res) => {
   const uatToken = req.headers.authorization;
@@ -489,5 +517,6 @@ export {
   verifyInspectionApi,
   makePayment,
   verifyPayment,
-  aadhaarOtpApi
+  aadhaarOtpApi,
+  motorPolicyDownload
 };

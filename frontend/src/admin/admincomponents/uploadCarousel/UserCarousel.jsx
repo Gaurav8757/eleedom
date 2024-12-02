@@ -8,7 +8,7 @@ function UserCarousel() {
         usercarousel_title: "",
         usercarousel_desc: "",
         usercarousel_link: "",
-        usercarousel_upload: null,
+        usercarousel_upload: "",
     });
 
     const handleChange = (e) => {
@@ -16,12 +16,32 @@ function UserCarousel() {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        // console.log(file);
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
 
-        setFormData({ ...formData, usercarousel_upload: file });
-    };
+  if (!file) {
+    toast.error("No file uploaded.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = (event) => {
+    const base64String = event.target.result;// Get the Base64 string
+
+    // Update the form data with the Base64 string
+    setFormData((prevData) => ({
+      ...prevData,
+      usercarousel_upload: base64String
+    }));
+  };
+
+  // Read the file as a Data URL (Base64 string)
+  reader.readAsDataURL(file);
+};
+
+    console.log(formData);
+    
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,7 +63,7 @@ function UserCarousel() {
                     usercarousel_title: "",
                     usercarousel_desc: "",
                     usercarousel_link: "",
-                    usercarousel_upload: null,
+                    usercarousel_upload: "",
                 });
             } else {
                 toast.error(`Error Occurred: ${response.data.message}`);
@@ -66,7 +86,7 @@ function UserCarousel() {
                             <input
                                 type="text"
                                 name="usercarousel_title"
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 value={formData.usercarousel_title}
                                 onChange={handleChange}
                                 placeholder="Title"
@@ -76,7 +96,7 @@ function UserCarousel() {
                         <div className="flex flex-col p-1 mt-4 text-start w-full lg:w-1/4">
                             <label className="text-base mx-1">Description:</label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 name="usercarousel_desc"
                                 value={formData.usercarousel_desc}
@@ -89,7 +109,7 @@ function UserCarousel() {
                         <div className="flex flex-col p-1 mt-4 text-start w-full lg:w-1/4">
                             <label className="text-base mx-1">Link:</label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 name="usercarousel_link"
                                 value={formData.usercarousel_link}
@@ -103,7 +123,7 @@ function UserCarousel() {
                         <div className="flex flex-col p-1 mt-4 text-start w-full lg:w-1/4">
                             <label className="text-base mx-1">Image Upload:</label>
                             <input
-                                className="input-style border h-8 text-xs border-black  rounded-lg"
+                                className="input-style border text-sm border-black  rounded"
                                 type="file"
                                 name="usercarousel_upload"
                                 accept="image/*"

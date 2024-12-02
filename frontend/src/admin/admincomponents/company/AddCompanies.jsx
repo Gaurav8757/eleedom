@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { NavLink } from "react-router-dom";
 import axios from "axios";
 import VITE_DATA from "../../../config/config.jsx";
 let homesection = [
@@ -84,8 +83,6 @@ function AddCompanies() {
   const [APIData, setAPIData] = useState([]);
   const [insList, setInsList] = useState("");
   const [category, setCategory] = useState("");
-  const [cType, setCType] = useState('');
-  // const [establishment, setEstablishment] = useState("");
   const [cname, setCname] = useState("");
   const [files, setFiles] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -111,6 +108,7 @@ function AddCompanies() {
         });
     }
   }, []);
+  
   const handleInsuranceTypeChange = (e) => {
     const selectedInsuranceType = e.target.value;
     setInsList(selectedInsuranceType);
@@ -169,7 +167,7 @@ function AddCompanies() {
             <div className="flex flex-col  p-2 text-start w-full lg:w-1/4">
               <label className="text-base mx-1">Copmany Name:</label>
               <select
-                className="input-style p-1 h-8 text-base rounded-lg"
+                className="input-style h-10 ps-2 text-base rounded"
                 name="comp_cname"
                 value={cname}
                 onChange={(e) => {
@@ -178,10 +176,10 @@ function AddCompanies() {
                 }}
               >
                 <option className="text-sm" value="">
-                  ------------ Select Company Name --------
+                  ---------------- Select Company Name ------------------------
                 </option>
                 {APIData.map((policy) => (
-                  <option className="text-sm" key={policy._id} value={policy.c_type} data-id={policy._id}>
+                  <option className="text-sm ps-2" key={policy._id} value={policy.c_type}>
                     {policy.c_type}
                   </option>
                 ))}
@@ -191,14 +189,14 @@ function AddCompanies() {
             <div className="flex flex-col  p-2 text-start w-full lg:w-1/4">
               <label className="text-base mx-1">Insurance Type:</label>
               <select
-                className="input-style p-1 rounded-lg"
+                className="input-style  h-10 rounded"
                 type="text"
                 name="insList"
                 value={insList}
                 onChange={handleInsuranceTypeChange}
               >
                 <option value="" disabled>
-                  ----- Select Insurance Type-----
+                  --------------- Select Insurance Type -------------------
                 </option>
                 {homesection.map((ins, idx) => (
                   <option key={idx} value={ins.title}>
@@ -214,14 +212,14 @@ function AddCompanies() {
             <div className="flex flex-col  p-2 text-start w-full lg:w-1/4">
               <label className="text-base mx-1">Category:</label>
               <select
-                className="input-style p-1 rounded-lg"
+                className="input-style  h-10  rounded"
                 type="text"
                 name="comp_categories"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option value="" disabled>
-                  ----- Select Category -----
+                  ------------------ Select Category -------------------
                 </option>
                 {/* Map categories based on selected insurance type */}
                 {insList &&
@@ -238,7 +236,7 @@ function AddCompanies() {
             <div className="flex flex-col  p-2 text-start w-full lg:w-1/4">
               <label className="text-base mx-1">Plan:</label>
               <input
-                className="input-style text-base p-0 h-10 my-auto border border-emerald-500 rounded-lg"
+                className="input-style text-base h-10 my-auto border border-slate-300 rounded"
                 type="file"
                 name="comp_cfiles"
                 accept="/*"

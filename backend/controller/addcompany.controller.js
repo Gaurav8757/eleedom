@@ -10,14 +10,7 @@ const __dirname = dirname(currentModuleFile);
 export const addCompany = async (req, res) => {
 
     try {
-      const { comp_insurance, comp_categories, comp_establishment, comp_cname } = req.body;
-      // const serverURL = `${req.protocol}://${req.get('host')}`; 
-      // Check if a file is provided in the request
-      const comp_cfiles =
-        req.files && req.files["comp_cfiles"] && req.files["comp_cfiles"][0]
-          ? "https://eleedomimf.onrender.com/uploads/" + req.files["comp_cfiles"][0].filename
-          : null;
-  //  console.log(comp_cfiles);
+      const { comp_insurance, comp_categories, comp_establishment, comp_cname, comp_cfiles } = req.body;
       // Create a new company instance
       const addNewCompany = new AddCompanies({
         comp_insurance,
@@ -29,8 +22,6 @@ export const addCompany = async (req, res) => {
   
       // Save the company to the database
       await addNewCompany.save();
-      
-      // const avatarPath = `${serverURL}/${comp_cfiles}`; 
       // console.log(serverURL);
       return res.status(201).json({
         status: "Company Added Successfully!",
@@ -74,11 +65,6 @@ export const viewCompanies = async (req, res) => {
     });
   }
 };
-
-
-
-
-
 
 
 // filter view list on Health Insurance
@@ -162,7 +148,6 @@ export const updateCompany = async (req, res) => {
     });
   } catch (err) {
     console.error('Error during Company Update:', err);
-
  // Handle Mongoose validation errors
  if (err.name === 'ValidationError') {
   return res.status(400).json({
@@ -170,8 +155,6 @@ export const updateCompany = async (req, res) => {
     message: err.message,
   });
 }
-
-
     return res.status(500).json({
       status: "Internal Server Error",
       message: err.message,

@@ -14,7 +14,7 @@ function Careers() {
   const [dates, setDates] = useState("");
   const [level, setLevel] = useState("");
   const [position, setPosition] = useState("");
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState("");
 
   useEffect(() => {
     fetchBranchList();
@@ -32,30 +32,47 @@ function Careers() {
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
+    if (!selectedFile) {
+      toast.error("No file selected.");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const base64String = event.target.result; // Get the Base64 string
+      console.log(base64String);
+      setFile(base64String);
+    };
+    // Read the file as a Data URL (Base64 string)
+    reader.readAsDataURL(selectedFile);
   };
+  const payload = {
+    name,
+    email,
+    mobile,
+    address,
+    branch,
+    qualification,
+    applyDate: dates,
+    level,
+    position,
+    pdfs: file, // Ensure `file` is Base64 or properly processed
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("mobile", mobile);
-    formData.append("address", address);
-    formData.append("branch", branch);
-    formData.append("qualification", qualification);
-    formData.append("applyDate", dates);
-    formData.append("level", level);
-    formData.append("position", position);
-    formData.append("pdf", file);
-
     try {
-      const response = await axios.post(`${VITE_DATA}/users/career/posts`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      const response = await axios.post(
+        `${VITE_DATA}/users/career/posts`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (response.data) {
         toast.success("Application Submitted Successfully.....!");
         clearForm();
@@ -63,8 +80,8 @@ function Careers() {
         toast.error("Failed to submit application");
       }
     } catch (error) {
-      console.error("Error submitting application:", error);
-      toast.error("Failed to submit application");
+      console.error(error);
+      toast.error(error?.response?.data.message);
     }
   };
 
@@ -78,7 +95,7 @@ function Careers() {
     setDates("");
     setLevel("");
     setPosition("");
-    setFile(null);
+    setFile("");
   };
 
   return (
@@ -97,6 +114,7 @@ function Careers() {
                 className="input-style p-1 rounded"
                 type="text"
                 value={name}
+                name="name"
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your Name"
                 required
@@ -109,6 +127,7 @@ function Careers() {
               <input
                 className="input-style p-1 rounded"
                 type="email"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="abc@gmail.com"
@@ -122,6 +141,7 @@ function Careers() {
               <input
                 className="input-style p-1 rounded"
                 type="tel"
+                name="mobile"
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
                 placeholder="+91"
@@ -133,6 +153,7 @@ function Careers() {
               <textarea
                 className="input-style text-base uppercase p-1 rounded"
                 value={address}
+                name="address"
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Address"
               />
@@ -144,6 +165,7 @@ function Careers() {
               <select
                 className="input-style p-1 text-base rounded"
                 value={position}
+                name="position"
                 onChange={(e) => setPosition(e.target.value)}
               >
                 <option value="">------- SELECT POSITION --------</option>
@@ -160,6 +182,7 @@ function Careers() {
               <select
                 className="input-style p-1 text-base rounded"
                 value={branch}
+                name="branch"
                 onChange={(e) => setBranch(e.target.value)}
               >
                 <option value="">------- SELECT BRANCH --------</option>
@@ -175,6 +198,7 @@ function Careers() {
               <input
                 className="input-style p-1 rounded"
                 type="date"
+                name="applyDate"
                 value={dates}
                 onChange={(e) => setDates(e.target.value)}
               />
@@ -185,6 +209,7 @@ function Careers() {
                 className="input-style p-1 rounded"
                 type="text"
                 value={qualification}
+                name="qualification"
                 onChange={(e) => setQualification(e.target.value)}
                 placeholder="Master's /Bachelor's /12th /10th"
               />
@@ -194,6 +219,7 @@ function Careers() {
               <select
                 className="input-style p-1 text-base rounded"
                 value={level}
+                name="level"
                 onChange={(e) => setLevel(e.target.value)}
               >
                 <option value="">---------- SELECT LEVEL ----------</option>
@@ -207,11 +233,11 @@ function Careers() {
               <label className="text-base mx-1">Upload CV/Resume</label>
               <input
                 type="file"
-                name="pdf"
-                id="pdf"
+                name="pdfs"
+                id="pdfs"
                 accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 onChange={handleFileChange}
-                className="input-style border h-10 text-sm border-black rounded-lg"
+                className="input-style border h-8 text-sm border-black rounded"
               />
             </div>
           </form>

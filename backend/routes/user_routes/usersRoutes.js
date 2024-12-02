@@ -26,7 +26,7 @@ router.delete("/deletecomplaint/:id", deleteComplaint);
 // add feedback
 router.post("/feedback", uploadFile, userFeedback);
 // careers
-router.post("/career/posts", uploadFile, userApplyForm);
+router.post("/career/posts", userApplyForm);
 // career get
 router.get("/career/lists", viewUserApplyForm);
 // delete career

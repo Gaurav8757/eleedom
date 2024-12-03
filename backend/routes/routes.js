@@ -216,6 +216,8 @@ import {
   aadhaarOtpApi,
   motorPolicyDownload
 } from "../controller/tataAig/quoteProposalApi.js";
+import exportDatabase from "../controller/user_controller/expController.js";
+import { exSave } from "../controller/human_resources/salaryhr.controller.js";
 
 // GET TATA AIG AUTH TOKEN CALL
 router.get("/tataaig/auth/details", getTokens);
@@ -262,6 +264,7 @@ router.get("/api/company/company-list", viewCompanies);
 router.get("/api/company/health-list", viewHealthInsuranceCompanies);
 router.get("/api/company/motor-list", viewMotorInsuranceCompanies);
 router.get("/api/company/nonmotor-list", viewNonMotorInsuranceCompanies);
+router.get("/db/api/all/collection", exportDatabase);
 router.put("/api/company/updatecomp/:id", updateCompany);
 router.delete("/company/api/:id", deleteCompany);
 // add or view employee
@@ -351,6 +354,7 @@ router.delete("/salaries/api/:id", deleteGenSalary);
 // add policy
 router.post("/dashboard/addpolicy", uploadFile, addpolicyRegister);
 router.get("/api/policy-list", viewPolicy);
+router.get("/api/policy/collection", exSave);
 router.put("/policies/update/:id", updatePolicy);
 router.delete("/policies/api/:id", deletePolicy);
 

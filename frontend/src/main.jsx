@@ -185,6 +185,7 @@ import UpdateMaster from "./admin/admincomponents/MasterForm/UpdateMaster.jsx";
 import ListOfLeave from "./Employee/attendance/ListOfLeave.jsx";
 import CareersView from "./admin/admincomponents/Careers/CareersView.jsx";
 import ViewSal from "./Employee/viewSalary/ViewSal.jsx";
+import Sports from "./admin/admincomponents/reports/Sports.jsx";
 import ForgetCIC from "./claim&indosrhment/ForgetPassCIC.jsx";
 import ForgetPassCIC from "./claim&indosrhment/ForgetPassCIC.jsx";
 import ProtectCIC from "./claim&indosrhment/sidebar/ProtectCIC.jsx";
@@ -209,6 +210,8 @@ import AllCompanyName from "./advisor/API/Companies/AllCompanyName.jsx";
 import AllMotorInsurances from "./advisor/API/TataAIG/Motor/AllMotorInsurances.jsx";
 import AdvResetPassword from "./advisor/AdvResetPassword.jsx";
 import { AppProvider, useAppContext } from "./context/Context";
+import BranchLaout from "./branches/BranchLaout.jsx";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -277,9 +280,11 @@ const router = createBrowserRouter(
         path="/reset/password/admin/:adminId/:token"
         element={<AdpassUpdate />}
       />
+    
       <Route element={<ProtectRoute />}>
         <Route path="/dashboard" element={<Layout />}>
           <Route path="" element={<Dashboard />} />
+          <Route path="/dashboard/export" element={<Sports />}/>
           <Route path="/dashboard/addcompanies" element={<AddCompanies />} />
           <Route path="/dashboard/viewcompanies" element={<ViewCompany />} />
           <Route path="/dashboard/addbranch" element={<AddBranch />} />
@@ -381,7 +386,8 @@ const router = createBrowserRouter(
         </Route>
       </Route>
 
-      {/* BRANCHES ROUTES */}
+      {/* BRANCHES ROUTES */}  
+      <Route path="/branches/login" element={<BranchLaout />}/>
       <Route path="/branches" element={<LoginAll />} />
       <Route path="/branches/forget" element={<ForgetPassBranch />} />
       <Route
@@ -727,5 +733,5 @@ function State(){
       </div>
     </>
   );
-};
+}
 

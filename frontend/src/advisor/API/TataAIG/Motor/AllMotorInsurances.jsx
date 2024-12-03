@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-// import { useNavigate } from "react-router-dom";
-// import VehicleRegistrationNo from "../vehicleNumber/VehicleRegistrationNo.jsx";
 import Asidebar from "../../Asidebar/Asidebar.jsx";
 import Navbar from "../../Navbar/Navbar.jsx";
 import QuoteForm from "../Quoteform/QuoteForm.jsx";
@@ -29,9 +27,9 @@ function AllMotorInsurances() {
   const [rtolist, setRtoList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [financier, setFinancier] = useState([]);
-  // const [panReqId, setPanReqId] = useState("");
   const [formSixtyState, setFormSixtyState] = useState(false);
   const [isPopupKycOpen, setIsPopupKycOpen] = useState(true);
+  
   // const navigate = useNavigate();
   const handleBackToQuote = () => {
     setShowQuoteForm(true);
@@ -631,6 +629,7 @@ function AllMotorInsurances() {
             />
           </>
         )}
+      
       </main>
     </>
   );

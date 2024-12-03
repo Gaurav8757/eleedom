@@ -19,33 +19,31 @@ function PaymentTaig({ token }) {
     payer_id: "",
     payer_relationship: "",
     payer_pan_no: ownResponse?.id_num || "",
-    payer_name: ownResponse?.result.customer_name || "",
+    payer_name: ownResponse?.result?.customer_name || "",
     email: "mr.gaurav@gmail.com",
     mobile_no: proposal?.mobile_no || "",
     pan_no: ownResponse?.id_num || "",
     payment_id: [proposal?.payment_id] || [],
-    returnurl: `${VITE_DATA}/advisor/tata_aig/motor/verif/pay`,
-    // returnurl: "https://uatapigw.tataaig.com/motor/v1/policy-download",
-    // returnurl: ""
+    returnurl: `http://localhost:5173/advisor/tata_aig/motor`,
   });
 
   const [isChecked, setIsChecked] = useState(false);
   const [paymentLink, setPaymentLink] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
 
-  function openPopup() {
-    const url = `${paymentLink}`; // URL to open in the popup
-    const windowName = '_blank'; // Target a new tab
-    const windowFeatures = 'width=1200,height=600,resizable=yes,scrollbars=yes'; // Set the size and features of the popup window
-    // Open the URL in a new tab as a popup
-    const popup = window.open(url, windowName, windowFeatures);
-    if (popup) {
-      // Optional: Do something after the popup opens, if needed
-      console.log('Popup opened successfully');
-    } else {
-      toast.error('Popup blocked by browser');
-    }
-  }
+  // function openPopup() {
+  //   const url = `${paymentLink}`; // URL to open in the popup
+  //   const windowName = '_blank'; // Target a new tab
+  //   const windowFeatures = 'width=1200,height=600,resizable=yes,scrollbars=yes'; // Set the size and features of the popup window
+  //   // Open the URL in a new tab as a popup
+  //   const popup = window.open(url, windowName, windowFeatures);
+  //   if (popup) {
+  //     // Optional: Do something after the popup opens, if needed
+  //     console.log('Popup opened successfully');
+  //   } else {
+  //     toast.error('Popup blocked by browser');
+  //   }
+  // }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -213,11 +211,10 @@ function PaymentTaig({ token }) {
             <div className="flex justify-start m-4 items-center mt-8">
               <button
                 className={`transition-all text-lg bg-green-600 text-white font-mono font-bold px-4 py-1.5 mr-5 rounded-md border-green-700 border-b-[4px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[2px] active:text-black`}
-               
                 onClick={() => {
                   if (paymentLink) {
-                    // window.open(paymentLink, "_blank"); // Open payment link in a new tab
-                    openPopup();
+                    window.open(paymentLink, "_self"); // Open payment link in a new tab
+                    // openPopup();
                   }
                 }}
                 disabled={!isChecked || !paymentLink} // Disable if unchecked or no link
@@ -229,9 +226,6 @@ function PaymentTaig({ token }) {
           </div>
         </>
       )}
-     
-
-
     </div>
   );
 }

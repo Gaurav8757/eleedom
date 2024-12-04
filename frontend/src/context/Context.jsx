@@ -12,6 +12,7 @@ const initialState = {
       otherKyc:{},
       aadhaarOtp: {},
       payment: {},
+      controller: {},
     },
   },
   magmaHDI: {},
@@ -86,6 +87,14 @@ const appReducer = (state, action) => {
               privateCar: { ...state.tata.privateCar, aadhaarOtp: action.payload },
             },
           };
+          case "SET_TATA_PRIVATE_CAR_CONTROLLER":
+            return {
+              ...state,
+              tata: {
+                ...state.tata,
+                privateCar: { ...state.tata.privateCar, controller: action.payload },
+              },
+            };
 
     default:
       throw new Error(`Unknown action type: ${action.type}`);

@@ -2,8 +2,8 @@
 // Navbar component with token handling and session management
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
 import TimerForAllUser from "../../Timer/TimerForAllUser.jsx";
+import { useAppContext } from "../../../context/Context.jsx";
 
 function Navbar({
   selectedOption,
@@ -11,11 +11,12 @@ function Navbar({
   setMenuItems,
   selectedSubOption,
 }) {
+  const { state } = useAppContext();
   const [timer, setTimer] = useState(); // Default to 30 minutes
   const intervalRef = useRef(null); // To track the timer
   const location = useLocation();
   const navigate = useNavigate();
-  const { subCategories, logos, insuranceName } = location.state || {};
+  const { subCategories } = location.state || {};
 
   useEffect(() => {
     const storedOption = sessionStorage.getItem("selectedOption");
@@ -89,12 +90,12 @@ function Navbar({
         <div className="text-xl font-bold">
           <img
             className="md:w-20 md:h-20 w-16 h-16 shadow-inner"
-            src={logos}
-            alt={insuranceName}
+            src={state.tata.privateCar.controller.image}
+            alt={state.tata.privateCar.controller.insuranceName}
           />
         </div>
         <div className="container-flex flex justify-between tracking-wide">
-          {subCategories ? (
+          {subCategories && (
             <select
               value={selectedOption}
               onChange={handleSelectChange}
@@ -107,8 +108,6 @@ function Navbar({
                 </option>
               ))}
             </select>
-          ) : (
-            <p>N/A</p>
           )}
         </div>
         {selectedSubOption ? (

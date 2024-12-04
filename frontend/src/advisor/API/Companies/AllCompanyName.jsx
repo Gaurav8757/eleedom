@@ -2,18 +2,24 @@ import CompanyListModals from "./CompanyListModals";
 import {NavLink} from "react-router-dom";
 import Data from "../Data";
 import { useState } from "react";
+import { useAppContext } from "../../../context/Context";
 function AllCompanyName() {
+  const {dispatch} = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedInsurance, setSelectedInsurance] = useState({
-    name: "",
-    categories: [],
-    image: ""
-  });
-
   const toggleModal = (insuranceName, categories, image) => {
-    setSelectedInsurance({ name: insuranceName, categories: categories, image: image });
+    dispatch({
+      type: "SET_TATA_PRIVATE_CAR_CONTROLLER",
+      payload: {
+        insuranceName,
+        categories,
+        image,
+      },
+    });
     setIsModalOpen(!isModalOpen);
   };
+ 
+ 
+  
   return (
     // <div className="flex justify-center lg:p-8 p-2 md:p-6 flex-wrap gap-2 md:gap-6 lg:gap-10 ">
     //   {Data.GeneralInsurance.map((item, index) => (
@@ -99,9 +105,6 @@ function AllCompanyName() {
 
       {isModalOpen && (
         <CompanyListModals
-          insuranceName={selectedInsurance.name}
-          logos= {selectedInsurance.image}
-          categories={selectedInsurance.categories}
           closeModal={() => setIsModalOpen(false)}
         />
       )}

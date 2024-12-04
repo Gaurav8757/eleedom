@@ -10,7 +10,7 @@ function PaymentTaig({ token }) {
   const { state } = useAppContext();
   const proposal = state.tata.privateCar.proposer;
   const ownResponse = state.tata.privateCar.ckyc;
-
+  sessionStorage.setItem("id", state.tata.privateCar.proposer.payment_id);
   const [formData, setFormData] = useState({
     payment_mode: "onlinePayment",
     deposit_in: "Bank",
@@ -24,7 +24,7 @@ function PaymentTaig({ token }) {
     mobile_no: proposal?.mobile_no || "",
     pan_no: ownResponse?.id_num || "",
     payment_id: [proposal?.payment_id] || [],
-    returnurl: `http://localhost:5173/advisor/tata_aig/motor`,
+    returnurl: `http://localhost:5173/advisor/insuranceName/category/policy`,
   });
 
   const [isChecked, setIsChecked] = useState(false);

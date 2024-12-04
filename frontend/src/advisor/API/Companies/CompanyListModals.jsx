@@ -1,20 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../../context/Context.jsx";
 /* eslint-disable react/prop-types */
-function CompanyListModals({ closeModal, insuranceName, logos, categories }) {
+function CompanyListModals({ closeModal }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const navigate = useNavigate(); // Initialize useNavigate for redirection
+  const navigate = useNavigate();
+  const { state } = useAppContext();
 
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    // Set subcategories based on the selected category passed from props
-    const subCats = categories[category];
-    // Redirect to the new page with the subcategories and selected category
-    navigate(`/advisor/${insuranceName}/${category}`, {
-      state: { subCategories: subCats, logos, insuranceName },
-    });
-  };
   
+  const handleCategorySelect = (category) => {
+    const subCats = state.tata.privateCar.controller.categories[category];
+    setSelectedCategory(subCats);
+    navigate(
+      `/advisor/${state.tata.privateCar.controller.insuranceName}/${category}`,
+      {
+        state: { subCategories: subCats },
+      }
+    );
+  };
+
   if (!closeModal) return null;
 
   return (
@@ -26,16 +30,13 @@ function CompanyListModals({ closeModal, insuranceName, logos, categories }) {
               <div className="flex my-auto items-center">
                 <img
                   className="md:w-16 md:h-14 w-8 h-8 me-2 md:me-3 rounded-sm hover:shadow-inner"
-                  src={logos}
-                  alt={insuranceName}/>
+                  src={state.tata.privateCar.controller.image}
+                  alt={state.tata.privateCar.controller.insuranceName}
+                />
                 <h3 className="text-sm md:text-xl uppercase tracking-wider font-bold font-sans text-gray-900">
-                  {insuranceName}
+                  {state.tata.privateCar.controller.insuranceName}
                 </h3>
               </div>
-
-              {/* <div>
-                Select Your Desired Insurance
-              </div> */}
               <div>
                 <button
                   type="button"
@@ -66,7 +67,8 @@ function CompanyListModals({ closeModal, insuranceName, logos, categories }) {
               <div className="mb-4 flex justify-between  text-xl font-bold font-mono text-black list-none mx-2">
                 <div
                   className={`cursor-pointer  w-48 md:w-64 lg:w-64 ml-4 md:ml-0 h-32 md:h-64 lg:h-64 rounded-full bg-white hover:shadow-2xl hover:shadow-black hover:-translate-y-1 active:-translate-y-4  transition-all duration-300`}
-                  onClick={() => handleCategorySelect("motor")}>
+                  onClick={() => handleCategorySelect("motor")}
+                >
                   <img
                     className={`w-auto ${
                       selectedCategory === "motor"

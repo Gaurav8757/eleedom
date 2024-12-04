@@ -21,8 +21,8 @@ function PopupAllKyc({ isOpen, toggleModal, token }) {
     if (ckyc.verified) {
       toggleModal(); // Close popup
     }
-  }, [ckyc.verified, toggleModal]);
-  console.log(state.tata.privateCar);
+  }, [ckyc.verified]);
+  // console.log(state.tata.privateCar);
   return (
     <div
       className={`fixed ${

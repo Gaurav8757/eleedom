@@ -1,9 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import Data from "../../Data.jsx";
 import { useAppContext } from "../../../../context/Context.jsx";
 
 function Proposer({ onSubmit, financier }) {
+  const [direction, setDirection] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const { state } = useAppContext();
   const quote = state.tata.privateCar.quotes;
   const [errors, setErrors] = useState({});
@@ -130,19 +133,30 @@ function Proposer({ onSubmit, financier }) {
   const handleNext = () => {
     if (validateStep(step)) {
       if (step < 2) {
-        setStep((prevStep) => prevStep + 1);
-        setStepsCompleted((prev) => {
-          const newCompleted = [...prev];
-          newCompleted[step - 1] = true;
-          return newCompleted;
-        });
+        setDirection(1); // Moving forward
+        setIsLoading(true); // Show loader
+        setTimeout(() => {
+          setStep((prevStep) => prevStep + 1);
+          setStepsCompleted((prev) => {
+            const newCompleted = [...prev];
+            newCompleted[step - 1] = true;
+            return newCompleted;
+          });
+          setIsLoading(false); // Hide loader
+        }, 1000); // Simulate loading delay
       }
     }
   };
 
+
   const handlePrevious = () => {
     if (step > 1) {
-      setStep((prevStep) => prevStep - 1);
+      setDirection(-1); // Moving backward
+      setIsLoading(true); // Show loader
+      setTimeout(() => {
+        setStep((prevStep) => prevStep - 1);
+        setIsLoading(false); // Hide loader
+      }, 1000); // Simulate loading delay
     }
   };
 
@@ -184,6 +198,22 @@ function Proposer({ onSubmit, financier }) {
         [name]: value,
       });
     }
+  };
+
+  
+  const variants = {
+    enter: (direction) => ({
+      x: direction > 0 ? "100%" : "100%",
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? "-100%" : "100%",
+      opacity: 0,
+    }),
   };
 
   const renderStep = () => {
@@ -799,7 +829,21 @@ function Proposer({ onSubmit, financier }) {
 
   return (
     <>
-      <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-slate-50  isolation-auto border-none Z-10  relative rounded group">
+       {isLoading ? (
+        <div className="fixed inset-0 flex items-center justify-center bg-slate-100 backdrop-blur-sm bg-opacity-75 z-50">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <>
+           <AnimatePresence custom={direction} mode="wait">
+
+      <motion.div    key={step}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5, ease: "easeInOut" }} className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-slate-50  isolation-auto border-none Z-10  relative rounded group">
         <div className={`${step > 1 ? "mb-6" : "mb-8"}`}>
           <div className="flex justify-between items-center">
             <span className="md:text-lg text-sm">Step {step} of 2</span>
@@ -824,7 +868,7 @@ function Proposer({ onSubmit, financier }) {
         </div>
 
         {renderStep()}
-      </div>
+     
       <div className="my-4 flex justify-between">
         <button
           type="button"
@@ -863,9 +907,22 @@ function Proposer({ onSubmit, financier }) {
           </div>
         )}
       </div>
+      </motion.div>
+      </AnimatePresence>
+      </>
+      )}
+
+
       {showConfirmation && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-md flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg">
+           <AnimatePresence>
+            <motion.div
+              className="bg-white p-4 rounded shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
             <h3 className="text-lg font-semibold mb-8">
               {`Are you sure you want to `}
               <span className="text-blue-600 font-medium">_finalize</span>
@@ -891,13 +948,21 @@ function Proposer({ onSubmit, financier }) {
                 Yes
               </button>
             </div>
-          </div>
+          </motion.div>
+          </AnimatePresence>
         </div>
       )}
 
       {showConfirmSave && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-md flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg">
+           <AnimatePresence>
+            <motion.div
+              className="bg-white p-4 rounded shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
             <h3 className="text-lg mb-8">
               {`Are you sure you want to `}
               <span className="text-blue-600 font-medium">save</span>
@@ -923,7 +988,8 @@ function Proposer({ onSubmit, financier }) {
                 Yes
               </button>
             </div>
-          </div>
+            </motion.div>
+            </AnimatePresence>
         </div>
       )}
     </>

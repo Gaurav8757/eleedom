@@ -9,6 +9,7 @@ function VerifyPayments() {
   const [message, setMessage] = useState("");
   const [encryptedPolicyId, setEncryptedPolicyId] = useState(null);
   const token = sessionStorage.getItem("auth_access_token");
+  const baseUrl = window.location.origin;
 
   useEffect(() => {
     // Trigger verification automatically on component load
@@ -73,6 +74,10 @@ function VerifyPayments() {
     }
   };
 
+  const handleHomepage = () => {
+    window.location.href = `${baseUrl}/advisor/home/insurance`;
+    setPopupOpen(false);
+  };
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       {/* Verify Payment Button */}
@@ -145,7 +150,7 @@ function VerifyPayments() {
                   </button>
                   <button
                     className="px-4 py-2 bg-red-600 text-white font-medium rounded hover:bg-red-700"
-                    onClick={() => setPopupOpen(false)}
+                    onClick={handleHomepage}
                   >
                     Close
                   </button>

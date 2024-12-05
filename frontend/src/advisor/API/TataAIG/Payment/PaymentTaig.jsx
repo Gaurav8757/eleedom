@@ -7,6 +7,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useAppContext } from "../../../../context/Context.jsx";
 
 function PaymentTaig({ token }) {
+  const baseUrl = window.location.origin;
   const { state } = useAppContext();
   const proposal = state.tata.privateCar.proposer;
   const ownResponse = state.tata.privateCar.ckyc;
@@ -24,7 +25,7 @@ function PaymentTaig({ token }) {
     mobile_no: proposal?.mobile_no || "",
     pan_no: ownResponse?.id_num || "",
     payment_id: [proposal?.payment_id] || [],
-    returnurl: `http://localhost:5173/advisor/insuranceName/category/policy`,
+    returnurl: `${baseUrl}/advisor/insuranceName/category/policy`,
   });
 
   const [isChecked, setIsChecked] = useState(false);

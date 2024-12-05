@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import PaymentTaig from "../../Payment/PaymentTaig.jsx";
 import { useAppContext } from "../../../../../context/Context.jsx";
 import AadhaarKyc from "../Aadhaar/AadhaarKyc.jsx";
@@ -84,7 +85,7 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
   const renderStep = () => {
     return !ownResponse?.req_id ? (
       <div className="space-y-2 my-8">
-        <div className="text-sm md:text-base px-4 text-gray-500 rounded">
+        <div className="text-sm md:text-base px-4 rounded">
           <div className="flex flex-col">
             <h1 className="text-sm text-start md:text-base font-medium space-x-2 md:space-x-4">
               PAN No.
@@ -100,19 +101,19 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
                 className={`${
                   ownResponse?.verified
                     ? "bg-slate-100 text-black"
-                    : "bg-gray-100 text-black"
+                    : "bg-gray-200 text-black"
                 } items-center text-base md:text-inherit shadow-inner p-1.5 font-medium rounded border-none active:border-none`}
-                disabled={ownResponse?.verified || ownResponse?.req_id}
+                disabled={ownResponse?.verified ||ownResponse?.req_id}
               />
               <button
                 onClick={handleConvert}
                 className={`${
-                  ownResponse?.verified || ownResponse?.req_id
-                    ? "bg-green-700 text-gray-50 cursor-not-allowed"
-                    : "bg-gray-100 text-black active:border-b-[2px]  active:translate-y-[2px] before:bg-green-800 hover:text-gray-50 "
+                  ownResponse?.verified || ownResponse?.req_id  || !formData.id_num
+                    ? "bg-gray-500 text-gray-50 cursor-not-allowed"
+                    : "bg-slate-200 text-black active:border-b-[2px]  active:translate-y-[2px] before:bg-green-700 hover:text-gray-50 "
                 }  justify-center border-b-[4px]  items-center shadow-xl text-base backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:py-2 px-3 py-1 overflow-hidden rounded group`}
                 type="submit"
-                disabled={ownResponse?.verified || ownResponse?.req_id}
+                disabled={ownResponse?.verified ||  !formData.id_num || ownResponse?.req_id}
               >
                 {ownResponse?.verified ? "Verified" : "Submit"}
               </button>
@@ -134,7 +135,7 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
       {proposal.stage === "nstp" && (
             <InspectionStatus token={token} />
           )}
-      <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-white isolation-auto border-none Z-10  relative rounded group">
+      <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-slate-100 isolation-auto border-none   relative rounded group">
         <div className={"mb-0"}>
           <div className="flex justify-center items-center">
             <h2 className="md:text-2xl tracking-wide text-base font-semibold">
@@ -165,7 +166,14 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
       {/* kyc successful message */}
       {showPopup && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded shadow-lg">
+          <AnimatePresence>
+            <motion.div
+              className="bg-white p-4 rounded shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
             <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center mx-auto mb-3.5">
               <svg
                 aria-hidden="true"
@@ -197,14 +205,22 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
             >
               PROCEED
             </button>
-          </div>
+            </motion.div>
+            </AnimatePresence>
         </div>
       )}
 
       {/* confirmation box */}
       {showConfirmation && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-md flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg">
+           <AnimatePresence>
+            <motion.div
+              className="bg-white p-4 rounded shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
             <h3 className="text-lg font-semibold mb-8 text-start">
               {`Are you sure, you want to proceed`} {`to complete cKYC?`}
             </h3>
@@ -228,7 +244,8 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
                 Yes
               </button>
             </div>
-          </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
 

@@ -36,7 +36,7 @@ function AllCompanyName() {
     //     </NavLink>
     //   ))}
     // </div>
-    <div className="flex sm:ml-48 bg-slate-100  mx-auto justify-evenly">
+    <div className="flex sm:ml-48 bg-slate-100  mx-auto justify-evenly transition-all duration-500 ease-in-out">
       {/* General Insurance */}
       <div className="">
         <h2 className="text-lg md:py-4 text-start px-7 md:text-2xl lg:text-3xl font-mono py-1 font-bold">

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import Data from "../../Data.jsx";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/high-res.css";
@@ -25,6 +26,7 @@ function QuoteForm({
   // variantData
 }) {
   const [phone, setPhone] = useState("");
+  const [direction, setDirection] = useState(0);
   const [selectedBusinessName, setSelectedBusinessName] = useState("");
   const [selectedCustomerType, setSelectedCustomerType] = useState("");
   const [selectedPolicyPlan, setSelectedPolicyPlan] = useState("");
@@ -32,6 +34,7 @@ function QuoteForm({
   const [showConfirmation, setShowConfirmation] = useState(false); // for popup
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false); // Loader state
   const [selectedPlan, setSelectedPlan] = useState([]);
   const [stepsCompleted, setStepsCompleted] = useState([
     false,
@@ -284,19 +287,29 @@ function QuoteForm({
   const handleNext = () => {
     if (validateStep(step)) {
       if (step < 4) {
-        setStep((prevStep) => prevStep + 1);
-        setStepsCompleted((prev) => {
-          const newCompleted = [...prev];
-          newCompleted[step - 1] = true;
-          return newCompleted;
-        });
+        setDirection(1); // Moving forward
+        setIsLoading(true); // Show loader
+        setTimeout(() => {
+          setStep((prevStep) => prevStep + 1);
+          setStepsCompleted((prev) => {
+            const newCompleted = [...prev];
+            newCompleted[step - 1] = true;
+            return newCompleted;
+          });
+          setIsLoading(false); // Hide loader
+        }, 1000); // Simulate loading delay
       }
     }
   };
 
   const handlePrevious = () => {
     if (step > 1) {
-      setStep((prevStep) => prevStep - 1);
+      setDirection(-1); // Moving backward
+      setIsLoading(true); // Show loader
+      setTimeout(() => {
+        setStep((prevStep) => prevStep - 1);
+        setIsLoading(false); // Hide loader
+      }, 1000); // Simulate loading delay
     }
   };
 
@@ -341,7 +354,6 @@ function QuoteForm({
     const defaultRegex = /^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/;
     const bharatRegex = /^[0-9]{2}BH[0-9]{4}[A-Z]{1,2}$/;
     const specialRegex = /^[A-Z]{2}[0-9]{2}[A-Z]{1,3}[0-9]{4}$/;
-
     if (registrationType === "default") return defaultRegex.test(number);
     if (registrationType === "bharat") return bharatRegex.test(number);
     if (registrationType === "special") return specialRegex.test(number);
@@ -680,7 +692,7 @@ function QuoteForm({
                         htmlFor={business.id}
                         className={`${
                           errors["business_type_no"] ? "border-red-500" : ""
-                        } inline-flex items-center px-2 justify-between p-1 shadow-inner text-gray-500 bg-slate-100 border border-gray-200 rounded cursor-pointer peer-checked:border-blue-600 peer-checked:bg-gradient-to-t from-blue-700 to-blue-600 peer-checked:text-white hover:text-gray-600 hover:bg-gray-100`}
+                        } inline-flex items-center px-2 justify-between p-1 shadow-inner text-gray-500 bg-slate-100 border border-gray-200 rounded cursor-pointer peer-checked:border-blue-600 peer-checked:bg-gradient-to-t from-indigo-500 to-blue-500 peer-checked:text-white hover:text-gray-600 hover:bg-gray-100`}
                       >
                         <div className="md:block flex flex-wrap my-auto">
                           <div className="w-auto text-base md:text-lg text-nowrap font-semibold capitalize">
@@ -719,7 +731,7 @@ function QuoteForm({
                         htmlFor={type.id}
                         className={`${
                           errors["proposer_type"] ? "border-red-500 " : ""
-                        } inline-flex  items-center px-2 justify-between p-1 shadow-inner text-gray-500 bg-slate-100 border border-gray-200 rounded cursor-pointer peer-checked:border-blue-600 peer-checked:bg-gradient-to-t from-blue-700 to-blue-600 peer-checked:text-white hover:text-gray-600 hover:bg-gray-100`}
+                        } inline-flex  items-center px-2 justify-between p-1 shadow-inner text-gray-500 bg-slate-100 border border-gray-200 rounded cursor-pointer peer-checked:border-blue-600 peer-checked:bg-gradient-to-t from-indigo-500 to-blue-500 peer-checked:text-white hover:text-gray-600 hover:bg-gray-100`}
                       >
                         <div className="block my-auto">
                           <div className="w-auto text-base md:text-lg font-semibold">
@@ -846,7 +858,7 @@ function QuoteForm({
                         htmlFor="registrationType"
                         className={`inline-flex items-center px-2 justify-between p-1 shadow-inner text-gray-500 bg-slate-100 border border-gray-200 rounded cursor-pointer ${
                           registrationType === "default"
-                            ? "border-blue-600 bg-gradient-to-t from-blue-700 to-blue-600 text-white"
+                            ? "border-blue-600 bg-gradient-to-t from-indigo-500 to-blue-500 text-white"
                             : "hover:text-gray-600 hover:bg-gray-100"
                         }`}
                       >
@@ -871,7 +883,7 @@ function QuoteForm({
                         htmlFor="BH_regno"
                         className={`inline-flex items-center mx-3 px-2 justify-between p-1 shadow-inner text-gray-500 bg-slate-100 border border-gray-200 rounded cursor-pointer ${
                           registrationType === "bharat"
-                            ? "border-blue-600 bg-gradient-to-t from-blue-700 to-blue-600 text-white"
+                            ? "border-blue-600 bg-gradient-to-t from-indigo-500 to-blue-500 text-white"
                             : "hover:text-gray-600 hover:bg-gray-100"
                         }`}
                       >
@@ -896,7 +908,7 @@ function QuoteForm({
                         htmlFor="special_regno"
                         className={`inline-flex items-center px-2 justify-between p-1 shadow-inner text-gray-500 bg-slate-100 border border-gray-200 rounded cursor-pointer ${
                           registrationType === "special"
-                            ? "border-blue-600 bg-gradient-to-t from-blue-700 to-blue-600 text-white"
+                            ? "border-blue-600 bg-gradient-to-t from-indigo-500 to-blue-500 text-white"
                             : "hover:text-gray-600 hover:bg-gray-100"
                         }`}
                       >
@@ -1337,7 +1349,7 @@ function QuoteForm({
 
       case 2:
         return (
-          <div className="space-y-3">
+          <div className="space-y-3 ransition-all duration-500 ease-in-out">
             <div className="grid lg:grid-cols-10 grid-cols-4 text-sm text-gray-500 bg-blue-100 p-2 gap-8 rounded">
               {fieldMappings.map((field, index) => (
                 <p key={index} className="flex flex-col">
@@ -1724,7 +1736,6 @@ function QuoteForm({
                 "pa_unnamed_no",
                 "pa_unnamed_si",
                 "pa_named",
-               
               ].map((field, index) => (
                 <div key={index} className="flex flex-col mt-4">
                   <h1 className="text-sm text-start md:text-base font-semibold space-x-2 md:space-x-4 md:px-4 p-1">
@@ -1831,7 +1842,7 @@ function QuoteForm({
               )}
 
               {[
-                 "pa_unnamed_csi",
+                "pa_unnamed_csi",
                 "franchise_days",
                 "pa_paid_no",
                 "pa_paid_si",
@@ -1955,8 +1966,6 @@ function QuoteForm({
 
   const confirmFinalize = () => {
     handleSubmit();
-    // propo(true);
-    // Form conversion is confirmed
     setShowConfirmation(false);
   };
 
@@ -1966,136 +1975,181 @@ function QuoteForm({
     setShowConfirmSave(false);
   };
 
+  const variants = {
+    enter: (direction) => ({
+      x: direction > 0 ? "100%" : "100%",
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? "-100%" : "100%",
+      opacity: 0,
+    }),
+  };
+
   return (
     <>
-      {/* <form> */}
-      <div className="max-w-full border shadow-inner md:p-4 p-2 bg-slate-50 tracking-wide isolation-auto border-none Z-10  relative rounded group">
-        <div className={`${step > 1 ? "mb-6" : "mb-8"}`}>
-          <div className="flex justify-between items-center">
-            <span className="md:text-lg text-sm">Step {step} of 4</span>
-            <h2  className="md:text-2xl text-base bg-gradient-to-l bg-clip-text from-indigo-600 to-blue-500 font-bold">
-              {step > 3 ? "Quote Preview" : "Quote Information"}
-            </h2>
-            <div className="flex space-x-2">
-              {[1, 2, 3, 4].map((s) => (
-                <div
-                  key={s}
-                  className={`md:w-6 w-2 md:h-1.5 h-1  ${
-                    s === step
-                      ? "bg-blue-600"
-                      : stepsCompleted[s - 1]
-                      ? "bg-green-500"
-                      : "bg-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
+      {/* <form> */}{" "}
+      {isLoading ? (
+        <div className="fixed inset-0 flex items-center justify-center bg-slate-100 backdrop-blur-sm bg-opacity-75 z-50">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
+      ) : (
+        <>
+          <AnimatePresence custom={direction} mode="wait">
+            <motion.div
+              key={step}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              // className="absolute w-full"
+            >
+              <div className="max-w-full border shadow-inner md:p-4 p-2 bg-slate-50 tracking-wide isolation-auto border-none relative rounded group">
+                <div className={`${step > 1 ? "mb-4" : "mb-8"}`}>
+                  <div className="flex justify-between items-center">
+                    <span className="md:text-lg text-sm">Step {step} of 4</span>
+                    <h2 className="md:text-2xl text-base text-transparent bg-gradient-to-l bg-clip-text from-indigo-600 to-blue-500 font-bold">
+                      {step > 3 ? "Quote Preview" : "Quote Information"}
+                    </h2>
+                    <div className="flex space-x-2">
+                      {[1, 2, 3, 4].map((s) => (
+                        <div
+                          key={s}
+                          className={`md:w-6 w-2 md:h-1.5 h-1  ${
+                            s === step
+                              ? "bg-blue-600"
+                              : stepsCompleted[s - 1]
+                              ? "bg-green-500"
+                              : "bg-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-        {renderStep()}
-      </div>
-      <div className="my-4 flex justify-between">
-        <button
-          type="button"
-          className={`${
-            step === 1 && "cursor-not-allowed"
-          } flex justify-center gap-2 items-center shadow-xl text-lg z-0 bg-slate-100 backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-right-full before:hover:right-0 before:rounded before:bg-red-700 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative  md:px-8 md:py-2 px-3 py-1 overflow-hidden rounded group`}
-          onClick={handlePrevious}
-          disabled={step === 1}
-        >
-          Previous
-        </button>
-        {step < 4 ? (
-          <button
-            type="button"
-            className="flex justify-center gap-2 items-center shadow-xl text-lg z-0 bg-slate-100 backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:bg-blue-700 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:px-8 md:py-2 px-3 py-1  overflow-hidden rounded group"
-            onClick={handleNext}
-          >
-            Next
-          </button>
-        ) : (
-          <div className="flex justify-between space-x-5">
-            <button
-              onClick={handleSave}
-              className="flex justify-center gap-2 items-center shadow-xl text-lg bg-slate-100 active:translate-y-[2px] backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:bg-blue-700 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:px-8 md:py-2 px-3 py-1  overflow-hidden rounded group"
-              type="submit"
-            >
-              Save
-            </button>
-            <button
-              onClick={handleConvert}
-              className="flex justify-center gap-2 border-b-[4px] active:border-b-[2px]  active:translate-y-[2px] items-center shadow-xl text-lg bg-slate-100 backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:bg-green-800 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:px-8 md:py-2 px-3 py-1  overflow-hidden rounded group"
-              type="submit"
-            >
-              Convert to Proposal
-            </button>
-          </div>
-        )}
-      </div>
+                {renderStep()}
+              </div>
+
+              <div className="my-4 flex justify-between tracking-wide">
+                <button
+                  type="button"
+                  className={`${
+                    step === 1 && "cursor-not-allowed"
+                  } flex justify-center gap-2 items-center shadow-xl text-lg z-0 bg-slate-100 backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-right-full before:hover:right-0 before:rounded before:bg-red-700 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative  md:px-8 md:py-2 px-3 py-1 overflow-hidden rounded group`}
+                  onClick={handlePrevious}
+                  disabled={step === 1}
+                >
+                  Previous
+                </button>
+                {step < 4 ? (
+                  <button
+                    type="button"
+                    className="flex justify-center gap-2 items-center shadow-xl text-lg z-0 bg-slate-100 backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:bg-blue-700 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:px-8 md:py-2 px-3 py-1  overflow-hidden rounded group"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <div className="flex justify-between space-x-5">
+                    <button
+                      onClick={handleSave}
+                      className="flex justify-center gap-2 items-center shadow-xl text-lg bg-slate-100 active:translate-y-[2px] backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:bg-blue-700 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:px-8 md:py-2 px-3 py-1  overflow-hidden rounded group"
+                      type="submit"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleConvert}
+                      className="flex justify-center gap-2 border-b-[4px] active:border-b-[2px]  active:translate-y-[2px] items-center shadow-xl text-lg bg-slate-100 backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:bg-green-800 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:px-8 md:py-2 px-3 py-1  overflow-hidden rounded group"
+                      type="submit"
+                    >
+                      Convert to Proposal
+                    </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </>
+      )}
       {/* </form> */}
-
       {showConfirmation && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-md flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg">
-            <h3 className="text-lg font-semibold mb-8">
-              {`Are you sure you want to `}
-              <span className="text-blue-600 font-medium">_finalize</span>
-             {` quote?`}
-            </h3>
-            <div className="flex justify-end space-x-4">
-              <button
-                className="bg-gray-300  cursor-pointer transition-all text-black font-mono font-bold px-6 py-1 rounded-lg
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-sm flex items-center justify-center">
+          <AnimatePresence>
+            <motion.div
+              className="bg-white p-4 rounded shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <h3 className="text-lg font-semibold mb-8">
+                {`Are you sure you want to `}
+                <span className="text-blue-600 font-medium">_finalize</span>
+                {` quote?`}
+              </h3>
+              <div className="flex justify-end space-x-4">
+                <button
+                  className="bg-gray-300  cursor-pointer transition-all text-black font-mono font-bold px-6 py-1 rounded-lg
               border-gray-400
                 border-b-[4px] hover:brightness-110  
                 active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
-                onClick={() => setShowConfirmation(false)}
-              >
-                No
-              </button>
-              <button
-                className="cursor-pointer transition-all bg-green-600 text-black font-mono font-bold px-6 py-1 rounded-lg
+                  onClick={() => setShowConfirmation(false)}
+                >
+                  No
+                </button>
+                <button
+                  className="cursor-pointer transition-all bg-green-600 text-black font-mono font-bold px-6 py-1 rounded-lg
               border-green-700
                 border-b-[4px] hover:brightness-110 
                 active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
-                onClick={confirmFinalize} // Set formData.__finalize to "1"
-              >
-                Yes
-              </button>
-            </div>
-          </div>
+                  onClick={confirmFinalize} // Set formData.__finalize to "1"
+                >
+                  Yes
+                </button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
-
       {showConfirmSave && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-md flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg">
-            <h3 className="text-lg mb-8">
-              {`Are you sure you want to `}
-              <span className="text-blue-600 font-medium">save</span>
-              {` quote?`}
-            </h3>
-            <div className="flex justify-end space-x-4">
-              <button
-                className="bg-gray-300  cursor-pointer transition-all text-black font-mono font-bold px-6 py-1 rounded-lg
-              border-gray-400
-                border-b-[4px] hover:brightness-110  
-                active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
-                onClick={() => setShowConfirmSave(false)}
-              >
-                No
-              </button>
-              <button
-                className=" cursor-pointer transition-all bg-blue-500 text-white font-mono font-bold px-6 py-1 rounded-lg
-              border-blue-600
-                border-b-[4px] hover:brightness-110 
-                active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
-                onClick={confirmSave} // Set formData.__finalize to "1"
-              >
-                Yes
-              </button>
-            </div>
-          </div>
+          <AnimatePresence>
+            <motion.div
+              className="bg-white p-4 rounded shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <h3 className="text-lg mb-8">
+                {`Are you sure you want to `}
+                <span className="text-blue-600 font-medium">save</span>
+                {` quote?`}
+              </h3>
+              <div className="flex justify-end space-x-4">
+                <button
+                  className="bg-gray-300 cursor-pointer transition-all text-black font-mono font-bold px-6 py-1 rounded-lg border-gray-400 border-b-[4px] hover:brightness-110 active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
+                  onClick={() => setShowConfirmSave(false)}
+                >
+                  No
+                </button>
+                <button
+                  className="cursor-pointer transition-all bg-blue-500 text-white font-mono font-bold px-6 py-1 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
+                  onClick={confirmSave}
+                >
+                  Yes
+                </button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
     </>

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import axios from "axios";
+import { AnimatePresence, motion } from "motion/react";
 import VITE_DATA from "../../../../config/config";
 import { useAppContext } from "../../../../context/Context";
 import { toast } from "react-toastify";
@@ -67,60 +68,71 @@ function InspectionStatus({ token }) {
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex backdrop-blur-md justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-4 max-w-xl w-full relative">
-        {loading ? (
-          <div className="flex flex-col items-center">
-            <div className="loader border-4 border-blue-700 border-t-transparent rounded-full w-12 h-12 animate-spin"></div>
-            <p className="text-blue-600 mt-4">Verifying inspection...</p>
-          </div>
-        ) : (
-          <div className=" text-center ">
-            <div className="flex  text-slate-600 justify-between">
-              <span>
-                Proposal No:{" "}
-                <span className="text-black"> {vInsStatus?.proposal_no}</span>
-              </span>
-              <span>
-                Inspection No:{" "}
-                <span className="text-black"> {vInsStatus?.inspection_no}</span>
-              </span>
+      <AnimatePresence>
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.8, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="bg-white rounded-lg shadow-lg p-4 max-w-xl w-full relative"
+        >
+          {loading ? (
+            <div className="flex flex-col items-center">
+              <div className="loader border-4 border-blue-700 border-t-transparent rounded-full w-12 h-12 animate-spin"></div>
+              <p className="text-blue-600 mt-4">Verifying inspection...</p>
             </div>
-            <div className="flex justify-center items-center flex-col max-w-sm mx-auto mt-8 mb-5">
-              <div className=" w-10 h-10 flex justify-center mx-auto items-center  rounded-full  text-center">
-                {vInsStatus?.inspection_status === "Pending" ? (
-                  <div className=" w-10 h-10 flex justify-center mx-auto items-center  rounded-full bg-red-500 text-center">
-                    <OctagonAlert className="text-white" />
-                  </div>
-                ) : (
-                  <div className=" w-20 h-10 flex justify-center  items-center bg-green-700  rounded text-center">
-                    <CircleCheckBig className="text-green-50" />
-                  </div>
-                )}
+          ) : (
+            <div className=" text-center ">
+              <div className="flex  text-slate-600 justify-between">
+                <span>
+                  Proposal No:{" "}
+                  <span className="text-black"> {vInsStatus?.proposal_no}</span>
+                </span>
+                <span>
+                  Inspection No:{" "}
+                  <span className="text-black">
+                    {" "}
+                    {vInsStatus?.inspection_no}
+                  </span>
+                </span>
               </div>
-              <span className="text-black tracking-wider font-semibold">
-                {vInsStatus?.inspection_status}
-              </span>
-              <p className="text-lg font-medium  mt-2 text-gray-700">
-                {vInsStatus?.result}
-              </p>
-              <button
-                className=" text-white text-lg flex m-4 justify-center w-12 bg-blue-700 px-4 py-1 rounded animate-blink"
-                onClick={() => setShowPopup(false)}
-              >
-                OK
-              </button>
+              <div className="flex justify-center items-center flex-col max-w-sm mx-auto mt-8 mb-5">
+                <div className=" w-10 h-10 flex justify-center mx-auto items-center  rounded-full  text-center">
+                  {vInsStatus?.inspection_status === "Pending" ? (
+                    <div className=" w-10 h-10 flex justify-center mx-auto items-center  rounded-full bg-red-500 text-center">
+                      <OctagonAlert className="text-white" />
+                    </div>
+                  ) : (
+                    <div className=" w-20 h-10 flex justify-center  items-center bg-green-700  rounded text-center">
+                      <CircleCheckBig className="text-green-50" />
+                    </div>
+                  )}
+                </div>
+                <span className="text-black tracking-wider font-semibold">
+                  {vInsStatus?.inspection_status}
+                </span>
+                <p className="text-lg font-medium  mt-2 text-gray-700">
+                  {vInsStatus?.result}
+                </p>
+                <button
+                  className=" text-white text-lg flex m-4 justify-center w-12 bg-blue-700 px-4 py-1 rounded animate-blink"
+                  onClick={() => setShowPopup(false)}
+                >
+                  OK
+                </button>
+              </div>
             </div>
+          )}
+          <div className="w-6 h-6 flex justify-center -top-2 -right-2 items-center content-center bg-blue-500 hover:bg-red-500 rounded absolute">
+            <button
+              className="absolute text-white text-xl"
+              onClick={() => setShowPopup(false)}
+            >
+              &times;
+            </button>
           </div>
-        )}
-        <div className="w-6 h-6 flex justify-center -top-2 -right-2 items-center content-center bg-blue-500 hover:bg-red-500 rounded absolute">
-          <button
-            className="absolute text-white text-xl"
-            onClick={() => setShowPopup(false)}
-          >
-            &times;
-          </button>
-        </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

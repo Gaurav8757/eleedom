@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../context/Context.jsx";
+import { AnimatePresence, motion } from "motion/react";
 /* eslint-disable react/prop-types */
 function CompanyListModals({ closeModal }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const navigate = useNavigate();
   const { state } = useAppContext();
 
-  
   const handleCategorySelect = (category) => {
     const subCats = state.tata.privateCar.controller.categories[category];
     setSelectedCategory(subCats);
@@ -22,10 +22,17 @@ function CompanyListModals({ closeModal }) {
   if (!closeModal) return null;
 
   return (
-    <>
-      <div className="fixed inset-0 sm:ml-48 backdrop-blur-lg  flex items-center justify-center bg-gray-800 bg-opacity-75">
-        <div className="relative p-1 w-full max-w-7xl max-h-full ">
-          <div className="relative flex flex-col bg-white rounded-lg shadow">
+   
+      <div className="fixed inset-0 sm:ml-48 backdrop-blur-lg transition-all duration-500 ease-in-out flex items-center justify-center bg-gray-800 bg-opacity-75">
+        <div className="relative p-1 w-full max-w-7xl max-h-full transform transition-transform duration-500 ease-out">
+        <AnimatePresence>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 4 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="relative flex flex-col bg-white rounded-lg shadow"
+          >
             <div className="flex items-center justify-between p-3 px-4 md:p-1 md:px-6 border-b rounded-t">
               <div className="flex my-auto items-center">
                 <img
@@ -109,10 +116,11 @@ function CompanyListModals({ closeModal }) {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
+          </AnimatePresence>
         </div>
       </div>
-    </>
+    
   );
 }
 export default CompanyListModals;

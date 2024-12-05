@@ -29,13 +29,13 @@ function AllMotorInsurances() {
   const [financier, setFinancier] = useState([]);
   const [formSixtyState, setFormSixtyState] = useState(false);
   const [isPopupKycOpen, setIsPopupKycOpen] = useState(true);
-  
+
   // const navigate = useNavigate();
   const handleBackToQuote = () => {
     setShowQuoteForm(true);
     setShowProposer(false);
   };
-// console.log(menuItems);
+  // console.log(menuItems);
 
   const handleBackToProposal = () => {
     setShowProposer(true);
@@ -90,7 +90,6 @@ function AllMotorInsurances() {
   useEffect(() => {
     const fetchData = async () => {
       if (!uatToken) {
-        // toast.error("Not Authorized yet.. Try again!");
         return; // Exit if token is not present
       }
       try {
@@ -250,12 +249,12 @@ function AllMotorInsurances() {
   };
 
   useEffect(() => {
-    // Simulate data loading
+    // Simulate data
     const loadData = async () => {
       try {
         // Simulate an async operation, such as an API call
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        // When data is ready, set loading to false
+        // When data is ready, set  to false
         setLoading(false);
       } catch (error) {
         console.error("Error loading data:", error);
@@ -278,6 +277,7 @@ function AllMotorInsurances() {
       Authorization: `${token}`,
       "Content-Type": "application/json",
     };
+    setLoading(true);
     try {
       const response = await axios.post(
         `${VITE_DATA}/taig/motor/quote`,
@@ -299,23 +299,24 @@ function AllMotorInsurances() {
           response.data.status === 200
         ) {
           setShowQuoteForm(false);
+          setLoading(false);
           setShowProposer(true);
         }
       } else if (response.data.status === -102) {
         // Stay on QuoteForm for error status -102
+        setLoading(false);
         toast.error(response.data.message_txt);
         setShowQuoteForm(true);
         setShowProposer(false);
       } else {
-        if (response.data.message_txt) {
-          toast.error(`${response.data.message_txt}`);
-        }
-        toast.error(response.data.message);
+        setLoading(false);
+        toast.error(`${response.data.message_txt || response.data.message}`);
       }
     } catch (error) {
       toast.error(
         error.response?.data?.message_txt || "Error to fetching quote response"
       );
+      setLoading(false);
     }
   };
 
@@ -324,6 +325,7 @@ function AllMotorInsurances() {
       Authorization: `${token}`,
       "Content-Type": "application/json",
     };
+    setLoading(true);
     try {
       const response = await axios.post(
         `${VITE_DATA}/taig/motor/proposal`,
@@ -342,20 +344,20 @@ function AllMotorInsurances() {
           response.data.message_txt === "Proposal submitted successfully" &&
           response.data.status === 200
         ) {
-          setShowCkyc(true);
           setShowProposer(false);
+          setLoading(false);
+          setShowCkyc(true);
         }
       } else {
-        if (response.data.message_txt) {
-          toast.error(`${response.data.message_txt}`);
-        }
-        toast.error(`${response.data.message}`);
+        toast.error(`${response.data.message_txt || response.data.message}`);
+        setLoading(false);
       }
     } catch (error) {
       toast.error(
         error.response?.data?.message_txt ||
           "Error to fetching proposal response"
       );
+      setLoading(false);
       // handleSessionExpiry();
     }
   };
@@ -366,11 +368,11 @@ function AllMotorInsurances() {
       delete newFormData.req_id;
       delete newFormData.dob;
       delete newFormData.gender;
-
       const headers = {
         Authorization: `${token}`,
         "Content-Type": "application/json",
       };
+      setLoading(true);
       try {
         const response = await axios.post(
           `${VITE_DATA}/taig/motor/ckyc`,
@@ -390,19 +392,17 @@ function AllMotorInsurances() {
           response.data.message_txt ===
             "CKYC not completed. Please retry with another id"
         ) {
-          // OPEN AADHAAR POPUP DIRECTLY, USE SEPARATE CONTEXT HERE
-          // setPanReqId(response?.data.req_id);
+          setLoading(false);
           toast.error(`${response.data.message_txt}`);
         } else {
-          if (response.data.message_txt) {
-            toast.error(`${response.data.message_txt}`);
-          }
-          toast.error(`${response.data.message}`);
+          setLoading(false);
+          toast.error(`${response.data.message_txt || response.data.message}`);
         }
       } catch (error) {
         toast.error(
           error.response?.data?.message_txt || "Error to complete cKYC"
         );
+        setLoading(false);
         // handleSessionExpiry();
       }
     }
@@ -501,41 +501,41 @@ function AllMotorInsurances() {
             MoveRight={<MoveRight width={20} />}
           />
             )}  */}
-
-        {/* proposer */}
-        {showProposer && (
-          <>
-            <div className="flex  justify-between mb-3">
-              <button
-                onClick={handleBackToQuote}
-                type="button"
-                className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        {/* quotes */}
+        {loading ? (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-4 rounded shadow-lg text-center">
+              <svg
+                aria-hidden="true"
+                className="mx-auto w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  className="w-5 h-5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 5H1m0 0l4-4M1 5l4 4"
-                  />
-                </svg>
-                <span className="px-2">Back to Quote</span>
-              </button>
-              {state.tata.privateCar.ckyc.verified && (
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
+            </div>
+          </div>
+        ) : (
+          selectedOption &&
+          showQuoteForm && (
+            <>
+              {" "}
+              {state.tata.privateCar.proposer.verified && (
                 <button
-                  onClick={handleForwardToCkyc}
+                  onClick={handleForwardToProposal}
                   type="button"
                   className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   {" "}
-                  <span className="px-2">Forward to CKYC</span>
+                  <span className="px-2">Forward to Proposal</span>
                   <svg
                     className="w-5 h-5"
                     aria-hidden="true"
@@ -553,52 +553,163 @@ function AllMotorInsurances() {
                   </svg>
                 </button>
               )}
-            </div>
-            <Proposer
-              onSubmit={handleSetAuthTokenToProposal}
-              token={uatToken}
-              financier={financier}
-            />
-          </>
+              <QuoteForm
+                onSubmit={(data) => {
+                  handleSetAuthTokenToQuote(data);
+                }}
+                handle={handleSubOptionChange}
+                vehMake={vehMake}
+                model={model}
+                variant={variant}
+                rtolist={rtolist}
+                onSelectedVeh={handleSelectedModel}
+                onSelectedModel={handleSelectedVariant}
+                handleRtoData={handleRtoData}
+              />
+            </>
+          )
         )}
 
-        {/* verify inspection as popup */}
-      
-        {/* ckyc */} 
-        {showCkyc &&  (
-          <>
-          
-            <div className="flex mb-3">
-              <button
-                onClick={handleBackToProposal}
-                type="button"
-                className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        {/* proposer */}
+        {loading ? (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-4 rounded shadow-lg text-center">
+              <svg
+                aria-hidden="true"
+                className="mx-auto w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  className="w-5 h-5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 5H1m0 0l4-4M1 5l4 4"
-                  />
-                </svg>
-                <span className="px-2">Back to Proposal</span>
-              </button>
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
             </div>
-            <PvtCkyc
-              onSubmit={handleSetAuthTokenToCkyc}
-              token={token}
-              setFormSixtyState={setFormSixtyState}
-            />
-          </>
+          </div>
+        ) : (
+          showProposer && (
+            <>
+              <div className="flex  justify-between mb-3">
+                <button
+                  onClick={handleBackToQuote}
+                  type="button"
+                  className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 10"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 5H1m0 0l4-4M1 5l4 4"
+                    />
+                  </svg>
+                  <span className="px-2">Back to Quote</span>
+                </button>
+                {state.tata.privateCar.ckyc.verified && (
+                  <button
+                    onClick={handleForwardToCkyc}
+                    type="button"
+                    className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    {" "}
+                    <span className="px-2">Forward to CKYC</span>
+                    <svg
+                      className="w-5 h-5"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 14 10"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M1 5h12m0 0l-4 4m4-4l-4-4"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              <Proposer
+                onSubmit={handleSetAuthTokenToProposal}
+                token={uatToken}
+                financier={financier}
+              />
+            </>
+          )
         )}
+
+        {loading ? (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-4 rounded shadow-lg text-center">
+              <svg
+                aria-hidden="true"
+                className="mx-auto w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
+            </div>
+          </div>
+        ) : (
+          showCkyc && (
+            <>
+              <div className="flex mb-3">
+                <button
+                  onClick={handleBackToProposal}
+                  type="button"
+                  className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 10"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 5H1m0 0l4-4M1 5l4 4"
+                    />
+                  </svg>
+                  <span className="px-2">Back to Proposal</span>
+                </button>
+              </div>
+              <PvtCkyc
+                onSubmit={handleSetAuthTokenToCkyc}
+                token={token}
+                setFormSixtyState={setFormSixtyState}
+              />
+            </>
+          )
+        )}
+
         {/* form 60 */}
         {formSixtyState && (
           <FormSixty
@@ -613,55 +724,8 @@ function AllMotorInsurances() {
           token={token}
           toggleModal={() => setIsPopupKycOpen(false)}
         />
-
-        {/* Payment by pan responses */}
-
-        {/* quotes */}
-        {selectedOption && showQuoteForm && (
-          <>   {state.tata.privateCar.proposer.verified && (
-            <button
-              onClick={handleForwardToProposal}
-              type="button"
-              className="flex text-white bg-blue-600 hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm p-2.5 text-center items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              {" "}
-              <span className="px-2">Forward to Proposal</span>
-              <svg
-                className="w-5 h-5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 10"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M1 5h12m0 0l-4 4m4-4l-4-4"
-                />
-              </svg>
-            </button>
-          )}
-            <QuoteForm
-              onSubmit={(data) => {
-                handleSetAuthTokenToQuote(data);
-              }}
-              handle={handleSubOptionChange}
-              vehMake={vehMake}
-              model={model}
-              variant={variant}
-              rtolist={rtolist}
-              onSelectedVeh={handleSelectedModel}
-              onSelectedModel={handleSelectedVariant}
-              handleRtoData={handleRtoData}
-            />
-          </>
-        )}
-      
       </main>
     </>
   );
 }
-
 export default AllMotorInsurances;

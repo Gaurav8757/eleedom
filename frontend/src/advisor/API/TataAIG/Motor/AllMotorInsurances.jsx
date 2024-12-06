@@ -30,12 +30,10 @@ function AllMotorInsurances() {
   const [formSixtyState, setFormSixtyState] = useState(false);
   const [isPopupKycOpen, setIsPopupKycOpen] = useState(true);
 
-  // const navigate = useNavigate();
   const handleBackToQuote = () => {
     setShowQuoteForm(true);
     setShowProposer(false);
   };
-  // console.log(menuItems);
 
   const handleBackToProposal = () => {
     setShowProposer(true);
@@ -387,6 +385,7 @@ function AllMotorInsurances() {
             type: "SET_TATA_PRIVATE_CAR_CKYC",
             payload: response.data.data,
           });
+          setLoading(false);
         } else if (
           response.data.status === 400 &&
           response.data.message_txt ===
@@ -413,6 +412,7 @@ function AllMotorInsurances() {
       Authorization: `${token}`,
       "Content-Type": "application/json",
     };
+    setLoading(true);
     try {
       const response = await axios.post(
         `${VITE_DATA}/taig/motor/form/sixty`,
@@ -426,20 +426,20 @@ function AllMotorInsurances() {
         response.data.message_txt === "Succesfully uploaded"
       ) {
         toast.success(`${response.data.message_txt}`);
+        setLoading(false);
         dispatch({
           type: "SET_TATA_PRIVATE_CAR_FORM60",
           payload: response.data.data,
         });
       } else {
-        if (response.data.message_txt) {
-          toast.error(`${response.data.message_txt}`);
-        }
-        toast.error(`${response.data.message}`);
+        setLoading(false);
+        toast.error(`${response.data.message_txt || response.data.message}`);
       }
     } catch (error) {
       toast.error(
         error.response?.data?.message_txt || "Error to upload Form60"
       );
+      setLoading(false);
       // handleSessionExpiry();
     }
   };

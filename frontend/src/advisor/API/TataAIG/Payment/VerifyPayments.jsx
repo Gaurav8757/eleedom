@@ -8,6 +8,7 @@ function VerifyPayments() {
   const [popupOpen, setPopupOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [encryptedPolicyId, setEncryptedPolicyId] = useState(null);
+  const [download, setDownload] = useState();
   const token = sessionStorage.getItem("auth_access_token");
   const baseUrl = window.location.origin;
 
@@ -46,6 +47,7 @@ function VerifyPayments() {
 
   const downloadPolicy = async () => {
     if (!encryptedPolicyId) return;
+    if (download) return;
     try {
       const headers = {
         Authorization: token,
@@ -68,10 +70,16 @@ function VerifyPayments() {
       link.setAttribute("download", "policy.pdf");
       document.body.appendChild(link);
       link.click();
+      setDownload(data.download);
     } catch (error) {
       console.error("Error downloading policy:", error);
       toast.error("Failed to download policy. Please try again.");
     }
+  };
+  const closeHandler = (e) => {
+    e.preventDefault();
+    handleHomepage();
+    setPopupOpen(false);
   };
 
   const handleHomepage = () => {
@@ -121,7 +129,7 @@ function VerifyPayments() {
                 <div className="flex justify-around mt-6">
                   <button
                     className="px-4 py-1 bg-red-600 text-white font-medium tracking-wider rounded hover:bg-red-700"
-                    onClick={() => setPopupOpen(false)}
+                    onClick={closeHandler}
                   >
                     Close
                   </button>
@@ -143,10 +151,14 @@ function VerifyPayments() {
                 </p>
                 <div className="mt-4 flex justify-center space-x-4">
                   <button
-                    className={`bg-green-600 cursor-pointer hover:bg-green-700 px-4 py-2  text-white font-medium rounded`}
+                    className={`${
+                      download
+                        ? "bg-gray-500 cursor-not-allowed"
+                        : "bg-green-600 hover:bg-green-700 cursor-pointer"
+                    }    px-4 py-2  text-white font-medium rounded`}
                     onClick={downloadPolicy}
                   >
-                    Download Policy
+                    {download === true ? "Downloaded" : "Download Policy"}
                   </button>
                   <button
                     className="px-4 py-2 bg-red-600 text-white font-medium rounded hover:bg-red-700"

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { useAppContext } from "../../../../../context/Context";
 import axios from "axios";
 import VITE_DATA from "../../../../../config/config.jsx";
@@ -7,6 +8,7 @@ import { toast } from "react-toastify";
 
 function AadhaarKyc({ selectedID, token }) {
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [direction, setDirection] = useState(0);
   const [timer, setTimer] = useState(600);
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const { state, dispatch } = useAppContext();
@@ -100,15 +102,18 @@ function AadhaarKyc({ selectedID, token }) {
           response?.data.message_txt === "OTP Sent" &&
           response?.data?.data.otp_sent
         ) {
+        
           dispatch({
             type: "SET_TATA_PRIVATE_CAR_AADHAAR_OTP",
             payload: response.data.data,
           });
+          setDirection(clientid.otp_sent ? -1 : 1);
         } else {
           dispatch({
             type: "SET_TATA_PRIVATE_CAR_CKYC",
             payload: response.data.data,
           });
+          setDirection(clientid.otp_sent ? -1 : 1);
         }
       } else {
         if (response.data.message_txt) {
@@ -219,6 +224,28 @@ function AadhaarKyc({ selectedID, token }) {
     }
   };
 
+
+   
+   
+
+
+
+  const variants = {
+    enter: (direction) => ({
+      y: direction > 0 ? "20%" : "-20%",
+      opacity: 0,
+    }),
+    center: {
+      y: 0,
+      opacity: 1,
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? "-100%" : "20%",
+      opacity: 0,
+    }),
+  };
+
+
   return (
     <div className="flex flex-col ">
       {ckyc.req_id && (
@@ -226,8 +253,15 @@ function AadhaarKyc({ selectedID, token }) {
           KYC with Aadhar Card{" "}
         </h1>
       )}
+           <AnimatePresence custom={direction}>
       {!clientid.otp_sent ? (
-        <div className="bg-white rounded transition-all animate-fade-in transform  grid grid-cols-2 gap-4 justify-between">
+        <motion.div key="form"
+            custom={direction}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            variants={variants}
+            transition={{ duration: 0.3 }} className="bg-white rounded  grid grid-cols-2 gap-4 justify-between">
           {/* Aadhaar Number */}
           <div className="mb-4 text-start ">
             <label className="block  text-gray-700 font-medium">
@@ -332,14 +366,21 @@ function AadhaarKyc({ selectedID, token }) {
             <button
               type="submit"
               onClick={handleConvert}
-              className={`transition-all  text-base bg-blue-600 text-white font-bold px-4 py-2 tracking-widest rounded border-blue-700 border-b-[3px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[1px] active:text-slate-400`}
+              className={`  text-base bg-blue-600 text-white font-bold px-4 py-2 tracking-widest rounded border-blue-700 border-b-[3px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[1px] active:text-slate-400`}
             >
               Submit
             </button>
           </div>
-        </div>
+        </motion.div>
+      
       ) : (
-        <div className="bg-gray-100 w-full flex flex-col items-center mx-auto justify-center ">
+        <motion.div key="form"
+        custom={direction}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        variants={variants}
+        transition={{ duration: 0.5 }}  className="bg-gray-100 w-full flex flex-col items-center mx-auto justify-center ">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Enter OTP</h1>
           <p className="text-gray-600 text-sm mb-6">
             We sent a 6-digit OTP to your Aadhaar-linked mobile number.
@@ -392,13 +433,21 @@ function AadhaarKyc({ selectedID, token }) {
               Verify OTP
             </button>
           </div>
-        </div>
+        </motion.div>
         // </div>
       )}
+  </AnimatePresence>
 
       {showConfirmation && (
+        
         <div className="fixed inset-0 transition-opacity bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg">
+          <AnimatePresence>
+            <motion.div
+              className="bg-white p-4 rounded shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}>
             <h3 className="text-lg font-semibold mb-8">
               {`Are you sure you want to send Aadhaar OTP ?`}
             </h3>
@@ -422,7 +471,8 @@ function AadhaarKyc({ selectedID, token }) {
                 Yes
               </button>
             </div>
-          </div>
+            </motion.div>
+         </AnimatePresence>
         </div>
       )}
     </div>

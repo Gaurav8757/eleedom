@@ -72,12 +72,27 @@ function Navbar({
     checkToken(); // Check token on mount
   }, [navigate, selectedOption]);
 
+    // Retrieve and set initial data from sessionStorage
+    useEffect(() => {
+      const savedOption = sessionStorage.getItem("selectedOption");
+      if (savedOption) {
+        setSelectedOption(savedOption);
+        if (subCategories && subCategories[savedOption]) {
+          const items = Object.values(subCategories[savedOption]);
+          setMenuItems(items);
+        }
+      }
+    }, [subCategories]);
+  
+
   const handleSelectChange = (event) => {
-    const selectedCategory = event.target.value;
+    const selectedCategory = event.target.value;   
     setSelectedOption(selectedCategory);
     sessionStorage.setItem("selectedOption", selectedCategory);
     if (subCategories && subCategories[selectedCategory]) {
       const items = Object.values(subCategories[selectedCategory]);
+      console.log(items);
+      
       setMenuItems(items);
     } else {
       setMenuItems([]);

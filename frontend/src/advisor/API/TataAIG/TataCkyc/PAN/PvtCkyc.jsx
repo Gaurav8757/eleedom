@@ -138,7 +138,7 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
       <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-slate-100 isolation-auto border-none   relative rounded group">
         <div className={"mb-0"}>
           <div className="flex justify-center items-center">
-            <h2 className="md:text-2xl tracking-wide text-base font-semibold">
+            <h2 className="md:text-2xl tracking-wide text-transparent bg-gradient-to-l bg-clip-text from-indigo-600 to-blue-500 text-base font-bold">
               {!ownResponse.req_id ? "cKYC" : ""}
             </h2>
           </div>

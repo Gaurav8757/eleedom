@@ -142,7 +142,7 @@ function PaymentTaig({ token }) {
       {ownResponse?.verified && (
         <>
           {" "}
-          <h1 className="text-xl tracking-wider font-medium">Make Payment</h1>
+          <h1 className="text-2xl tracking-wider text-transparent bg-gradient-to-l bg-clip-text from-indigo-600 to-blue-500 font-bold">Make Payment</h1>
           <div
             className={`${
               ownResponse?.verified ? "mt-4" : "mt-10"

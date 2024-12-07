@@ -413,6 +413,8 @@ const Data = {
             },
           },
 
+
+
           "2 Wheeler": {
             new: { name: "New", apiLink: "/api/tata_aig/2_wheeler/new" },
             renewal: {
@@ -424,6 +426,8 @@ const Data = {
               apiLink: "/api/tata_aig/2_wheeler/comprehensive",
             },
           },
+
+
 
           "Commercial Vehicle": {
             new: {

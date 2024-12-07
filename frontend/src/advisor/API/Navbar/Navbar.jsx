@@ -17,6 +17,8 @@ function Navbar({
   const location = useLocation();
   const navigate = useNavigate();
   const { subCategories } = location.state || {};
+  
+  
 
   useEffect(() => {
     const storedOption = sessionStorage.getItem("selectedOption");
@@ -91,8 +93,6 @@ function Navbar({
     sessionStorage.setItem("selectedOption", selectedCategory);
     if (subCategories && subCategories[selectedCategory]) {
       const items = Object.values(subCategories[selectedCategory]);
-      console.log(items);
-      
       setMenuItems(items);
     } else {
       setMenuItems([]);

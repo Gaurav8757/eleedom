@@ -55,6 +55,8 @@ function AllMotorInsurances() {
     sessionStorage.setItem("selectedSubOption", selectedOption.name);
     setSelectedSubOption(selectedOption.name);
     const authLink = selectedOption.authLink;
+    console.log(selectedOption);
+    console.log(authLink);
 
     // Make API call if needed
     if (authLink) {

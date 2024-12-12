@@ -16,6 +16,7 @@ function AadhaarKyc({ selectedID, token }) {
   const proposal = state.tata.privateCar.proposer;
   const ckyc = state.tata.privateCar.ckyc;
   const clientid = state.tata.privateCar.aadhaarOtp;
+  const values = ckyc?.req_id?.split("_")[0];
   const [formData, setFormData] = useState({
     proposal_no: proposal.proposal_no || "", //proposalResponses.proposal_no
     id_type: selectedID || "AADHAAR",
@@ -97,36 +98,35 @@ function AadhaarKyc({ selectedID, token }) {
       );
 
       if (response.data.status === 200) {
-        toast.success(`${response.data.message_txt}`);
+        toast.success(`${response?.data.message_txt}`);
         if (
           response?.data.message_txt === "OTP Sent" &&
           response?.data?.data.otp_sent
         ) {
-        
           dispatch({
             type: "SET_TATA_PRIVATE_CAR_AADHAAR_OTP",
-            payload: response.data.data,
+            payload: response?.data.data,
           });
           setDirection(clientid.otp_sent ? -1 : 1);
         } else {
           dispatch({
             type: "SET_TATA_PRIVATE_CAR_CKYC",
-            payload: response.data.data,
+            payload: response?.data.data,
           });
           setDirection(clientid.otp_sent ? -1 : 1);
         }
       } else {
-        if (response.data.message_txt) {
-          toast.error(`${response.data.message_txt}`);
-        }
-        toast.error(`${response.data.message}`);
+        toast.error(`${response.data.message_txt || response.data.message}`);
+        dispatch({
+          type: "SET_TATA_PRIVATE_CAR_CKYC",
+          payload: response?.data,
+        });
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Error to get otp response");
       // handleSessionExpiry();
     }
   };
- 
 
   const handleConvert = () => {
     setShowConfirmation(true);
@@ -224,12 +224,6 @@ function AadhaarKyc({ selectedID, token }) {
     }
   };
 
-
-   
-   
-
-
-
   const variants = {
     enter: (direction) => ({
       y: direction > 0 ? "20%" : "-20%",
@@ -245,201 +239,203 @@ function AadhaarKyc({ selectedID, token }) {
     }),
   };
 
-
   return (
     <div className="flex flex-col ">
-      {ckyc.req_id && (
+      {values === "pan" && (
         <h1 className="text-lg  font-semibold mb-5 tracking-wider">
           KYC with Aadhar Card{" "}
         </h1>
       )}
-           <AnimatePresence custom={direction}>
-      {!clientid.otp_sent ? (
-        <motion.div key="form"
+      <AnimatePresence custom={direction}>
+        {!clientid.otp_sent ? (
+          <motion.div
+            key="form"
             custom={direction}
             initial="enter"
             animate="center"
             exit="exit"
             variants={variants}
-            transition={{ duration: 0.3 }} className="bg-white rounded  grid grid-cols-2 gap-4 justify-between">
-          {/* Aadhaar Number */}
-          <div className="mb-4 text-start ">
-            <label className="block  text-gray-700 font-medium">
-              Aadhaar Number:
-            </label>
-            <input
-              type="text"
-              name="id_num"
-              value={formData.id_num}
-              onChange={handleChange}
-              maxLength="12"
-              placeholder="Enter 12-digit Aadhaar number"
-              className={`w-full px-3 py-2  tracking-widest rounded ${
-                isAadhaarValid ? "border-none" : "border border-red-500"
-              } shadow-inner bg-slate-100 focus:ring-0   focus:outline-none`}
-            />
-            {!isAadhaarValid && formData.id_num.length > 0 && (
-              <p className="text-red-500 text-xs mt-0.5">
-                Aadhaar No must be 12 digits.
-              </p>
-            )}
-          </div>
-          {/* Full Name */}
-          <div className="mb-4 text-start">
-            <label className="block text-gray-700 font-medium">
-              Full Name (as per Aadhaar):
-            </label>
-            <input
-              type="text"
-              name="full_name"
-              value={formData.full_name}
-              onChange={handleChange}
-              placeholder="Enter full name"
-              className="w-full px-3 py-2 border-none  tracking-wider capitalize rounded shadow-inner bg-slate-100 focus:ring-0  focus:outline-none"
-            />
-          </div>
-
-          <div className="mb-4 text-start ">
-            <label className="block text-gray-700 font-medium mb-2">
-              Gender:
-            </label>
-            <div className="flex justify-around items-center space-x-4">
-              {/* Male */}
-              <label className="flex items-center cursor-pointer space-x-2">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="M"
-                  checked={formData.gender === "M"}
-                  onChange={handleChange}
-                  className="form-radio text-blue-600 focus:ring-0"
-                />
-                <span className="text-gray-700">Male</span>
+            transition={{ duration: 0.3 }}
+            className="bg-white rounded  grid grid-cols-2 gap-4 justify-between"
+          >
+            {/* Aadhaar Number */}
+            <div className="mb-4 text-start ">
+              <label className="block  text-gray-700 font-medium">
+                Aadhaar Number:
               </label>
-
-              {/* Female */}
-              <label className="flex items-center cursor-pointer space-x-2">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="F"
-                  checked={formData.gender === "F"}
-                  onChange={handleChange}
-                  className="form-radio text-blue-600  focus:ring-0"
-                />
-                <span className="text-gray-700">Female</span>
-              </label>
-
-              {/* Transgender */}
-              <label className="flex items-center cursor-pointer space-x-2">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="T"
-                  checked={formData.gender === "T"}
-                  onChange={handleChange}
-                  className="form-radio text-blue-600 focus:ring-0"
-                />
-                <span className="text-gray-700">Transgender</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Date of Birth */}
-          <div className="mb-4 text-start">
-            <label className="block text-gray-700 font-medium">DOB:</label>
-            <input
-              type="date"
-              name="dob"
-              max={eighteenYearsAgo}
-              value={getDateForInput()}
-              onChange={handleChange}
-              placeholder="DD-MM-YYYY"
-              className="w-full px-3 py-2 border-none rounded shadow-inner tracking-wider bg-slate-100 focus:ring-0  focus:outline-none"
-            />
-          </div>
-          <span className="col-span-2 text-start text-slate-700 italic tracking-wide">
-            In case CKYC record is not found, OTP based verification will be
-            initated.
-          </span>
-          <div className="flex justify-center mt-5 col-span-2 ">
-            <button
-              type="submit"
-              onClick={handleConvert}
-              className={`  text-base bg-blue-600 text-white font-bold px-4 py-2 tracking-widest rounded border-blue-700 border-b-[3px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[1px] active:text-slate-400`}
-            >
-              Submit
-            </button>
-          </div>
-        </motion.div>
-      
-      ) : (
-        <motion.div key="form"
-        custom={direction}
-        initial="enter"
-        animate="center"
-        exit="exit"
-        variants={variants}
-        transition={{ duration: 0.5 }}  className="bg-gray-100 w-full flex flex-col items-center mx-auto justify-center ">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Enter OTP</h1>
-          <p className="text-gray-600 text-sm mb-6">
-            We sent a 6-digit OTP to your Aadhaar-linked mobile number.
-          </p>
-          <div className="space-y-2">
-            {/* OTP Inputs */}
-            <div className="flex justify-between gap-2">
-              {otp.map((digit, index) => (
-                <input
-                  key={index}
-                  id={`otp-input-${index}`}
-                  type="text"
-                  value={digit}
-                  onChange={(e) => handleChangeOtp(e.target.value, index)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Backspace") handleBackspace(index);
-                  }}
-                  maxLength="1"
-                  className="otp-input w-12 h-12 text-center font-sans text-xl font-bold border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  required
-                />
-              ))}
-            </div>
-            {clientid.otp_sent && timer > 0 ? (
-              <div className="text-center text-sm text-gray-600 tracking-wider pb-10">
-                <p>
-                  OTP will expires in{" "}
-                  <span className="font-bold text-red-600">
-                    {formatTime(timer)}
-                  </span>{" "}
-                  minutes!
+              <input
+                type="text"
+                name="id_num"
+                value={formData.id_num}
+                onChange={handleChange}
+                maxLength="12"
+                placeholder="Enter 12-digit Aadhaar number"
+                className={`w-full px-3 py-2  tracking-widest rounded ${
+                  isAadhaarValid ? "border-none" : "border border-red-500"
+                } shadow-inner bg-slate-100 focus:ring-0   focus:outline-none`}
+              />
+              {!isAadhaarValid && formData.id_num.length > 0 && (
+                <p className="text-red-500 text-xs mt-0.5">
+                  Aadhaar No must be 12 digits.
                 </p>
+              )}
+            </div>
+            {/* Full Name */}
+            <div className="mb-4 text-start">
+              <label className="block text-gray-700 font-medium">
+                Full Name (as per Aadhaar):
+              </label>
+              <input
+                type="text"
+                name="full_name"
+                value={formData.full_name}
+                onChange={handleChange}
+                placeholder="Enter full name"
+                className="w-full px-3 py-2 border-none  tracking-wider capitalize rounded shadow-inner bg-slate-100 focus:ring-0  focus:outline-none"
+              />
+            </div>
+
+            <div className="mb-4 text-start ">
+              <label className="block text-gray-700 font-medium mb-2">
+                Gender:
+              </label>
+              <div className="flex justify-around items-center space-x-4">
+                {/* Male */}
+                <label className="flex items-center cursor-pointer space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="M"
+                    checked={formData.gender === "M"}
+                    onChange={handleChange}
+                    className="form-radio text-blue-600 focus:ring-0"
+                  />
+                  <span className="text-gray-700">Male</span>
+                </label>
+
+                {/* Female */}
+                <label className="flex items-center cursor-pointer space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="F"
+                    checked={formData.gender === "F"}
+                    onChange={handleChange}
+                    className="form-radio text-blue-600  focus:ring-0"
+                  />
+                  <span className="text-gray-700">Female</span>
+                </label>
+
+                {/* Transgender */}
+                <label className="flex items-center cursor-pointer space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="T"
+                    checked={formData.gender === "T"}
+                    onChange={handleChange}
+                    className="form-radio text-blue-600 focus:ring-0"
+                  />
+                  <span className="text-gray-700">Transgender</span>
+                </label>
               </div>
-            ) : (
-              <div className="text-center flex justify-end text-sm text-gray-600 pb-8">
-                <button
-                  onClick={confirmFinalize}
-                  className="text-blue-700 text-base font-semibold tracking-wide"
-                >
-                  Resend OTP
-                </button>
+            </div>
+
+            {/* Date of Birth */}
+            <div className="mb-4 text-start">
+              <label className="block text-gray-700 font-medium">DOB:</label>
+              <input
+                type="date"
+                name="dob"
+                max={eighteenYearsAgo}
+                value={getDateForInput()}
+                onChange={handleChange}
+                placeholder="DD-MM-YYYY"
+                className="w-full px-3 py-2 border-none rounded shadow-inner tracking-wider bg-slate-100 focus:ring-0  focus:outline-none"
+              />
+            </div>
+            <span className="col-span-2 text-start text-slate-700 italic tracking-wide">
+              In case CKYC record is not found, OTP based verification will be
+              initated.
+            </span>
+            <div className="flex justify-center mt-5 col-span-2 ">
+              <button
+                type="submit"
+                onClick={handleConvert}
+                className={`  text-base bg-blue-600 text-white font-bold px-4 py-2 tracking-widest rounded border-blue-700 border-b-[3px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[1px] active:text-slate-400`}
+              >
+                Submit
+              </button>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="form"
+            custom={direction}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            variants={variants}
+            transition={{ duration: 0.5 }}
+            className="bg-gray-100 w-full flex flex-col items-center mx-auto justify-center "
+          >
+            <h1 className="text-2xl font-bold text-gray-800 mb-4">Enter OTP</h1>
+            <p className="text-gray-600 text-sm mb-6">
+              We sent a 6-digit OTP to your Aadhaar-linked mobile number.
+            </p>
+            <div className="space-y-2">
+              {/* OTP Inputs */}
+              <div className="flex justify-between gap-2">
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    id={`otp-input-${index}`}
+                    type="text"
+                    value={digit}
+                    onChange={(e) => handleChangeOtp(e.target.value, index)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Backspace") handleBackspace(index);
+                    }}
+                    maxLength="1"
+                    className="otp-input w-12 h-12 text-center font-sans text-xl font-bold border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    required
+                  />
+                ))}
               </div>
-            )}
-            {/* Submit Button */}
-            <button
-              type="submit"
-              onClick={handleOtpSubmit}
-              className={`transition-all  text-base bg-blue-600 text-white font-bold px-4 py-2 tracking-widest rounded border-blue-700 border-b-[3px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[1px] active:text-slate-400`}
-            >
-              Verify OTP
-            </button>
-          </div>
-        </motion.div>
-        // </div>
-      )}
-  </AnimatePresence>
+              {clientid.otp_sent && timer > 0 ? (
+                <div className="text-center text-sm text-gray-600 tracking-wider pb-10">
+                  <p>
+                    OTP will expires in{" "}
+                    <span className="font-bold text-red-600">
+                      {formatTime(timer)}
+                    </span>{" "}
+                    minutes!
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center flex justify-end text-sm text-gray-600 pb-8">
+                  <button
+                    onClick={confirmFinalize}
+                    className="text-blue-700 text-base font-semibold tracking-wide"
+                  >
+                    Resend OTP
+                  </button>
+                </div>
+              )}
+              {/* Submit Button */}
+              <button
+                type="submit"
+                onClick={handleOtpSubmit}
+                className={`transition-all  text-base bg-blue-600 text-white font-bold px-4 py-2 tracking-widest rounded border-blue-700 border-b-[3px] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:border-b-[2px] active:brightness-90 active:translate-y-[1px] active:text-slate-400`}
+              >
+                Verify OTP
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {showConfirmation && (
-        
         <div className="fixed inset-0 transition-opacity bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
           <AnimatePresence>
             <motion.div
@@ -447,32 +443,33 @@ function AadhaarKyc({ selectedID, token }) {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}>
-            <h3 className="text-lg font-semibold mb-8">
-              {`Are you sure you want to send Aadhaar OTP ?`}
-            </h3>
-            <div className="flex justify-end space-x-4">
-              <button
-                className="bg-gray-300  cursor-pointer transition-all text-black font-mono font-bold px-6 py-1 rounded-lg
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <h3 className="text-lg font-semibold mb-8">
+                {`Are you sure you want to send Aadhaar OTP ?`}
+              </h3>
+              <div className="flex justify-end space-x-4">
+                <button
+                  className="bg-gray-300  cursor-pointer transition-all text-black font-mono font-bold px-6 py-1 rounded-lg
               border-gray-400
                 border-b-[4px] hover:brightness-110  
                 active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
-                onClick={() => setShowConfirmation(false)}
-              >
-                No
-              </button>
-              <button
-                className=" cursor-pointer transition-all bg-green-600 text-black font-mono font-bold px-6 py-1 rounded-lg
+                  onClick={() => setShowConfirmation(false)}
+                >
+                  No
+                </button>
+                <button
+                  className=" cursor-pointer transition-all bg-green-600 text-black font-mono font-bold px-6 py-1 rounded-lg
               border-green-700
                 border-b-[4px] hover:brightness-110 
                 active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
-                onClick={confirmFinalize} // Set formData.__finalize to "1"
-              >
-                Yes
-              </button>
-            </div>
+                  onClick={confirmFinalize} // Set formData.__finalize to "1"
+                >
+                  Yes
+                </button>
+              </div>
             </motion.div>
-         </AnimatePresence>
+          </AnimatePresence>
         </div>
       )}
     </div>

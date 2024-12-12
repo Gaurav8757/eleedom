@@ -41,7 +41,6 @@ function Careers() {
 
     reader.onload = (event) => {
       const base64String = event.target.result; // Get the Base64 string
-      console.log(base64String);
       setFile(base64String);
     };
     // Read the file as a Data URL (Base64 string)

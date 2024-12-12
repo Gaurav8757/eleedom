@@ -5,12 +5,13 @@ import PaymentTaig from "../../Payment/PaymentTaig.jsx";
 import { useAppContext } from "../../../../../context/Context.jsx";
 import AadhaarKyc from "../Aadhaar/AadhaarKyc.jsx";
 import InspectionStatus from "../../VerifyInspection/InspectionStatus.jsx";
-function PvtCkyc({onSubmit, token, setFormSixtyState }) {
-  const {state} = useAppContext();
+import OvdForm from "../../OVD/OvdForm.jsx";
+function PvtCkyc({ onSubmit, token, setFormSixtyState }) {
+  const { state } = useAppContext();
   const [errors, setErrors] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const proposal = state.tata.privateCar.proposer;
-  const ownResponse = state.tata.privateCar.ckyc;
+  const ckyc = state.tata.privateCar.ckyc;
   const [formData, setFormData] = useState({
     proposal_no: proposal.proposal_no || "", //proposalResponses.proposal_no
     id_type: "PAN",
@@ -19,7 +20,6 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
     gender: "",
     dob: "",
   });
-
 
   const validatePAN = (pan) => {
     // Regex for PAN validation
@@ -33,6 +33,8 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
       setErrors("");
     }
   };
+  console.log(ckyc);
+
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleChange = (e) => {
@@ -69,7 +71,7 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
   };
 
   useEffect(() => {
-    if (ownResponse?.verified) {
+    if (ckyc?.verified) {
       // Automatically display the popup
       setShowPopup(true);
       // Auto-close popup after 5 seconds
@@ -80,83 +82,84 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
       // Cleanup the timer when the component unmounts or dependencies change
       return () => clearTimeout(timer);
     }
-  }, [ownResponse]);
-
-  const renderStep = () => {
-    return !ownResponse?.req_id ? (
-      <div className="space-y-2 my-8">
-        <div className="text-sm md:text-base px-4 rounded">
-          <div className="flex flex-col">
-            <h1 className="text-sm text-start md:text-base font-medium space-x-2 md:space-x-4">
-              PAN No.
-              <span className="text-red-500 font-extrabold">*</span>
-            </h1>
-            <div className="flex flex-wrap space-x-4">
-              <input
-                type="text"
-                name="id_num"
-                value={formData.id_num}
-                onChange={handleChange}
-                placeholder="Enter PAN No."
-                className={`${
-                  ownResponse?.verified
-                    ? "bg-slate-100 text-black"
-                    : "bg-gray-200 text-black"
-                } items-center text-base md:text-inherit shadow-inner p-1.5 font-medium rounded border-none active:border-none`}
-                disabled={ownResponse?.verified ||ownResponse?.req_id}
-              />
-              <button
-                onClick={handleConvert}
-                className={`${
-                  ownResponse?.verified || ownResponse?.req_id  || !formData.id_num
-                    ? "bg-gray-500 text-gray-50 cursor-not-allowed"
-                    : "bg-slate-200 text-black active:border-b-[2px]  active:translate-y-[2px] before:bg-green-700 hover:text-gray-50 "
-                }  justify-center border-b-[4px]  items-center shadow-xl text-base backdrop-blur-md lg:font-semibold isolation-auto border-none before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative md:py-2 px-3 py-1 overflow-hidden rounded group`}
-                type="submit"
-                disabled={ownResponse?.verified ||  !formData.id_num || ownResponse?.req_id}
-              >
-                {ownResponse?.verified ? "Verified" : "Submit"}
-              </button>
+  }, [ckyc]);
+  // console.log("ckyc data:", ckyc.data.req_id.split("_")[0]);
+  const RenderStep = () => {
+    if (!ckyc?.req_id) {
+      return (
+        <div className="space-y-2 my-8">
+          <div className="text-sm md:text-base px-4 rounded">
+            <div className="flex flex-col">
+              <h1 className="text-sm text-start md:text-base font-medium space-x-2 md:space-x-4">
+                PAN No.
+                <span className="text-red-500 font-extrabold">*</span>
+              </h1>
+              <div className="flex flex-wrap space-x-4">
+                <input
+                  type="text"
+                  name="id_num"
+                  value={formData.id_num}
+                  onChange={handleChange}
+                  placeholder="Enter PAN No."
+                  className={`${
+                    ckyc?.verified
+                      ? "bg-slate-100 text-black"
+                      : "bg-gray-200 text-black"
+                  } items-center text-base md:text-inherit shadow-inner p-1.5 font-medium rounded border-none`}
+                  disabled={ckyc?.verified || ckyc?.req_id}
+                />
+                <button
+                  onClick={handleConvert}
+                  className={`${
+                    ckyc?.verified || ckyc?.req_id || !formData.id_num
+                      ? "bg-gray-600 text-gray-50 border-gray-500 cursor-not-allowed"
+                      : "bg-green-600 text-slate-100 active:border-b-[2px] border-green-700 active:translate-y-[2px] hover:text-gray-50"
+                  } justify-center border-b-[4px] items-center shadow-xl text-base backdrop-blur-md lg:font-semibold relative md:py-2 px-3 py-1 overflow-hidden rounded group`}
+                  type="submit"
+                  disabled={ckyc?.verified || !formData.id_num || ckyc?.req_id}
+                >
+                  {ckyc?.verified ? "Verified" : "Submit"}
+                </button>
+              </div>
+              {errors && (
+                <span className="text-red-600 text-start">{errors}</span>
+              )}
             </div>
-            {errors && (
-              <span className="text-red-600 text-start">{errors}</span>
-            )}
           </div>
         </div>
-      </div>
-    ) : ( ownResponse.req_id && !ownResponse.verified &&(
-       <AadhaarKyc  token = {token} />
-    )
-    );
+      );
+    } else if (ckyc?.req_id.split("_")[0] === "pan") {
+      return <AadhaarKyc token={token} />;
+    } else if (ckyc?.data?.req_id.split("_")[0] === "ovd") {
+      return <OvdForm token={token} />;
+    } else {
+      return null;
+    }
   };
 
   return (
     <>
-      {proposal.stage === "nstp" && (
-            <InspectionStatus token={token} />
-          )}
-      <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-slate-100 isolation-auto border-none   relative rounded group">
-        <div className={"mb-0"}>
+      {proposal?.stage === "nstp" && <InspectionStatus token={token} />}
+      <div className="max-w-full border shadow-inner md:p-4 p-2 tracking-wide bg-slate-100 isolation-auto border-none relative rounded group">
+        <div className="mb-0">
           <div className="flex justify-center items-center">
             <h2 className="md:text-2xl tracking-wide text-transparent bg-gradient-to-l bg-clip-text from-indigo-600 to-blue-500 text-base font-bold">
-              {!ownResponse.req_id ? "cKYC" : ""}
+              {!ckyc?.req_id ? "cKYC" : ""}
             </h2>
           </div>
         </div>
-        {renderStep()}
-        <div>
-          {ownResponse?.verified && (
-              <PaymentTaig token={token} />
-          )}
-        </div>
+        {RenderStep()}
+        <div>{ckyc?.verified && <PaymentTaig token={token} />}</div>
       </div>
 
-      {/* if pan not verified then show FORM60 */}
-      {!ownResponse?.verified &&  !ownResponse?.req_id && (!formData.id_num) && (
+      {!ckyc?.verified && !ckyc?.req_id && !formData.id_num && (
         <div className="my-4 flex justify-start">
           <span>
             Don&apos;t have a PAN?{" "}
-            <button onClick={()=> setFormSixtyState(prev=>!prev)} className="text-blue-800 font-semibold tracking-wide">
+            <button
+              onClick={() => setFormSixtyState((prev) => !prev)}
+              className="text-blue-800 font-semibold tracking-wide"
+            >
               Upload Form60
             </button>
           </span>
@@ -174,46 +177,46 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center mx-auto mb-3.5">
-              <svg
-                aria-hidden="true"
-                className="w-8 h-8 text-green-500 dark:text-green-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
+              <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center mx-auto mb-3.5">
+                <svg
+                  aria-hidden="true"
+                  className="w-8 h-8 text-green-500 dark:text-green-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold tracking-wider mb-4">
+                KYC Successful!
+              </h2>
+              <p>
+                Thank you,{" "}
+                <strong className="tracking-wider">
+                  {ckyc.result?.registered_name}
+                </strong>
+                . Your KYC process has been completed!
+              </p>
+              <button
+                className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                onClick={() => setShowPopup(false)}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </div>
-            <h2 className="text-lg font-bold tracking-wider mb-4">
-              KYC Successful!
-            </h2>
-            <p>
-              Thank you,{" "}
-              <strong className="tracking-wider">
-                {ownResponse.result?.registered_name}
-              </strong>
-              . Your KYC process has been completed!
-            </p>
-            <button
-              className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-              onClick={() => setShowPopup(false)}
-            >
-              PROCEED
-            </button>
+                PROCEED
+              </button>
             </motion.div>
-            </AnimatePresence>
+          </AnimatePresence>
         </div>
       )}
 
       {/* confirmation box */}
       {showConfirmation && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-md flex items-center justify-center">
-           <AnimatePresence>
+          <AnimatePresence>
             <motion.div
               className="bg-white p-4 rounded shadow-lg"
               initial={{ scale: 0.9, opacity: 0 }}
@@ -221,29 +224,29 @@ function PvtCkyc({onSubmit, token, setFormSixtyState }) {
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-            <h3 className="text-lg font-semibold mb-8 text-start">
-              {`Are you sure, you want to proceed`} {`to complete cKYC?`}
-            </h3>
-            <div className="flex justify-end space-x-4">
-              <button
-                className="bg-gray-300  cursor-pointer transition-all text-black font-mono font-bold px-6 py-1 rounded-lg
+              <h3 className="text-lg font-semibold mb-8 text-start">
+                {`Are you sure, you want to proceed`} {`to complete cKYC?`}
+              </h3>
+              <div className="flex justify-end space-x-4">
+                <button
+                  className="bg-gray-300  cursor-pointer transition-all text-black font-mono font-bold px-6 py-1 rounded-lg
               border-gray-400
                 border-b-[4px] hover:brightness-110  
                 active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
-                onClick={() => setShowConfirmation(false)}
-              >
-                No
-              </button>
-              <button
-                className=" cursor-pointer transition-all bg-green-600 text-black font-mono font-bold px-6 py-1 rounded-lg
+                  onClick={() => setShowConfirmation(false)}
+                >
+                  No
+                </button>
+                <button
+                  className=" cursor-pointer transition-all bg-green-600 text-black font-mono font-bold px-6 py-1 rounded-lg
               border-green-700
                 border-b-[4px] hover:brightness-110 
                 active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
-                onClick={confirmFinalize}
-              >
-                Yes
-              </button>
-            </div>
+                  onClick={confirmFinalize}
+                >
+                  Yes
+                </button>
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>

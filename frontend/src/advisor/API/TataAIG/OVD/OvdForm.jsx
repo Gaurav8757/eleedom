@@ -3,25 +3,30 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useAppContext } from "../../../../context/Context";
 import { useState, useEffect } from "react";
+import { AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
-function OvdForm() {
-  const { state } = useAppContext({ onSubmitFormSixty, setFormSixtyState });
+import axios from "axios";
+import VITE_DATA from "../../../../config/config.jsx";
+function OvdForm({token}) {
+  const { state, dispatch } = useAppContext();
   const proposal = state.tata.privateCar.proposer;
   const ckyc = state.tata.privateCar.ckyc;
+  const [loading, setLoading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const tokens = sessionStorage.getItem("auth_access_token");
   const [formData, setFormData] = useState({
-    proposal_no: proposal.proposal_no || "",
+    req_id: ckyc?.data?.req_id,
+    proposal_no: proposal?.proposal_no || "",
     id_type: "OVD",
     doc_type: "",
     doc_base64: "",
   });
-
-  useEffect(() => {
-    // Auto-check whenever `verified` changes
-    if (ckyc.verified) {
-      setFormSixtyState(false); // Close popup
-    }
-  }, [ckyc.verified, setFormSixtyState]);
+  // useEffect(() => {
+  //   // Auto-check whenever `verified` changes
+  //   if (ckyc?.verified) {
+  //     setFormOvdState(false); // Close popup
+  //   }
+  // }, [ckyc?.verified, setFormOvdState]);
 
   const [fileName, setFileName] = useState("");
   const [docs, setDocs] = useState("");
@@ -122,9 +127,36 @@ function OvdForm() {
 
   const handleSubmit = () => {
     if (check) {
-      onSubmitFormSixty(formData);
+      onSubmitFormOVD(formData);
     } else {
       toast.error("Please check the checkbox before submitting.");
+    }
+  };
+
+  const onSubmitFormOVD = async (formData) => {
+    const headers = {
+      Authorization: `${token || tokens} `,
+      "Content-Type": "application/json",
+    };
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${VITE_DATA}/taig/motor/form/sixty`,
+        formData,
+        {
+          headers,
+        }
+      );
+      setLoading(false);
+      toast.success(`${response.data.message_txt || response.data.message}`);
+      dispatch({
+        type: "SET_TATA_PRIVATE_CAR_CKYC",
+        payload: response.data.data,
+      });
+    } catch (error) {
+      toast.error(error.response?.data?.message_txt || "Error to upload OVD");
+      setLoading(false);
+      // handleSessionExpiry();
     }
   };
 
@@ -135,16 +167,16 @@ function OvdForm() {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="block w-1/2 min-h-64  mb-20 p-6 border border-gray-200 rounded shadow bg-gray-100"
+        className="block  min-h-64  mb-20 p-6 border border-gray-200 rounded shadow bg-gray-100"
       >
         {/* <span className="text-end">{proposalResponses}</span> */}
         <h1 className="text-sm tracking-wider text-start md:text-base font-medium space-x-2 md:space-x-4">
-          Upload Form60
+          Upload OVD
           <span className="text-red-500 font-extrabold">*</span>
         </h1>
         <div className="flex flex-col min-w-full justify-between space-y-3">
           <label
-            htmlFor="files"
+            htmlFor="ovd"
             className={`w-full min-h-32 cursor-pointer flex items-center flex-col justify-center border transition-all ${
               dragOver
                 ? "border-blue-500 bg-blue-100"
@@ -191,7 +223,7 @@ function OvdForm() {
           <input
             className="hidden w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none"
             aria-describedby="user_avatar_help"
-            id="files"
+            id="ovd"
             type="file"
             onChange={handleFileUpload}
             accept="image/jpeg, image/png, application/pdf"
@@ -206,8 +238,7 @@ function OvdForm() {
             />
             <span className="font-medium tracking-wide">
               {" "}
-              I hereby declare that I do not possess a PAN Card and will submit
-              Form60.{" "}
+              {`I hereby declare that I do not possess a ${"pan"} and will submit OVD.`}
             </span>
           </div>
           <div className="flex justify-center items-center">
@@ -290,7 +321,7 @@ const PdfPreviewModal = ({ isOpen, onClose, pdfUrl }) => {
           <div className="h-full">
             <iframe
               src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-              className="w-full h-full"
+              className="w-full h-full z-100"
               style={{ border: "none" }}
               title="PDF Preview"
             ></iframe>

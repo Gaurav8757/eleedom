@@ -27,37 +27,33 @@ const Carousel = () => {
   }, []);
 
   return (
-    <section className="flex justify-self-stretch container md:container-fluid min-h-auto min-w-7xl ">
-    <Suspense fallback={null}>
+    <Suspense fallback={null} className="flex mx-auto justify-self-stretch bg-black">
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, Autoplay]}
-        spaceBetween={10}
+        spaceBetween={20}
         slidesPerView={1}
         pagination={{ clickable: true }}
         autoplay={{
           delay: 4000,
           disableOnInteraction: false,
         }}
-        className="container-fluid border-0 border-black max-h-auto "
+        className="container-fluid border-0 border-black"
       >
         {APIData.map((obj, idx) => (
-          <SwiperSlide key={idx} className="flex justify-self-stretch  container-fluid">
-            <NavLink to={obj.usercarousel_link} className="  container-fluid justify-self-stretch  ">
-              <img 
-                src={obj.usercarousel_upload}
-                // srcSet={`${obj.usercarousel_upload} 420w, ${obj.usercarousel_upload} 768w, ${obj.usercarousel_upload} 1200w`}
-                // sizes="(max-width: 420px) 280px, (max-width: 768px) 680px, (max-width: 1200px) 500px, 100vw"
-                className="brightness-100 flex justify-items-stretch justify-self-stretch contrast-125 object-fill " 
-                alt={`slide-${idx}`}
-                loading="lazy" 
-              />
-            </NavLink>
-          </SwiperSlide>
+        <SwiperSlide key={idx} >
+        <NavLink to={obj.usercarousel_link} className="container-fluid justify-self-stretch">
+          <img
+            src={obj.usercarousel_upload}
+            className="brightness-100 flex justify-items-stretch justify-self-stretch contrast-125 w-full h-full object-cover"
+            alt={`slide-${idx}`}
+            loading="lazy"
+          />
+        </NavLink>
+      </SwiperSlide>
+      
         ))}
       </Swiper>
     </Suspense>
-  </section>
-  
   );
 };
 

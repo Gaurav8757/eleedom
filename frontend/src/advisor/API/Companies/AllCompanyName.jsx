@@ -108,6 +108,11 @@ function AllCompanyName() {
           closeModal={() => setIsModalOpen(false)}
         />
       )}
+
+
+
+
+    
     </div>
   );
 }

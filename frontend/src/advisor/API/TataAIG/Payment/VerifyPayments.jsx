@@ -44,7 +44,6 @@ function VerifyPayments() {
       setIsLoading(false);
     }
   };
-
   const downloadPolicy = async () => {
     if (!encryptedPolicyId) return;
     if (download) return;

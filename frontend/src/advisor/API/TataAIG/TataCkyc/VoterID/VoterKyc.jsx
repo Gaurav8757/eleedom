@@ -16,7 +16,7 @@ function VoterKyc({ selectedID, token }) {
 
   const [formData, setFormData] = useState({
     proposal_no: proposal.proposal_no || "",
-    id_type: selectedID || "VoterID",
+    id_type: selectedID || "VOTERID",
     id_num: "",
     dob: "",
     req_id: formSixty.req_id || ckyc.req_id,

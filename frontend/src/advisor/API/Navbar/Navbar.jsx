@@ -16,9 +16,8 @@ function Navbar({
   const intervalRef = useRef(null); // To track the timer
   const location = useLocation();
   const navigate = useNavigate();
-  const { subCategories } = location.state || {};
-  
-  
+  const { subCats } = location.state || {};
+console.log(subCats);
 
   useEffect(() => {
     const storedOption = sessionStorage.getItem("selectedOption");
@@ -79,20 +78,20 @@ function Navbar({
       const savedOption = sessionStorage.getItem("selectedOption");
       if (savedOption) {
         setSelectedOption(savedOption);
-        if (subCategories && subCategories[savedOption]) {
-          const items = Object.values(subCategories[savedOption]);
+        if (subCats && subCats[savedOption]) {
+          const items = Object.values(subCats[savedOption]);
           setMenuItems(items);
         }
       }
-    }, [subCategories]);
+    }, [subCats]);
   
 
   const handleSelectChange = (event) => {
     const selectedCategory = event.target.value;   
     setSelectedOption(selectedCategory);
     sessionStorage.setItem("selectedOption", selectedCategory);
-    if (subCategories && subCategories[selectedCategory]) {
-      const items = Object.values(subCategories[selectedCategory]);
+    if (subCats && subCats[selectedCategory]) {
+      const items = Object.values(subCats[selectedCategory]);
       setMenuItems(items);
     } else {
       setMenuItems([]);
@@ -110,14 +109,14 @@ function Navbar({
           />
         </div>
         <div className="container-flex flex justify-between tracking-wide">
-          {subCategories && (
+          {subCats && (
             <select
               value={selectedOption}
               onChange={handleSelectChange}
               className="items-center cursor-pointer border-none text-base md:text-inherit font-semibold md:p-1.5 p-1 shadow-inner text-gray-500 bg-slate-100 rounded  hover:text-gray-600 hover:bg-gray-100"
             >
               <option value="">Select Insurance</option>
-              {Object.keys(subCategories).map((subCat, index) => (
+              {Object.keys(subCats).map((subCat, index) => (
                 <option key={index} value={subCat} className="capitalize">
                   {subCat}
                 </option>

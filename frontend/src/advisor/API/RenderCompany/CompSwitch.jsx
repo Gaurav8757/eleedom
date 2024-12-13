@@ -5,8 +5,6 @@ import NotFound from "../../../notFound/NotFound.jsx";
 
 function CompSwitch() {
   const { insuranceName, category } = useParams();
-  console.log(category);
-
   const renderComponent = () => {
     if (insuranceName === "tata_aig") {
       if (category === "motor") {

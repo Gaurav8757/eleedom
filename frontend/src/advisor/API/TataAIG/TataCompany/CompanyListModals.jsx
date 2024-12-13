@@ -14,7 +14,7 @@ function CompanyListModals({ closeModal }) {
     navigate(
       `/advisor/home/${state.tata.privateCar.controller.insuranceName}/${category}`,
       {
-        state: { subCategories: subCats },
+        state: { subCats },
       }
     );
   };

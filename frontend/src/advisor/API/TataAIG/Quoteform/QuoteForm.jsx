@@ -2033,7 +2033,6 @@ function QuoteForm({
                     </div>
                   </div>
                 </div>
-
                 {renderStep()}
               </div>
 

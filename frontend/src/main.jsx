@@ -206,13 +206,14 @@ import ViewDailyVisit from "./Employee/DailyVisitReport/ViewDailyVisit.jsx";
 import VisitReport from "./admin/admincomponents/VisitReport/VisitReport.jsx";
 import Dvr from "./branches/DVR/Dvr.jsx";
 import ReconAdvisor from "./admin/admincomponents/MasterForm/ReconAdvisor/ReconAdvisor.jsx";
-import AllCompanyName from "./advisor/API/Companies/AllCompanyName.jsx";
-import AllMotorInsurances from "./advisor/API/TataAIG/Motor/AllMotorInsurances.jsx";
+import AllCompanyName from "./advisor/API/TataAIG/TataCompany/AllCompanyName.jsx";
 import AdvResetPassword from "./advisor/AdvResetPassword.jsx";
 import { AppProvider, useAppContext } from "./context/Context";
 // import { AppProvider } from "./context/Context";
 import BranchLaout from "./branches/BranchLaout.jsx";
 import VerifyPayments from "./advisor/API/TataAIG/Payment/VerifyPayments.jsx";
+import NotFound from "./notFound/NotFound.jsx";
+import CompSwitch from "./advisor/API/RenderCompany/CompSwitch.jsx";
 // import { useState } from "react";
 
 const router = createBrowserRouter(
@@ -474,8 +475,8 @@ const router = createBrowserRouter(
         />
         {/* apis calls */}
         <Route
-          path="/advisor/:insuranceName/:category"
-          element={<AllMotorInsurances />}
+          path="/advisor/home/:insuranceName/:category"
+          element={<CompSwitch />}
         />
       </Route>
 
@@ -657,6 +658,7 @@ const router = createBrowserRouter(
           />
         </Route>
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Route>
   )
 );
@@ -664,7 +666,6 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AppProvider>
- 
       <RouterProvider router={router} />
       <ToastContainer
         position="top-right"

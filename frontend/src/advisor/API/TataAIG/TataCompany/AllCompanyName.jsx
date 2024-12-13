@@ -1,8 +1,8 @@
 import CompanyListModals from "./CompanyListModals";
 import {NavLink} from "react-router-dom";
-import Data from "../Data";
+import Data from "../../Data";
 import { useState } from "react";
-import { useAppContext } from "../../../context/Context";
+import { useAppContext } from "../../../../context/Context";
 function AllCompanyName() {
   const {dispatch} = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);

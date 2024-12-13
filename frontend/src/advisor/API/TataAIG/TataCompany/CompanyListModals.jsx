@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../../context/Context.jsx";
+import { useAppContext } from "../../../../context/Context.jsx";
 import { AnimatePresence, motion } from "motion/react";
 /* eslint-disable react/prop-types */
 function CompanyListModals({ closeModal }) {
@@ -12,7 +12,7 @@ function CompanyListModals({ closeModal }) {
     const subCats = state.tata.privateCar.controller.categories[category];
     setSelectedCategory(subCats);
     navigate(
-      `/advisor/${state.tata.privateCar.controller.insuranceName}/${category}`,
+      `/advisor/home/${state.tata.privateCar.controller.insuranceName}/${category}`,
       {
         state: { subCategories: subCats },
       }
@@ -22,9 +22,8 @@ function CompanyListModals({ closeModal }) {
   if (!closeModal) return null;
 
   return (
-   
-      <div className="fixed inset-0 sm:ml-48 backdrop-blur-lg transition-all duration-500 ease-in-out flex items-center justify-center bg-gray-800 bg-opacity-75">
-        <div className="relative p-1 w-full max-w-7xl max-h-full transform transition-transform duration-500 ease-out">
+    <div className="fixed inset-0 sm:ml-48 backdrop-blur-lg transition-all duration-500 ease-in-out flex items-center justify-center bg-gray-800 bg-opacity-75">
+      <div className="relative p-1 w-full max-w-7xl max-h-full transform transition-transform duration-500 ease-out">
         <AnimatePresence>
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -117,10 +116,9 @@ function CompanyListModals({ closeModal }) {
               </div>
             </div>
           </motion.div>
-          </AnimatePresence>
-        </div>
+        </AnimatePresence>
       </div>
-    
+    </div>
   );
 }
 export default CompanyListModals;

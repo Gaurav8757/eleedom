@@ -18,7 +18,7 @@
     "country-state-city": "^3.2.1",
     "date-fns": "^3.3.1",
     "dotenv": "^16.4.5",
-    "flowbite": "^2.2.0",
+    "flowbite": "^2.5.2",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.2",
     "ind-state-district": "^1.0.3",

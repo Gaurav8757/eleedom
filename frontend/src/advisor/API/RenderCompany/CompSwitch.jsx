@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import AllMotorInsurances from "../TataAIG/Motor/AllMotorInsurances.jsx";
+import AllMotorInsurances from "../TataAIG/CAR/Motor/AllMotorInsurances.jsx";
 // import SomeOtherComponent from "./SomeOtherComponent"; // Example component
 import NotFound from "../../../notFound/NotFound.jsx";
 
@@ -16,7 +16,6 @@ function CompSwitch() {
       return <NotFound />;
     }
   };
-
   return <>{renderComponent()}</>;
 }
 

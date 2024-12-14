@@ -1,7 +1,5 @@
 function SwitchPolicy() {
-  return (
-    <div>SwitchPolicy</div>
-  )
+  return <div>SwitchPolicy</div>;
 }
 
-export default SwitchPolicy
+export default SwitchPolicy;

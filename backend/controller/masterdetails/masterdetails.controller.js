@@ -1,13 +1,13 @@
 // insurancePolicyController.js
 import AllInsurance from "../../models/masterDetails/masterdetailSchema.js";
+import CompanyGrid from "../../models/commSlab/companypayout.js";
 import { Counter } from "../../models/masterDetails/masterdetailSchema.js";
-
 
 export const createAllInsurance = async (req, res) => {
   try {
-     // Find the counter document for the policy reference numbers or create one if it doesn't exist
-     let counter = await Counter.findOneAndUpdate(
-      { policyrefno: 'autoval' },
+    // Find the counter document for the policy reference numbers or create one if it doesn't exist
+    let counter = await Counter.findOneAndUpdate(
+      { policyrefno: "autoval" },
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
@@ -15,16 +15,16 @@ export const createAllInsurance = async (req, res) => {
     let seqId;
     if (!counter) {
       // If counter doesn't exist, create a new one with sequence value 1
-      const newCounter = new Counter({ policyrefno: 'autoval', seq: 1 });
+      const newCounter = new Counter({ policyrefno: "autoval", seq: 1 });
       await newCounter.save();
       seqId = 1;
     } else {
       // Use the sequence value from the counter document
       seqId = counter.seq;
     }
- // Generate the five-digit policy number with leading zeros
- const policyNumber = seqId.toString().padStart(6, '0');
-       
+    // Generate the five-digit policy number with leading zeros
+    const policyNumber = seqId.toString().padStart(8, "0");
+
     const {
       entryDate,
       advId,
@@ -153,17 +153,17 @@ export const createAllInsurance = async (req, res) => {
       currentTime,
       empTime,
       overallTime,
-      employee_id
+      employee_id,
     });
 
     // Save the company to the database
     await newInsurance.save();
     return res.status(201).json({
-      status: "All Details Added Successfully!",
+      status: "Policy Created Successfully...!",
       message: {
         newInsurance,
       },
-    })
+    });
   } catch (error) {
     console.error("Error creating insurance policy:", error);
     res.status(500).json({ error: "Internal Server Error", error });
@@ -219,10 +219,228 @@ export const updateMasterDetails = async (req, res) => {
   }
 };
 
+// Helper Functions
+const calculateBranchPayableAmount = (finalEntryFields, branchPayout) =>
+  finalEntryFields - branchPayout;
+
+const calculateBranchPayoutAmount = (finalEntryFields, branchpayoutper) =>
+  finalEntryFields * (branchpayoutper / 100);
+
+const calculateCompanyPayoutAmount = (finalEntryFields, companypayoutper) =>
+  finalEntryFields * (companypayoutper / 100);
+
+export const recalculateAndUpdate = async (req, res) => {
+  try {
+    const { allDetailsData } = req.body;
+
+    if (!Array.isArray(allDetailsData) || allDetailsData.length === 0) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid data format. Expected a non-empty array.",
+      });
+    }
+
+    // Fetch payout slabs from the database
+    const payoutSlab = await CompanyGrid.find({});
+    if (!payoutSlab || payoutSlab.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        message: "No payout slabs found in the database.",
+      });
+    }
+
+    const updates = allDetailsData.map(async (data) => {
+      if (!data.payoutOn) return null;
+      const vehicleAge1 = parseInt(data.vehicleAge, 10);
+      const vehicleAgeNormalized =
+        data.vehicleAge === "0 years" ||
+        data.vehicleAge === "0" ||
+        data.vehicleAge1 === 0
+          ? 0
+          : 1;
+
+      const matchingCSLab = payoutSlab.find((slab) => {
+        const isMatching =
+          (slab.vage === "NEW" && vehicleAgeNormalized === 0) ||
+          (slab.vage === "OLD" && vehicleAgeNormalized !== 0);
+
+        return (
+          slab.cnames === data.company &&
+          slab.catnames === data.category &&
+          slab.policytypes === data.policyType &&
+          slab.states === data.states &&
+          (slab.vfuels === data.fuel ||
+            slab.vfuels === "ALL" ||
+            !slab.vfuels ||
+            (slab.vfuels === "OTHER THAN DIESEL" && data.fuel !== "DIESEL")) &&
+          (!slab.vncb ||
+            slab.vncb === data.ncb ||
+            ["BOTH", "YES", "NO"].includes(slab.vncb)) &&
+          slab.pcodes === data.productCode &&
+          (slab.districts === data.district ||
+            slab.districts === "All" ||
+            slab.districts === "ALL") &&
+          slab.payoutons === data.payoutOn &&
+          (slab.sitcapacity === data.sitcapacity ||
+            slab.sitcapacity === "All" ||
+            slab.sitcapacity === "ALL" ||
+            !slab.sitcapacity) &&
+          slab.segments === data.segment &&
+          (slab.voddiscount === data.odDiscount || !slab.voddiscount) &&
+          (isMatching ||
+            (slab.vage === "1-7 YEARS" &&
+              vehicleAge1 >= 1 &&
+              vehicleAge1 <= 7) ||
+            (slab.vage === "MORE THAN 7 YEARS" && vehicleAge1 > 7)) &&
+          (slab.vcc === data.cc ||
+            ["ALL", "", null, undefined].includes(slab.vcc))
+        );
+      });
+
+      if (!matchingCSLab) return null;
+
+      const branchpercent = matchingCSLab.branchpayoutper || 0;
+      const companypercent = matchingCSLab.companypayoutper || 0;
+      const netPremium = parseFloat(data.netPremium);
+      const finalEntryFields = parseFloat(data.finalEntryFields);
+      const odPremium = parseFloat(data.odPremium);
+      let branchPayout, companyPayout, branchPayable, profitLoss;
+
+      if (
+        data.policyType === "COMP" &&
+        data.productCode === "PVT-CAR" &&
+        data.payoutOn === "OD"
+      ) {
+        branchPayout = calculateBranchPayoutAmount(odPremium, branchpercent);
+        branchPayable = calculateBranchPayableAmount(
+          finalEntryFields,
+          branchPayout
+        );
+        companyPayout = calculateCompanyPayoutAmount(odPremium, companypercent);
+        profitLoss = companyPayout - branchPayout;
+      } else {
+        branchPayout = calculateBranchPayoutAmount(netPremium, branchpercent);
+        branchPayable = calculateBranchPayableAmount(
+          finalEntryFields,
+          branchPayout
+        );
+        companyPayout = calculateCompanyPayoutAmount(
+          netPremium,
+          companypercent
+        );
+        profitLoss = companyPayout - branchPayout;
+      }
+
+      // Prepare the update data
+      if (
+        !data.companyPayout ||
+        !data.branchPayableAmount ||
+        !data.branchPayout ||
+        !data.profitLoss ||
+        !branchpercent ||
+        !companypercent
+      ) {
+        const updatePayload = {
+          branchPayableAmount: parseFloat(branchPayable.toFixed(2)),
+          branchPayout: parseFloat(branchPayout.toFixed(2)),
+          companyPayout: parseFloat(companyPayout.toFixed(2)),
+          profitLoss: parseFloat(profitLoss.toFixed(2)),
+          branchpayoutper: branchpercent,
+          companypayoutper: companypercent,
+        };
+
+        return AllInsurance.findByIdAndUpdate(data._id, updatePayload, {
+          new: true,
+          runValidators: true,
+        });
+      }
+    });
+    const results = await Promise.all(updates);
+    const updatedRecords = results.filter((record) => record !== null);
+    return res.status(200).json({
+      status: "success",
+      message: `${updatedRecords.length} calculation data null.`,
+      data: updatedRecords,
+    });
+  } catch (error) {
+    console.error("Error in recalculateAndUpdate:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+// Bulk update endpoint for processing all details
+export const bulkUpdateDetails = async (req, res) => {
+  try {
+    const allDetailsData = req.body; // Expecting an array of insurance details from the client
+
+    if (!Array.isArray(allDetailsData)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid data format. Expected an array of details.",
+      });
+    }
+
+    const updates = allDetailsData.map(async (data) => {
+      let paydata;
+
+      // Determine the required update logic for each record
+      if (!data.paydata) {
+        if (data.policyType === "COMP" && data.productCode === "PVT-CAR") {
+          paydata = { payoutOn: "OD" };
+        } else {
+          paydata = { payoutOn: "NET" };
+        }
+      } else if (
+        data.policyType === "COMP" &&
+        data.productCode === "PVT-CAR" &&
+        data.paydata !== "OD"
+      ) {
+        paydata = { payoutOn: "OD" };
+      } else if (
+        data.paydata !== "NET" &&
+        !(data.policyType === "COMP" && data.productCode === "PVT-CAR")
+      ) {
+        paydata = { payoutOn: "NET" };
+      }
+
+      // If no update is required, skip this record
+      if (!paydata) {
+        return null;
+      }
+
+      // Update the record in the database
+      return AllInsurance.findByIdAndUpdate(data._id, paydata, {
+        new: true,
+        runValidators: true,
+      });
+    });
+
+    // Wait for all updates to complete
+    const results = await Promise.all(updates);
+    // Filter out null results (no updates required)
+    const updatedRecords = results.filter((record) => record !== null);
+    return res.status(200).json({
+      status: "success",
+      message: `${updatedRecords.length} records updated successfully`,
+      data: updatedRecords,
+    });
+  } catch (error) {
+    console.error("Error in bulk update:", error);
+
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+
 // // view lists
 export const viewPolicyBasedonId = async (req, res) => {
   const { employee_id } = req.params;
-  const policyBasedonId = await AllInsurance.find({employee_id});
+  const policyBasedonId = await AllInsurance.find({ employee_id });
   if (!policyBasedonId) {
     return res.status(400).json({
       status: "Error during view lists Update",
@@ -233,29 +451,28 @@ export const viewPolicyBasedonId = async (req, res) => {
   }
 };
 
-
 export const viewAdvisorListing = async (req, res) => {
   const { advisorName } = req.query;
   try {
     const allList = await AllInsurance.aggregate([
       {
         $match: {
-          advisorName: advisorName // Filter documents where advisorname matches adv_id
-        }
+          advisorName: advisorName, // Filter documents where advisorname matches adv_id
+        },
       },
       {
         $lookup: {
           from: "advisors", // Name of the advisors collection
           localField: "advisorname", // Field in the insurance collection
           foreignField: "advisorName", // Field in the advisors collection
-          as: "allpolicyemployee" // Name of the field to store the advisor details
-        }
-      }
+          as: "allpolicyemployee", // Name of the field to store the advisor details
+        },
+      },
     ]);
     if (allList.length === 0) {
       return res.status(404).json({
         status: "Error",
-        message: "No lists found for the given advisor ID"
+        message: "No lists found for the given advisor ID",
       });
     } else {
       return res.status(200).json(allList);
@@ -264,11 +481,10 @@ export const viewAdvisorListing = async (req, res) => {
     console.error("Error viewing lists:", error);
     return res.status(500).json({
       status: "Error",
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
-
 
 export const updateByAdvisor = async (req, res) => {
   const updates = req.body;
@@ -283,8 +499,9 @@ export const updateByAdvisor = async (req, res) => {
     const bulkOperations = [];
 
     // Iterate over each update and construct bulk write operations
-    updates.forEach(update => {
-      const { policyrefno, company, insuredName, policyMadeBy, cvpercentage } = update;
+    updates.forEach((update) => {
+      const { policyrefno, company, insuredName, policyMadeBy, cvpercentage } =
+        update;
 
       // Construct the filter criteria
       const filter = { policyrefno, company, insuredName, policyMadeBy };
@@ -295,27 +512,30 @@ export const updateByAdvisor = async (req, res) => {
           cvpercentage,
           // advisorPayoutAmount,
           // advisorPayableAmount,
-        }
+        },
       };
 
       // Add the update operation to the bulk operations array
       bulkOperations.push({
         updateOne: {
           filter,
-          update: updateOperation
-        }
+          update: updateOperation,
+        },
       });
     });
 
     // Perform bulk updates using bulkWrite method
     await AllInsurance.bulkWrite(bulkOperations);
 
-    return res.status(200).json({ message: "Advisor data updated successfully", bulkOperations });
+    return res
+      .status(200)
+      .json({ message: "Advisor data updated successfully", bulkOperations });
   } catch (error) {
-    return res.status(500).json({ message: "Error updating advisor data: " + error.message });
+    return res
+      .status(500)
+      .json({ message: "Error updating advisor data: " + error.message });
   }
 };
-
 
 export const viewMonthlyData = async (req, res) => {
   let { page = 1, limit = 1000 } = req.query; // Default page: 1, Default limit: 1000
@@ -327,7 +547,7 @@ export const viewMonthlyData = async (req, res) => {
     if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
       return res.status(400).json({
         status: "Error",
-        message: "Invalid page or limit"
+        message: "Invalid page or limit",
       });
     }
 
@@ -336,24 +556,28 @@ export const viewMonthlyData = async (req, res) => {
 
     // Get the current date, and adjust the month based on the offset
     const currentDate = new Date();
-    const targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + monthOffset, 1);
+    const targetDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + monthOffset,
+      1
+    );
 
     const targetYear = targetDate.getFullYear();
-    const targetMonth = (targetDate.getMonth() + 1).toString().padStart(2, '0');
+    const targetMonth = (targetDate.getMonth() + 1).toString().padStart(2, "0");
 
     // Calculate the start and end dates for the target month
     const startDate = new Date(`${targetYear}-${targetMonth}-01`);
     const endDate = new Date(targetYear, targetDate.getMonth() + 1, 0); // Last day of the target month
 
     // Convert dates to ISO format strings for MongoDB query
-    const startISODate = startDate.toISOString().split('T')[0];
-    const endISODate = endDate.toISOString().split('T')[0];
+    const startISODate = startDate.toISOString().split("T")[0];
+    const endISODate = endDate.toISOString().split("T")[0];
 
     // Optimize the query by selecting only necessary fields
     const matchStage = {
       $match: {
-        entryDate: { $gte: startISODate, $lte: endISODate }
-      }
+        entryDate: { $gte: startISODate, $lte: endISODate },
+      },
     };
 
     const lookupStage = {
@@ -363,19 +587,19 @@ export const viewMonthlyData = async (req, res) => {
         pipeline: [
           {
             $match: {
-              $expr: { $eq: ["$employee_id", "$$empId"] }
-            }
+              $expr: { $eq: ["$employee_id", "$$empId"] },
+            },
           },
           {
             $project: {
               _id: 0, // Exclude _id field
               employee_id: 1,
               // Add other fields you need
-            }
-          }
+            },
+          },
         ],
-        as: "allpolicyemployee"
-      }
+        as: "allpolicyemployee",
+      },
     };
 
     const sortStage = { $sort: { entryDate: -1 } }; // Sort by entryDate field in descending order
@@ -383,7 +607,6 @@ export const viewMonthlyData = async (req, res) => {
     const limitStage = { $limit: limit };
 
     const totalCount = await AllInsurance.countDocuments(matchStage.$match); // Count total documents for the current date range
-
     const totalPages = Math.ceil(totalCount / limit); // Calculate total pages
 
     const allList = await AllInsurance.aggregate([
@@ -391,13 +614,13 @@ export const viewMonthlyData = async (req, res) => {
       lookupStage,
       sortStage,
       skipStage,
-      limitStage
+      limitStage,
     ]);
 
     if (allList.length === 0) {
       return res.status(404).json({
         status: "Error",
-        message: "No lists found for the current period"
+        message: "No lists found for the current period",
       });
     } else {
       return res.status(200).json({ allList, totalPages });
@@ -406,89 +629,159 @@ export const viewMonthlyData = async (req, res) => {
     console.error("Error viewing lists:", error);
     return res.status(500).json({
       status: "Error",
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
 
-export const viewAllPoliciesLists = async (req, res) =>{
+export const viewAllPoliciesLists = async (req, res) => {
   try {
-      const dayss = await AllInsurance.find({});
+    const dayss = await AllInsurance.find({});
 
-      if (!dayss) {
-          return res.status(400).json({
-            status: "Error during policies lists Update",
-            message: "Invalid policies selected..!",
-          });
-        }else{
-          return res.status(200).json(dayss);
-        }
-      
-  } catch (error) {
+    if (!dayss) {
       return res.status(400).json({
-          status: "Error during View policies Lists....!",
-          message: error.message,
-        });
+        status: "Error during policies lists Update",
+        message: "Invalid policies selected..!",
+      });
+    } else {
+      return res.status(200).json(dayss);
+    }
+  } catch (error) {
+    return res.status(400).json({
+      status: "Error during View policies Lists....!",
+      message: error.message,
+    });
   }
-}
+};
 
+// export const viewAllList = async (req, res) => {
+//   let { page, limit=1000 } = req.query; // Default page: 1, Default limit: 20
+//   try {
+//     page = parseInt(page); // Convert page to integer
+//     // Check if page is not a valid integer or less than 1
+//     if (isNaN(page) || page < 1) {
+//       return res.status(400).json({
+//         status: "Error",
+//         message: "Invalid page number"
+//       });
+//     }
+//     const skip = (page - 1) * parseInt(limit); // Calculate the number of documents to skip
+//     const totalCount = await AllInsurance.countDocuments(); // Count total documents
+//     const totalPages = Math.ceil(totalCount / limit); // Calculate total pages
 
+//     const allList = await AllInsurance.aggregate([
+//       {
+//         $lookup: {
+//           from: "addemployees",
+//           let: { empId: "$empname" },
+//           pipeline: [
+//             {
+//               $match: {
+//                 $expr: { $eq: ["$employee_id", "$$empId"] }
+//               }
+//             },
+//             {
+//               $project: {
+//                 _id: 0, // Exclude _id field
+//                 employee_id: 1,
+//                 // Add other fields you need
+//               }
+//             }
+//           ],
+//           as: "allpolicyemployee"
+//         }
+//       },
+//       { $sort: { entryDate: -1 } }, // Sort by createdAt field in descending order
+//       { $skip: skip },
+//       { $limit: parseInt(limit) }
+//     ]);
+
+//     if (allList.length === 0) {
+//       return res.status(404).json({
+//         status: "Error",
+//         message: "No lists found for the given employee ID"
+//       });
+//     } else {
+//       return res.status(200).json({ allList, totalPages });
+//     }
+//   } catch (error) {
+//     console.error("Error viewing lists:", error);
+//     return res.status(500).json({
+//       status: "Error",
+//       message: "Internal server error"
+//     });
+//   }
+// };
 
 export const viewAllList = async (req, res) => {
-  let { page, limit=1000 } = req.query; // Default page: 1, Default limit: 20
+  let { page = 1, limit = 1000 } = req.query; // Default page: 1, Default limit: 1000
+
   try {
-    page = parseInt(page); // Convert page to integer
-    // Check if page is not a valid integer or less than 1
-    if (isNaN(page) || page < 1) {
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    // Validate page and limit
+    if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
       return res.status(400).json({
         status: "Error",
-        message: "Invalid page number"
+        message: "Invalid page or limit values",
       });
     }
-    const skip = (page - 1) * parseInt(limit); // Calculate the number of documents to skip
-    const totalCount = await AllInsurance.countDocuments(); // Count total documents
-    const totalPages = Math.ceil(totalCount / limit); // Calculate total pages
 
-    const allList = await AllInsurance.aggregate([
-      {
-        $lookup: {
-          from: "addemployees",
-          let: { empId: "$empname" },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$employee_id", "$$empId"] }
-              }
-            },
-            {
-              $project: {
-                _id: 0, // Exclude _id field
-                employee_id: 1,
-                // Add other fields you need
-              }
-            }
-          ],
-          as: "allpolicyemployee"
-        }
-      },
-      { $sort: { entryDate: -1 } }, // Sort by createdAt field in descending order
-      { $skip: skip },
-      { $limit: parseInt(limit) }
+    const skip = (page - 1) * limit;
+
+    // Run countDocuments and data query concurrently
+    const [totalCount, allList] = await Promise.all([
+      AllInsurance.countDocuments(),
+      AllInsurance.aggregate([
+        { $sort: { entryDate: -1 } }, // Sort first to improve performance
+        { $skip: skip },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: "addemployees",
+            let: { empId: "$empname" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$employee_id", "$$empId"] },
+                },
+              },
+              {
+                $project: {
+                  _id: 0, // Exclude _id field
+                  employee_id: 1,
+                },
+              },
+            ],
+            as: "allpolicyemployee",
+          },
+        },
+        // {
+        //   $project: {
+        //     empname: 1,
+        //     entryDate: 1,
+        //     allpolicyemployee: 1,
+        //   },
+        // },
+      ]),
     ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
 
     if (allList.length === 0) {
       return res.status(404).json({
         status: "Error",
-        message: "No lists found for the given employee ID"
+        message: "No lists found",
       });
-    } else {
-      return res.status(200).json({ allList, totalPages });
     }
+
+    return res.status(200).json({ allList, totalPages, totalCount });
   } catch (error) {
     console.error("Error viewing lists:", error);
     return res.status(500).json({
       status: "Error",
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
@@ -500,10 +793,13 @@ export const viewPoliciesList = async (req, res) => {
     // Construct the filter object based on the provided parameters
     const filter = {};
     if (fromDate) filter.entryDate = { $gte: new Date(fromDate) };
-    if (toDate) filter.entryDate = { ...filter.entryDate, $lte: new Date(toDate) };
-    if (advisorName) filter.advisorName = { $regex: new RegExp(advisorName, 'i') };
-    if (policyNo) filter.policyNo = { $regex: new RegExp(policyNo, 'i') };
-    if (insuredName) filter.insuredName = { $regex: new RegExp(insuredName, 'i') };
+    if (toDate)
+      filter.entryDate = { ...filter.entryDate, $lte: new Date(toDate) };
+    if (advisorName)
+      filter.advisorName = { $regex: new RegExp(advisorName, "i") };
+    if (policyNo) filter.policyNo = { $regex: new RegExp(policyNo, "i") };
+    if (insuredName)
+      filter.insuredName = { $regex: new RegExp(insuredName, "i") };
 
     // Find documents based on the constructed filter
     const allList = await AllInsurance.find(filter);
@@ -511,7 +807,7 @@ export const viewPoliciesList = async (req, res) => {
     if (allList.length === 0) {
       return res.status(404).json({
         status: "Error",
-        message: "No policies found"
+        message: "No policies found",
       });
     } else {
       return res.status(200).json({ allList });
@@ -520,7 +816,7 @@ export const viewPoliciesList = async (req, res) => {
     console.error("Error viewing lists:", error);
     return res.status(500).json({
       status: "Error",
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
@@ -529,11 +825,11 @@ export const viewPoliciesList = async (req, res) => {
 export const viewHajipurList = async (req, res) => {
   const { branch } = req.query;
   // Constructing case-insensitive regex for matching branch name
-  const branchRegex = new RegExp(`^${branch}$`, 'i');
+  const branchRegex = new RegExp(`^${branch}$`, "i");
   const hajipurList = await AllInsurance.find({
-    branch: branchRegex
+    branch: branchRegex,
   }).sort({ entryDate: -1 });
-  
+
   if (!hajipurList || hajipurList.length === 0) {
     return res.status(400).json({
       status: "Error during view lists Update",
@@ -543,7 +839,6 @@ export const viewHajipurList = async (req, res) => {
     return res.status(200).json(hajipurList);
   }
 };
-
 
 //  delete branch controller
 export const deleteAllList = async (req, res) => {

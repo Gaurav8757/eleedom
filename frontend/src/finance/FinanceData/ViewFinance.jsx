@@ -22,7 +22,6 @@ function ViewFinance() {
   const [veh, setVeh] = useState("");
   const [searchInsuredName, setSearchInsuredName] = useState("");
   const [policyNo, setPolicyNo] = useState("");
-  
   const name = sessionStorage.getItem('finname');
 
 
@@ -271,11 +270,6 @@ function ViewFinance() {
   };
 
 
-
-
-  
-
-
 const exportAdvisorWiseReconData = () => {
     try {
         const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
@@ -368,11 +362,6 @@ const exportAdvisorWiseReconData = () => {
 const handleAdvisorWiseReconData = () => {
     exportAdvisorWiseReconData();
 };
-
-
-
-
-
 
 
   const exportMisToExcel = () => {

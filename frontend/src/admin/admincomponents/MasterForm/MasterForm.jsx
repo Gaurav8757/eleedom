@@ -2,68 +2,15 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import MultiStep from "react-multistep";
-// import { SlArrowRightCircle, SlArrowLeftCircle } from "react-icons/sl";
 import VITE_DATA from "../../../config/config.jsx";
 function MasterForm() {
   const [states, setStates] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [cities, setCities] = useState([]);
   const [ncbList, setNcbLists] = useState([]);
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-  const [entryDate, setEntryDate] = useState("");
-  const [company, setCompany] = useState("");
-  const [category, setCategory] = useState("");
-  const [segment, setSegment] = useState("");
-  const [sourcing, setSourcing] = useState("");
-  const [policyNo, setPolicyNo] = useState("");
-  const [insuredName, setInsuredName] = useState("");
-  const [contactNo, setContactNo] = useState("");
-  const [vehRegNo, setVehRegNo] = useState("");
-  const [policyStartDate, setPolicyStartDate] = useState("");
-  const [policyEndDate, setPolicyEndDate] = useState("");
-  const [odExpiry, setOdExpiry] = useState("");
-  const [tpExpiry, setTpExpiry] = useState("");
-  const [idv, setIdv] = useState("");
-  const [bodyType, setBodyType] = useState("");
-  const [makeModel, setMakeModel] = useState("");
-  const [mfgYear, setMfgYear] = useState("");
-  const [registrationDate, setRegistrationDate] = useState("");
-  const [vehicleAge, setVehicleAge] = useState("");
-  const [fuel, setFuel] = useState("");
-  const [gvw, setGvw] = useState("");
-  const [rsa, setRSA] = useState("");
-  const [cc, setCc] = useState("");
-  const [engNo, setEngNo] = useState("");
-  const [chsNo, setChsNo] = useState("");
-  const [policyType, setPolicyType] = useState("");
   const [productCode, setProductCode] = useState("");
-  const [odPremium, setOdPremium] = useState("");
-  const [liabilityPremium, setLiabilityPremium] = useState("");
-  const [netPremium, setNetPremium] = useState("");
-  const [finalEntryFields, setFinalEntryFields] = useState("");
-  const [taxes, setTaxes] = useState("");
-  const [odDiscount, setOdDiscount] = useState("");
   const [ccList, setCCList] = useState([]);
-  const [ncb, setNcb] = useState("");
-  const [advisorName, setAdvisorName] = useState("");
-  const [subAdvisor, setSubAdvisor] = useState("");
-  const [staffName, setStaffName] = useState("");
-  const [branch, setBranch] = useState("");
-  const [payoutOn, setPayoutOn] = useState("");
   const [branchname, setBranchName] = useState([]);
-  const [calculationType, setCalculationType] = useState("");
-  const [policyPaymentMode, setPolicyPaymentMode] = useState("");
-  const [paymentDoneBy, setPaymentDoneBy] = useState("");
-  const [chqNoRefNo, setChqNoRefNo] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [chqPaymentDate, setChqPaymentDate] = useState("");
-  const [chqStatus, setChqStatus] = useState("");
-  const [advisorPayableAmount, setAdvisorPayableAmount] = useState(0);
-  const [branchPayout, setBranchPayout] = useState("");
-  const [branchPayableAmount, setBranchPayableAmount] = useState("");
-  const [companyPayout, setCompanyPayout] = useState(0);
-  const [profitLoss, setProfitLoss] = useState("");
   const [data, setData] = useState([]);
   const [products, setProducts] = useState([]);
   const [pdata, setPdata] = useState([]);
@@ -79,10 +26,8 @@ function MasterForm() {
   const [cslab, setCslab] = useState([]);
   const [odList, setOdList] = useState([]);
   const [advLists, setAdvLists] = useState([]);
-  const [advId, setAdvId] = useState("");
-  const [advisorPayoutAmount, setAdvisorPayoutAmount] = useState();
   const [sit, setSit] = useState([]);
-  const [sitcapacity, setSitCapacity] = useState("");
+  const [createPolicy, setCreatePolicy] = useState({});
   const citiesToShow = [
     "Araria",
     "Arwal",
@@ -382,26 +327,6 @@ function MasterForm() {
       });
   }, []);
 
-  // useEffect(() => {
-  //   // Load states asynchronously when the component mounts
-  //   const fetchStates = async () => {
-  //     const fetchedStates = await State.getStatesOfCountry('IN');
-  //     setStates(fetchedStates);
-  //   };
-  //   fetchStates();
-  // }, []);
-
-  // const handleStateChange = (e) => {
-  //   const stateIsoCode = e.target.value;
-  //   setSelectedState(stateIsoCode);
-  //   // Fetch cities only when a state is selected
-  //   const fetchCities = async () => {
-  //     const stateCities = await City.getCitiesOfState("IN", stateIsoCode);
-  //     setCities(stateCities);
-  //   };
-  //   fetchCities();
-  // };
-
   useEffect(() => {
     // Load states asynchronously when the component mounts
     const fetchStates = async () => {
@@ -418,119 +343,26 @@ function MasterForm() {
     fetchStates();
   }, []);
 
-  const handleStateChange = async (e) => {
-    const stateIsoCode = e.target.value;
-    setSelectedState(stateIsoCode);
-
-    if (stateIsoCode) {
-      // Fetch cities only when a state is selected
-      try {
-        const { City } = await import("country-state-city").then(
-          (module) => module
-        );
-        const stateCities = City.getCitiesOfState("IN", stateIsoCode);
-        setCities(stateCities);
-      } catch (error) {
-        console.error("Error fetching cities:", error);
-      }
-    } else {
-      setCities([]);
-    }
-  };
-
-  // Function to update netPremium when odPremium or liabilityPremium changes
-  const updateNetPremium = () => {
-    const odPremiumValue = parseFloat(odPremium) || 0;
-    const liabilityPremiumValue = parseFloat(liabilityPremium) || 0;
-    // Calculate netPremium by adding odPremium and liabilityPremium
-    const newNetPremium = odPremiumValue + liabilityPremiumValue;
-    // Set the updated netPremium value directly
-    setNetPremium(newNetPremium);
-  };
-
-  const calculateAge = (year) => {
-    if (!year) {
-      setVehicleAge("Enter MFG Year");
-      return;
-    }
-
-    const currentYear = new Date().getFullYear();
-    const birthYearInt = parseInt(year, 10);
-
-    if (isNaN(birthYearInt)) {
-      setVehicleAge("Invalid year");
-      return;
-    }
-
-    let calculatedAge = currentYear - birthYearInt;
-
-    setVehicleAge(`${calculatedAge} years`);
-  };
-
-  useEffect(() => {
-    calculateAge(mfgYear);
-  }, [mfgYear]);
-
-  const handleMfgYearChange = (event) => {
-    const year = event.target.value;
-    setMfgYear(year);
-  };
-
-  // calculate taxes with netPremium
-  const calculateFinalAmount = () => {
-    const netPremiumValue = parseFloat(netPremium) || 0;
-    const taxesValue = parseFloat(taxes) || 0;
-    const rsaValue = parseFloat(rsa) || 0;
+  const calculateFinalAmount = (updatedPolicy) => {
+    // Ensure all values are numbers; default to 0 if undefined
+    const odPremiumValue = parseFloat(updatedPolicy.odPremium) || 0;
+    const liabilityPremiumValue =
+      parseFloat(updatedPolicy.liabilityPremium) || 0;
+    const taxesValue = parseFloat(updatedPolicy.taxes) || 0;
+    const rsaValue = parseFloat(updatedPolicy.rsa) || 0;
+    // Recalculate net premium (sum of odPremium and liabilityPremium)
+    const netPremiumValue = odPremiumValue + liabilityPremiumValue;
+    // Final amount calculation: netPremium + taxes + rsa
     const finalAmountValue = netPremiumValue + taxesValue + rsaValue;
-    if (company === "GO-DIGIT") {
-      setFinalEntryFields(finalAmountValue.toFixed(2));
-    } else {
-      setFinalEntryFields(finalAmountValue.toFixed(0));
-    }
-
-    // Assuming you want to display the final amount with two decimal places
-  };
-
-  useEffect(() => {
-    calculateFinalAmount();
-  });
-
-  // final amount set
-  const handleNetPremiumBlur = () => {
-    if (calculationType === "finalAmount") {
-      calculateFinalAmount();
-    } else if (calculationType === "branchPayableAmount") {
-      calculateBranchPayableAmount();
-    }
-    // Reset the calculation type after performing the calculation
-    setCalculationType("");
-  };
-
-  const handlePolicyStartDateChange = (e) => {
-    const startDate = e.target.value;
-    // Update odExpiry by adding 1 year to the selected policyStartDate
-    const odExpiryDate = new Date(startDate);
-    // odExpiryDate.setFullYear(odExpiryDate.getFullYear() + 1);
-    odExpiryDate.setFullYear(odExpiryDate.getFullYear() + 1);
-    setOdExpiry(odExpiryDate.toISOString().split("T")[0]);
-    // Update policyEndDate by adding 1 year to the selected policyStartDate
-    const policyEndDateValue = new Date(startDate);
-    policyEndDateValue.setFullYear(
-      policyEndDateValue.getFullYear() + 1,
-      policyEndDateValue.getMonth(),
-      policyEndDateValue.getDate() - 1
-    );
-    setPolicyEndDate(policyEndDateValue.toISOString().split("T")[0]);
-    // Update TP Expiry by adding 1 year to the selected policyStartDate
-    const tpExpiryDate = new Date(startDate);
-    tpExpiryDate.setFullYear(
-      tpExpiryDate.getFullYear() + 3,
-      tpExpiryDate.getMonth(),
-      tpExpiryDate.getDate() - 1
-    );
-    setTpExpiry(tpExpiryDate.toISOString().split("T")[0]);
-    // Set the selected policyStartDate
-    setPolicyStartDate(startDate);
+    // Set the final value based on the company rule
+    setCreatePolicy((prevPolicy) => ({
+      ...prevPolicy,
+      finalEntryFields:
+        createPolicy.company === "GO-DIGIT"
+          ? Number(finalAmountValue.toFixed(2))
+          : Number(finalAmountValue.toFixed(0)),
+    }));
+    return netPremiumValue; // Return netPremium if needed
   };
 
   // *************************************************************************************************************//
@@ -561,23 +393,21 @@ function MasterForm() {
   };
 
   //calculation  profit/loss
-  const calculateProfitLoss = () => {
-    const companyPayoutValue = parseFloat(companyPayout) || 0;
-    const branchPayoutValue = parseFloat(branchPayout) || 0;
-    const profitLossValue = companyPayoutValue - branchPayoutValue;
-    setProfitLoss(profitLossValue.toFixed(2)); // Assuming you want to display the result with two decimal places
+  const calculateProfitLoss = (branchPayout, companyPayout) => {
+    const profitLossValue = branchPayout - companyPayout;
+    return profitLossValue.toFixed(2); // Assuming you want to display the result with two decimal places
   };
 
-  // console.log(profitLoss);
   const matchingCSLab = cslab.find(
     (cslabItem) =>
-      cslabItem.cnames === company &&
-      cslabItem.catnames === category &&
-      cslabItem.policytypes === policyType &&
-      cslabItem.pcodes === productCode &&
-      cslabItem.vfuels === fuel &&
-      cslabItem.payoutons === payoutOn
+      String(cslabItem.catnames) === String(createPolicy.category) &&
+      String(cslabItem.policytypes) === String(createPolicy.policyType) &&
+      String(cslabItem.pcodes) === String(createPolicy.productCode) &&
+      String(cslabItem.vfuels) === String(createPolicy.fuel) &&
+      String(cslabItem.payoutons) === String(createPolicy.payoutOn)
   );
+
+  console.log(matchingCSLab);
 
   useEffect(() => {
     const calculateAmounts = () => {
@@ -588,278 +418,223 @@ function MasterForm() {
         const companypercent = matchingCSLab.companypayoutper || 0;
         // const cvPercentage = matchingCSLab.cvpercentage || 0;
         const advisorPayout = calculateAdvisorPayoutAmount(
-          parseFloat(finalEntryFields),
+          parseFloat(createPolicy?.finalEntryFields),
           percentage
         );
         const advisorPayable = calculateAdvisorPayableAmount(
-          parseFloat(finalEntryFields),
+          parseFloat(createPolicy.finalEntryFields),
           percentage
         );
         const branchPayables = calculateBranchPayableAmount(
-          parseFloat(finalEntryFields),
+          parseFloat(createPolicy?.finalEntryFields),
           branchpercent
         );
         const branchPayout = calculateBranchPayoutAmount(
-          parseFloat(finalEntryFields),
+          parseFloat(createPolicy?.finalEntryFields),
           branchpercent
         );
         const companyPayables = calculateCompanyPayableAmount(
-          parseFloat(finalEntryFields),
+          parseFloat(createPolicy?.finalEntryFields),
           companypercent
         );
-        setAdvisorPayableAmount(advisorPayable);
-        setAdvisorPayoutAmount(advisorPayout);
-        setBranchPayout(branchPayout);
-        setBranchPayableAmount(branchPayables);
-        setCompanyPayout(companyPayables);
-        // setBranchPayoutAmount(branchPayout);
+        setCreatePolicy({
+          ...createPolicy,
+          advisorPayableAmount: advisorPayable,
+          advisorPayoutAmount: advisorPayout,
+          branchPayout: branchPayout,
+          branchPayableAmount: branchPayables,
+          companyPayout: companyPayables,
+          profitLoss: calculateProfitLoss(branchPayout, companyPayables),
+        });
       }
     };
-    calculateAmounts();
-  }, [
-    cslab,
-    company,
-    category,
-    policyType,
-    productCode,
-    payoutOn,
-    finalEntryFields,
-    matchingCSLab,
-  ]);
+    if (createPolicy?.finalEntryFields) {
+      calculateAmounts();
+    }
+    [createPolicy.finalEntryFields, matchingCSLab];
+  });
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    if (name === "policyStartDate") {
+      // Update policyStartDate
+      const startDate = value;
+
+      // Calculate OD Expiry Date (1 Year Ahead)
+      const odExpiryDate = new Date(startDate);
+      odExpiryDate.setFullYear(odExpiryDate.getFullYear() + 1);
+      const formattedOdExpiry = odExpiryDate.toISOString().split("T")[0];
+
+      // Calculate Policy End Date (1 Year Ahead Minus 1 Day)
+      const policyEndDateValue = new Date(startDate);
+      policyEndDateValue.setFullYear(policyEndDateValue.getFullYear() + 1);
+      policyEndDateValue.setDate(policyEndDateValue.getDate() - 1);
+      const formattedPolicyEndDate = policyEndDateValue
+        .toISOString()
+        .split("T")[0];
+
+      // Calculate TP Expiry Date (3 Years Ahead Minus 1 Day)
+      const tpExpiryDate = new Date(startDate);
+      tpExpiryDate.setFullYear(tpExpiryDate.getFullYear() + 3);
+      tpExpiryDate.setDate(tpExpiryDate.getDate() - 1);
+      const formattedTpExpiry = tpExpiryDate.toISOString().split("T")[0];
+
+      // Update all related states
+      setCreatePolicy({
+        ...createPolicy,
+        [name]: startDate,
+        policyEndDate: formattedPolicyEndDate,
+        odExpiry: formattedOdExpiry,
+        tpExpiry: formattedTpExpiry,
+      });
+    } else if (name === "company") {
+      const selectedCatId = e.target.selectedOptions[0].getAttribute("data-id");
+      setCatTypesForSelectedPolicy(selectedCatId);
+      setCreatePolicy({
+        ...createPolicy,
+        [name]: value,
+      });
+    } else if (name === "selectedState") {
+      if (value) {
+        try {
+          const { City } = await import("country-state-city").then(
+            (module) => module
+          );
+          const stateCities = City.getCitiesOfState("IN", value);
+          setCities(stateCities);
+        } catch (error) {
+          console.error("Error fetching cities:", error);
+          setCities([]);
+        }
+      } else {
+        setCities([]);
+      }
+      setCreatePolicy({
+        ...createPolicy,
+        [name]: value,
+        selectedCity: value,
+      });
+    } else if (name === "mfgYear") {
+      const currentYear = new Date().getFullYear();
+      const birthYearInt = parseInt(value, 10);
+      let calculatedAge = currentYear - birthYearInt;
+      setCreatePolicy({
+        ...createPolicy,
+        [name]: value,
+        vehicleAge: isNaN(birthYearInt) ? 0 : `${calculatedAge} years`,
+      });
+    } else if (name === "policyType") {
+      const filteredProducts = data.find(
+        (prod) => prod.p_type === value
+      )?.products;
+      setProducts(filteredProducts);
+      setProductCode("");
+      setCreatePolicy({
+        ...createPolicy,
+        [name]: value,
+      });
+    } else if (
+      ["liabilityPremium", "odPremium", "taxes", "rsa"].includes(name)
+    ) {
+      setCreatePolicy((prevPolicy) => {
+        const updatedPolicy = {
+          ...prevPolicy,
+          [name]: Number(value), // Update premium fields
+        };
+        // Recalculate netPremium
+        const newNetPremium = calculateFinalAmount(updatedPolicy);
+        return {
+          ...updatedPolicy,
+          netPremium: newNetPremium,
+        };
+      });
+    } else if (name === "advId") {
+      const selectedAdvisor = advLists.find((adv) => adv.uniqueId === value);
+      setCreatePolicy({
+        ...createPolicy,
+        [name]: value,
+        advisorName: selectedAdvisor.advisorname || "",
+      });
+    } else if (name === "branchPayout" || name === "companyPayout" || name === "idv") {
+      setCreatePolicy({
+        ...createPolicy,
+        [name]: Number(value),
+      });
+    } else {
+      setCreatePolicy({
+        ...createPolicy,
+        [name]: value,
+      });
+    }
+  };
 
   // Handle form submission logic here
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formSubmitted) {
-      return;
-    }
+    
+    if (formSubmitted) return;
     setErrors({}); // Clear previous errors
 
-    const errors = {};
-    if (!entryDate) {
-      errors.entryDate = "required*";
-    }
-    if (!insuredName) {
-      errors.insuredName = "required*";
-    }
-    if (!company) {
-      errors.company = "required*";
-    }
+    const requiredFields = [
+      { field: createPolicy.entryDate, key: "entryDate" },
+      { field: createPolicy.insuredName, key: "insuredName" },
+      { field: createPolicy.company, key: "company" },
+      { field: createPolicy.branch, key: "branch" },
+      { field: createPolicy.policyNo, key: "policyNo" },
+      { field: createPolicy.engNo, key: "engNo" },
+      { field: createPolicy.chsNo, key: "chsNo" },
+      { field: createPolicy.policyType, key: "policyType" },
+      { field: createPolicy.odPremium, key: "odPremium" },
+      { field: createPolicy.liabilityPremium, key: "liabilityPremium" },
+      // { field: createPolicy.rsa, key: "rsa" },
+      { field: createPolicy.taxes, key: "taxes" },
+      { field: createPolicy.segment, key: "segment" },
+      { field: createPolicy.sourcing, key: "sourcing" },
+      { field: createPolicy.policyPaymentMode, key: "policyPaymentMode" },
+      { field: createPolicy.vehRegNo, key: "vehRegNo" },
+      { field: createPolicy.policyStartDate, key: "policyStartDate" },
+      { field: createPolicy.policyEndDate, key: "policyEndDate" },
+      { field: createPolicy.odDiscount, key: "odDiscount" },
+      // { field: createPolicy.ncb, key: "ncb" },
+      { field: createPolicy.contactNo, key: "contactNo" },
+      { field: createPolicy.idv, key: "idv" },
+      { field: createPolicy.bodyType, key: "bodyType" },
+      { field: createPolicy.makeModel, key: "makeModel" },
+      { field: createPolicy.mfgYear, key: "mfgYear" },
+      // { field: createPolicy.gvw, key: "gvw" },
+      // { field: createPolicy.cc, key: "cc" },
+      { field: createPolicy.payoutOn, key: "payoutOn" },
+      { field: createPolicy.productCode, key: "productCode" },
+      { field: createPolicy.advId, key: "advId" },
+      { field: createPolicy.staffName, key: "staffName" },
+    ];
 
-    if (!branch) {
-      errors.branch = "required*";
-    }
-    if (!policyNo) {
-      errors.policyNo = "required*";
-    }
-    if (!engNo) {
-      errors.engNo = "required*";
-    }
-    if (!chsNo) {
-      errors.chsNo = "required*";
-    }
-    if (!policyType) {
-      errors.policyType = "required*";
-    }
-    if (!odPremium) {
-      errors.odPremium = "required*";
-    }
-    if (!liabilityPremium) {
-      errors.liabilityPremium = "required*";
-    }
-    if (!rsa) {
-      errors.rsa = "required*";
-    }
-    if (!taxes) {
-      errors.taxes = "required*";
-    }
-    if (!segment) {
-      errors.segment = "required*";
-    }
-    if (!sourcing) {
-      errors.sourcing = "required*";
-    }
-    if (!policyPaymentMode) {
-      errors.policyPaymentMode = "required*";
-    }
-    if (!vehRegNo) {
-      errors.vehRegNo = "required*";
-    }
-    if (!policyStartDate) {
-      errors.policyStartDate = "required*";
-    }
-    if (!policyEndDate) {
-      errors.policyEndDate = "required*";
-    }
-    if (!odDiscount) {
-      errors.odDiscount = "required*";
-    }
-    if (!ncb) {
-      errors.ncb = "required*";
-    }
-    if (!contactNo) {
-      errors.contactNo = "required*";
-    }
-    if (!idv) {
-      errors.idv = "required*";
-    }
-    if (!bodyType) {
-      errors.bodyType = "required*";
-    }
-    if (!makeModel) {
-      errors.makeModel = "required*";
-    }
-    if (!mfgYear) {
-      errors.mfgYear = "required*";
-    }
-    if (!gvw) {
-      errors.gvw = "required*";
-    }
-    if (!cc) {
-      errors.cc = "required*";
-    }
-    if (!payoutOn) {
-      errors.payoutOn = "required*";
-    }
+    const errors = requiredFields.reduce((acc, { field, key }) => {
+      if (!field) acc[key] = "required*";
+      console.log(acc);
+      
+      return acc;
+    }, {});
 
-    if (!productCode) {
-      errors.productCode = "required*";
-    }
-    if (!advId) {
-      errors.advId = "required*";
-    }
-
-    if (!staffName) {
-      errors.staffName = "required*";
-    }
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
       return;
     }
-
     try {
-      // Make sure to replace this URL with your actual API endpoint
-      const response = await axios.post(`${VITE_DATA}/alldetails/adddata`, {
-        entryDate,
-        company,
-        category,
-        segment,
-        sourcing,
-        policyNo,
-        insuredName,
-        contactNo,
-        vehRegNo,
-        rsa,
-        policyStartDate,
-        policyEndDate,
-        odExpiry,
-        tpExpiry,
-        idv,
-        bodyType,
-        makeModel,
-        mfgYear,
-        registrationDate,
-        vehicleAge,
-        fuel,
-        gvw,
-        cc,
-        engNo,
-        chsNo,
-        policyType,
-        productCode,
-        odPremium,
-        liabilityPremium,
-        netPremium,
-        finalEntryFields,
-        odDiscount,
-        ncb,
-        advisorName,
-        advId,
-        subAdvisor,
-        staffName,
-        branch,
-        payoutOn,
-        taxes,
-        policyPaymentMode,
-        paymentDoneBy,
-        chqNoRefNo,
-        bankName,
-        chqPaymentDate,
-        chqStatus,
-        advisorPayableAmount,
-        states: selectedState,
-        district: selectedCity,
-        advisorPayoutAmount,
-        branchPayout,
-        branchPayableAmount,
-        companyPayout,
-        profitLoss,
-      });
+      const response = await axios.post(
+        `${VITE_DATA}/alldetails/adddata`,
+        createPolicy
+      );
 
       if (response.data) {
-        toast.success("Data Added Successfully !");
-        setFormSubmitted(true);
-        setSelectedCity("");
-        setSelectedState("");
-        setEntryDate("");
-        setInsuredName("");
-        setContactNo("");
-        setBranch("");
-        setStaffName("");
-        setSegment("");
-        setCompany("");
-        setCategory("");
-        setSourcing("");
-        setPolicyNo("");
-        setVehRegNo("");
-        setRSA("");
-        setAdvId("");
-        setPolicyStartDate("");
-        setPolicyEndDate("");
-        setOdExpiry("");
-        setTpExpiry("");
-        setIdv("");
-        setBodyType("");
-        setMakeModel("");
-        setMfgYear("");
-        setRegistrationDate("");
-        setVehicleAge("");
-        setFuel("");
-        setGvw("");
-        setCc("");
-        setEngNo("");
-        setChsNo("");
-        setPolicyType("");
-        setProductCode("");
-        setOdPremium("");
-        setLiabilityPremium("");
-        setNetPremium("");
-        setFinalEntryFields("");
-        setOdDiscount("");
-        setNcb("");
-        setAdvisorName("");
-        setSubAdvisor("");
-        setStaffName("");
-        setBranch("");
-        setPayoutOn("");
-        setTaxes("");
-        setPolicyPaymentMode("");
-        setPaymentDoneBy("");
-        setChqNoRefNo("");
-        setBankName("");
-        setChqPaymentDate("");
-        setChqStatus("");
-        setAdvisorPayoutAmount("");
-        setAdvisorPayableAmount("");
-        setBranchPayout("");
-        setBranchPayableAmount("");
-        setCompanyPayout("");
-        setProfitLoss("");
+        toast.success("Data Added Successfully!");
+        setCreatePolicy("");
       } else {
-        toast.error("Error Occurred. Try again...! ");
+        toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error during branch registration:", error.response);
+      console.error(error.response.data.error.message);
+      toast.error(error.response.data.error.message);
     } finally {
       setFormSubmitted(false);
     }
@@ -867,7 +642,7 @@ function MasterForm() {
 
   return (
     <section className="container-fluid relative  p-0 sm:ml-48 bg-white">
-      <div className="container-fluid  justify-center p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-white">
+      <div className="container-fluid  justify-center p-2 border-gray-200 border-dashed rounded dark:border-gray-700 bg-white">
         <h1 className="font-semibold text-3xl my-2 text-blue-700">
           Create Policy
         </h1>
@@ -875,7 +650,7 @@ function MasterForm() {
           <MultiStep
             activeStep={0}
             showNavigation={true}
-            className="bg-blue-500 rounded-lg shadow-md flex justify-between mt-0 overflow-hidden"
+            className="bg-blue-500 rounded shadow-md flex justify-between mt-0 overflow-hidden"
             stepCustomStyle={{
               display: "inline",
               width: "30%",
@@ -956,11 +731,11 @@ function MasterForm() {
                   Entry Date:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="date"
                   name="entryDate"
-                  value={entryDate}
-                  onChange={(e) => setEntryDate(e.target.value)}
+                  value={createPolicy.entryDate}
+                  onChange={handleChange}
                   placeholder="Select Entry Date"
                 />
                 {errors.entryDate && (
@@ -977,9 +752,9 @@ function MasterForm() {
                 <select
                   id="branch"
                   name="branch"
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={branch}
-                  onChange={(e) => setBranch(e.target.value)}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.branch}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     ---------------- Select Branch --------------
@@ -1000,11 +775,11 @@ function MasterForm() {
                   Insured Name:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded capitalize"
                   type="text"
                   name="insuredName"
-                  value={insuredName}
-                  onChange={(e) => setInsuredName(e.target.value.toUpperCase())}
+                  value={createPolicy.insuredName}
+                  onChange={handleChange}
                   placeholder="Enter Insured Name"
                 />
                 {errors.insuredName && (
@@ -1018,11 +793,11 @@ function MasterForm() {
               <div className="flex flex-col p-1 text-start w-full lg:w-1/4">
                 <label className="text-base mx-1">Contact No:</label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={contactNo}
+                  value={createPolicy.contactNo}
                   name="contactNo"
-                  onChange={(e) => setContactNo(e.target.value)}
+                  onChange={handleChange}
                   placeholder="Enter Contact No"
                 />
               </div>
@@ -1036,9 +811,9 @@ function MasterForm() {
                 <select
                   id="staffName"
                   name="staffName"
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={staffName}
-                  onChange={(e) => setStaffName(e.target.value)}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.staffName}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     --------------- Policy Made By --------------
@@ -1068,14 +843,9 @@ function MasterForm() {
                 <select
                   id="company"
                   name="company"
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={company}
-                  onChange={(e) => {
-                    setCompany(e.target.value.toUpperCase());
-                    const selectedCatId =
-                      e.target.selectedOptions[0].getAttribute("data-id");
-                    setCatTypesForSelectedPolicy(selectedCatId);
-                  }}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.company}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     ------------- Select Company --------------
@@ -1101,10 +871,10 @@ function MasterForm() {
                   Category:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style w-full p-0.5 text-lg rounded-lg"
-                  value={category}
+                  className="input-style w-full py-1.5 text-lg rounded"
+                  value={createPolicy.category}
                   name="category"
-                  onChange={(e) => setCategory(e.target.value)}
+                  onChange={handleChange}
                 >
                   <option value="">
                     ------------ Select Product Type ------------
@@ -1128,22 +898,11 @@ function MasterForm() {
                   Policy Type:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={policyType}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.policyType}
                   name="policyType"
-                  onChange={(e) => {
-                    const selectedPolicyType = e.target.value;
-                    setPolicyType(selectedPolicyType);
-                    // Filter products based on selected policy type
-                    const filteredProducts = data.find(
-                      (prod) => prod.p_type === selectedPolicyType
-                    )?.products;
-                    setProducts(filteredProducts);
-                    // Reset product code when policy type changes
-                    setProductCode("");
-                  }}
+                  onChange={handleChange}
                 >
-                  {" "}
                   <option value="">
                     ------------ Select Policy Type --------------
                   </option>
@@ -1166,11 +925,11 @@ function MasterForm() {
                   Policy No:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={policyNo}
+                  value={createPolicy.policyNo}
                   name="policyNo"
-                  onChange={(e) => setPolicyNo(e.target.value)}
+                  onChange={handleChange}
                   placeholder="Enter Policy No"
                 />
                 {errors.policyNo && (
@@ -1186,11 +945,11 @@ function MasterForm() {
                   Engine No:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="engNo"
-                  value={engNo}
-                  onChange={(e) => setEngNo(e.target.value.toUpperCase())}
+                  value={createPolicy.engNo}
+                  onChange={handleChange}
                   placeholder="Enter Engine No"
                 />
                 {errors.engNo && (
@@ -1202,11 +961,11 @@ function MasterForm() {
                   Chassis No:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={chsNo}
+                  value={createPolicy.chsNo}
                   name="chsNo"
-                  onChange={(e) => setChsNo(e.target.value.toUpperCase())}
+                  onChange={handleChange}
                   placeholder="Enter Chassis No"
                 />
                 {errors.chsNo && (
@@ -1214,19 +973,18 @@ function MasterForm() {
                 )}
               </div>
 
-              {policyType === "SATP" ? (
+              {createPolicy.policyType === "SATP" ? (
                 <div className="flex flex-col p-1 mt-4 text-start w-full lg:w-1/4">
                   <label className="text-base mx-1">
                     OD Premium:<span className="text-red-600 font-bold">*</span>
                   </label>
                   <input
-                    className="input-style p-1 rounded-lg"
+                    className="input-style rounded"
                     type="number"
-                    value={odPremium}
+                    value={createPolicy.odPremium}
                     name="odPremium"
-                    onChange={(e) => setOdPremium(e.target.value)}
+                    onChange={handleChange}
                     placeholder="Disabled"
-                    onBlur={updateNetPremium}
                     disabled
                   />
                 </div>
@@ -1236,13 +994,12 @@ function MasterForm() {
                     OD Premium:<span className="text-red-600 font-bold">*</span>
                   </label>
                   <input
-                    className="input-style p-1 rounded-lg"
+                    className="input-style rounded"
                     type="number"
-                    value={odPremium}
+                    value={createPolicy.odPremium}
                     name="odPremium"
-                    onChange={(e) => setOdPremium(e.target.value)}
+                    onChange={handleChange}
                     placeholder="Enter OD Premium"
-                    onBlur={updateNetPremium}
                   />
                   {errors.odPremium && (
                     <span className="text-red-600 text-sm ">
@@ -1254,20 +1011,19 @@ function MasterForm() {
             </div>
 
             <div className="flex flex-wrap mb-12 justify-between">
-              {policyType === "SAOD" ? (
+              {createPolicy.policyType === "SAOD" ? (
                 <div className="flex flex-col p-1 mt-0 text-start w-full lg:w-1/4">
                   <label className="text-base mx-1">
                     Liability Premium:
                     <span className="text-red-600 font-bold">*</span>
                   </label>
                   <input
-                    className="input-style p-1 rounded-lg"
+                    className="input-style rounded"
                     type="number"
                     name="liabilityPremium"
-                    value={liabilityPremium}
-                    onChange={(e) => setLiabilityPremium(e.target.value)}
+                    value={createPolicy.liabilityPremium}
+                    onChange={handleChange}
                     placeholder="Disabled"
-                    onBlur={updateNetPremium}
                     disabled
                   />
                 </div>
@@ -1278,13 +1034,12 @@ function MasterForm() {
                     <span className="text-red-600 font-bold">*</span>
                   </label>
                   <input
-                    className="input-style p-1 rounded-lg"
+                    className="input-style rounded"
                     type="number"
                     name="liabilityPremium"
-                    value={liabilityPremium}
-                    onChange={(e) => setLiabilityPremium(e.target.value)}
+                    value={createPolicy.liabilityPremium}
+                    onChange={handleChange}
                     placeholder="Enter Liability Premium"
-                    onBlur={updateNetPremium}
                   />
                   {errors.liabilityPremium && (
                     <span className="text-red-600 text-sm ">
@@ -1300,11 +1055,10 @@ function MasterForm() {
                   Net Premium:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="number"
                   name="netPremium"
-                  value={netPremium}
-                  onBlur={handleNetPremiumBlur}
+                  value={createPolicy.netPremium}
                   placeholder="Net Premium"
                   readOnly
                 />
@@ -1316,12 +1070,11 @@ function MasterForm() {
                   GST(Amount):<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={taxes}
-                  name="finalEntryFields"
-                  onChange={(e) => setTaxes(e.target.value)}
-                  // onBlur={calculateFinalAmount}
+                  value={createPolicy.taxes}
+                  name="taxes"
+                  onChange={handleChange}
                   placeholder="GST"
                 />
                 {errors.taxes && (
@@ -1334,12 +1087,11 @@ function MasterForm() {
                   RSA:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={rsa}
+                  value={createPolicy.rsa}
                   name="rsa"
-                  onChange={(e) => setRSA(e.target.value)}
-                  // onBlur={calculateFinalAmount}
+                  onChange={handleChange}
                   placeholder="RSA"
                 />
                 {errors.rsa && (
@@ -1353,11 +1105,10 @@ function MasterForm() {
                   Final Amount:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={finalEntryFields}
+                  value={createPolicy.finalEntryFields}
                   name="finalEntryFields"
-                  onChange={(e) => setFinalEntryFields(e.target.value)}
                   placeholder=" Final Amount"
                   readOnly
                 />
@@ -1367,7 +1118,7 @@ function MasterForm() {
               {/* <div className="flex flex-col p-1 mt-4 text-start w-full lg:w-1/4">
                 <label className="text-base mx-1">OD Discount%:<span className="text-red-600 font-bold">*</span></label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="odDiscount"
                   value={odDiscount}
@@ -1377,16 +1128,16 @@ function MasterForm() {
                 {errors.odDiscount && <span className="text-red-600 text-sm ">{errors.odDiscount}</span>}
               </div> */}
 
-              <div className="flex flex-col p-1 mt-5 text-start w-full lg:w-1/4">
+              <div className="flex flex-col p-1 mt-4 text-start w-full lg:w-1/4">
                 <label className="text-base mx-1">
                   OD Discount%:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style text-base p-1 rounded-lg"
+                  className="input-style text-base rounded"
                   type="text"
                   name="odDiscount"
-                  value={odDiscount}
-                  onChange={(e) => setOdDiscount(e.target.value)}
+                  value={createPolicy.odDiscount}
+                  onChange={handleChange}
                   placeholder="Enter OD Discount"
                 >
                   <option className="w-1" value="">
@@ -1411,10 +1162,10 @@ function MasterForm() {
                   Segment:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style p-0.5 text-lg rounded-lg"
+                  className="input-style py-1.5 text-lg rounded"
                   name="segment"
-                  value={segment}
-                  onChange={(e) => setSegment(e.target.value)}
+                  value={createPolicy.segment}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     -------------- Select Segment --------------
@@ -1433,17 +1184,17 @@ function MasterForm() {
                 )}
               </div>
 
-              {segment === "PVT-CAR" ? (
+              {createPolicy.segment === "PVT-CAR" ? (
                 <div className="flex flex-col p-1 mt-4 text-start w-full lg:w-1/4">
                   <label className="text-base mx-1">
                     NCB%:<span className="text-red-600 font-bold">*</span>
                   </label>
                   <select
-                    className="input-style p-1 text-base rounded-lg"
+                    className="input-style text-base rounded"
                     type="text"
                     name="ncb"
-                    value={ncb}
-                    onChange={(e) => setNcb(e.target.value)}
+                    value={createPolicy.ncb}
+                    onChange={handleChange}
                   >
                     <option className="w-1" value="">
                       ------------------- Select NCB -------------------
@@ -1464,11 +1215,11 @@ function MasterForm() {
                     NCB%:<span className="text-red-600 text-sm">Disabled</span>
                   </label>
                   <select
-                    className="input-style p-1 text-base rounded-lg"
+                    className="input-style text-base rounded"
                     type="text"
                     name="ncb"
-                    value={ncb}
-                    onChange={(e) => setNcb(e.target.value)}
+                    value={createPolicy.ncb}
+                    onChange={handleChange}
                     disabled
                   >
                     <option className="w-1" value="">
@@ -1494,10 +1245,10 @@ function MasterForm() {
                 </label>
                 <select
                   id="policyPaymentMode"
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={policyPaymentMode}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.policyPaymentMode}
                   name="policyPaymentMode"
-                  onChange={(e) => setPolicyPaymentMode(e.target.value)}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     ------- Select Policy Payment Mode -------
@@ -1519,9 +1270,10 @@ function MasterForm() {
                   State:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style text-lg p-0.5 rounded-lg"
-                  value={selectedState}
-                  onChange={handleStateChange}
+                  className="input-style text-lg py-1.5 rounded"
+                  name="selectedState"
+                  value={createPolicy.selectedState}
+                  onChange={handleChange}
                 >
                   <option value="">
                     ---------------- Select State -----------------{" "}
@@ -1541,10 +1293,11 @@ function MasterForm() {
                 {
                   // selectedCity ? (
                   <select
-                    className="input-style text-base p-1 rounded-lg"
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
-                    disabled={!selectedState} // Disable city dropdown until a state is selected
+                    className="input-style py-2 text-base rounded"
+                    name="selectedCity"
+                    value={createPolicy.selectedCity}
+                    onChange={handleChange}
+                    disabled={!createPolicy.selectedState} // Disable city dropdown until a state is selected
                   >
                     <option value="">
                       ------------------- Select District --------------
@@ -1568,11 +1321,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1  rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={vehRegNo}
+                  value={createPolicy.vehRegNo}
                   name="vehRegNo"
-                  onChange={(e) => setVehRegNo(e.target.value.toUpperCase())}
+                  onChange={handleChange}
                   placeholder="Enter Vehicle Reg No"
                 />
                 {errors.vehRegNo && (
@@ -1591,10 +1344,10 @@ function MasterForm() {
                   Sourcing:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={sourcing}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.sourcing}
                   name="sourcing"
-                  onChange={(e) => setSourcing(e.target.value)}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     ------------ Select Sourcing Type -----------
@@ -1617,11 +1370,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="date"
                   name="policyStartDate"
-                  value={policyStartDate}
-                  onChange={handlePolicyStartDateChange}
+                  value={createPolicy.policyStartDate}
+                  onChange={handleChange}
                   placeholder="Select Policy Start Date"
                 />
                 {errors.policyStartDate && (
@@ -1637,11 +1390,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="date"
                   name="policyEndDate"
-                  value={policyEndDate}
-                  onChange={(e) => setPolicyEndDate(e.target.value)}
+                  value={createPolicy.policyEndDate}
+                  onChange={handleChange}
                   placeholder="Select Policy End Date"
                 />
                 {errors.policyEndDate && (
@@ -1657,11 +1410,11 @@ function MasterForm() {
                   OD Expiry:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="date"
                   name="odExpiry"
-                  value={odExpiry}
-                  onChange={(e) => setOdExpiry(e.target.value)}
+                  value={createPolicy.odExpiry}
+                  onChange={handleChange}
                   placeholder="Select OD Expiry"
                   min="2025-01-01"
                 />
@@ -1672,11 +1425,11 @@ function MasterForm() {
                   TP Expiry:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="date"
                   name="tpExpiry"
-                  value={tpExpiry}
-                  onChange={(e) => setTpExpiry(e.target.value)}
+                  value={createPolicy.tpExpiry}
+                  onChange={handleChange}
                   placeholder="TP Expiry"
                   min="2025-01-01"
                 />
@@ -1688,11 +1441,11 @@ function MasterForm() {
                   IDV:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="idv"
-                  value={idv}
-                  onChange={(e) => setIdv(e.target.value.toUpperCase())}
+                  value={createPolicy.idv}
+                  onChange={handleChange}
                   placeholder="Enter IDV"
                 />
                 {errors.idv && (
@@ -1706,11 +1459,11 @@ function MasterForm() {
                   Body Type:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={bodyType}
+                  value={createPolicy.bodyType}
                   name="bodyType"
-                  onChange={(e) => setBodyType(e.target.value.toUpperCase())}
+                  onChange={handleChange}
                   placeholder="Enter Body Type"
                 />
                 {errors.bodyType && (
@@ -1726,11 +1479,11 @@ function MasterForm() {
                   Make & Model:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="makeModel"
-                  value={makeModel}
-                  onChange={(e) => setMakeModel(e.target.value.toUpperCase())}
+                  value={createPolicy.makeModel}
+                  onChange={handleChange}
                   placeholder="Enter Make & Model"
                 />
                 {errors.makeModel && (
@@ -1746,11 +1499,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1  rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="mfgYear"
-                  value={mfgYear}
-                  onChange={handleMfgYearChange}
+                  value={createPolicy.mfgYear}
+                  onChange={handleChange}
                   placeholder="Enter Manufacturing Year"
                 />
                 {errors.mfgYear && (
@@ -1767,14 +1520,12 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1  rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={registrationDate}
+                  value={createPolicy.registrationDate}
                   name="registrationDate"
-                  onChange={(e) => setRegistrationDate(e.target.value)}
+                  onChange={handleChange}
                   placeholder="Enter Registration Year"
-                  // min="1950-01-01"
-                  // max={getLastDayOfPreviousMonth()}
                 />
                 {errors.registrationDate && (
                   <span className="text-red-600 text-sm">
@@ -1789,10 +1540,10 @@ function MasterForm() {
                   Vehicle Age:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="vehicleAge"
-                  value={vehicleAge}
+                  value={createPolicy.vehicleAge}
                   placeholder="Vehicle Age"
                   readOnly
                 />
@@ -1804,10 +1555,10 @@ function MasterForm() {
                   Fuel:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={fuel}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.fuel}
                   name="fuel"
-                  onChange={(e) => setFuel(e.target.value)}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     ------------- Select Fuel Type -------------
@@ -1830,22 +1581,19 @@ function MasterForm() {
                 <select
                   id="productCode"
                   name="productCode"
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={productCode}
-                  onChange={(e) => setProductCode(e.target.value)}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.productCode}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     ----------- Select Product Code ------------
                   </option>
-                  {data.map(
-                    (policy) =>
-                      policy.p_type === policyType &&
-                      products.map((product, idx) => (
-                        <option key={idx} value={product}>
-                          {product}
-                        </option>
-                      ))
-                  )}
+
+                  {products.map((product, idx) => (
+                    <option key={idx} value={product}>
+                      {product}
+                    </option>
+                  ))}
                 </select>
                 {errors.productCode && (
                   <span className="text-red-600 text-sm ">
@@ -1854,14 +1602,14 @@ function MasterForm() {
                 )}
               </div>
 
-              {segment === "C V" ? (
+              {createPolicy.segment === "C V" ? (
                 <div className="flex flex-col p-1 mt-0 text-start w-full lg:w-1/4">
                   <label className="text-base mx-1">GVW (kg):</label>
                   <input
-                    className="input-style p-1 rounded-lg"
+                    className="input-style rounded"
                     type="text"
-                    value={gvw}
-                    onChange={(e) => setGvw(e.target.value)}
+                    value={createPolicy.gvw}
+                    onChange={handleChange}
                     placeholder="Enter GVW"
                     name="gvw"
                   />
@@ -1873,10 +1621,10 @@ function MasterForm() {
                     <span className="text-red-600 text-sm">Disabled</span>
                   </label>
                   <input
-                    className="input-style p-1 rounded-lg"
+                    className="input-style rounded"
                     type="text"
-                    value={gvw}
-                    onChange={(e) => setGvw(e.target.value)}
+                    value={createPolicy.gvw}
+                    onChange={handleChange}
                     name="gvw"
                     placeholder="Disabled"
                     disabled
@@ -1884,17 +1632,17 @@ function MasterForm() {
                 </div>
               )}
 
-              {segment === "C V" &&
+              {createPolicy.segment === "C V" &&
               (productCode === "SCHOOL BUS" ||
                 productCode === "ROUTE BUS" ||
                 productCode === "TAXI") ? (
                 <div className="flex flex-col p-1 mt-0 text-start w-full lg:w-1/4">
                   <label className="text-base mx-1 ">Seating Capacity:</label>
                   <select
-                    className="input-style p-1 text-base rounded-lg"
+                    className="input-style text-base rounded"
                     type="text"
-                    value={sitcapacity}
-                    onChange={(e) => setSitCapacity(e.target.value)}
+                    value={createPolicy.sitcapacity}
+                    onChange={handleChange}
                     name="sitcapacity"
                     placeholder="Enter Sitting Capacity"
                   >
@@ -1917,10 +1665,10 @@ function MasterForm() {
                     <span className="text-red-600 text-sm">Disabled</span>
                   </label>
                   <select
-                    className="input-style p-1 text-base rounded-lg"
+                    className="input-style text-base rounded"
                     type="text"
-                    value={sitcapacity}
-                    onChange={(e) => setSitCapacity(e.target.value)}
+                    value={createPolicy.sitcapacity}
+                    onChange={handleChange}
                     name="sitcapacity"
                     placeholder="Disabled"
                     disabled
@@ -1943,7 +1691,7 @@ function MasterForm() {
               <div className="flex flex-col p-1  text-start w-full lg:w-1/4">
                 <label className="text-base mx-1">CC:<span className="text-red-600 font-bold">*</span></label>
                 <select
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="cc"
                   value={cc}
@@ -1959,17 +1707,18 @@ function MasterForm() {
                 </select>
               </div> */}
 
-              {segment === "PVT-CAR" || segment === "TW" ? (
+              {createPolicy.segment === "PVT-CAR" ||
+              createPolicy.segment === "TW" ? (
                 <div className="flex flex-col p-1 mt-0 text-start w-full lg:w-1/4">
                   <label className="text-base mx-1">
                     CC:<span className="text-red-600 font-bold">*</span>
                   </label>
                   <select
-                    className="input-style p-1 rounded-lg"
+                    className="input-style rounded"
                     type="text"
                     name="cc"
-                    value={cc}
-                    onChange={(e) => setCc(e.target.value.toUpperCase())}
+                    value={createPolicy.cc}
+                    onChange={handleChange}
                     placeholder="Enter CC"
                   >
                     <option className="w-1" value="">
@@ -1988,11 +1737,11 @@ function MasterForm() {
                     CC:<span className="text-red-600 text-sm">Disabled</span>
                   </label>
                   <select
-                    className="input-style p-1 rounded-lg"
+                    className="input-style rounded"
                     type="text"
                     name="cc"
-                    value={cc}
-                    onChange={(e) => setCc(e.target.value.toUpperCase())}
+                    value={createPolicy.cc}
+                    onChange={handleChange}
                     placeholder="Enter CC"
                     disabled
                   >
@@ -2016,25 +1765,18 @@ function MasterForm() {
                   Advisor Name:<span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={advId}
+                  value={createPolicy.advId}
                   name="advId"
-                  onChange={(e) => {
-                    const selectedAdvisor = advLists.find(
-                      (adv) => adv.uniqueId === e.target.value
-                    );
-                    setAdvId(e.target.value);
-                    setAdvisorName(
-                      selectedAdvisor ? selectedAdvisor.advisorname : ""
-                    );
-                  }}
+                  onChange={handleChange}
                   placeholder="Enter Advisor Name"
                 >
                   <option value="">
                     ----------------- Select Advisor -----------------
                   </option>
-                  {advLists.filter((emp)=> emp.branch[0] === branch)
+                  {advLists
+                    .filter((emp) => emp.branch[0] === createPolicy.branch)
                     .sort((a, b) => a.advisorname.localeCompare(b.advisorname))
                     .map((data) => (
                       <option
@@ -2057,11 +1799,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="subAdvisor"
-                  value={subAdvisor}
-                  onChange={(e) => setSubAdvisor(e.target.value.toUpperCase())}
+                  value={createPolicy.subAdvisor}
+                  onChange={handleChange}
                   placeholder="Enter Sub Advisor"
                 />
               </div>
@@ -2074,9 +1816,9 @@ function MasterForm() {
                 <select
                   id="payoutOn"
                   name="payoutOn"
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={payoutOn}
-                  onChange={(e) => setPayoutOn(e.target.value)}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.payoutOn}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     -------------- Select Payout on -------------
@@ -2100,10 +1842,10 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <select
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={paymentDoneBy}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.paymentDoneBy}
                   name="paymentDoneBy"
-                  onChange={(e) => setPaymentDoneBy(e.target.value)}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     --------- Select Payment Done By ------------
@@ -2124,11 +1866,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={chqNoRefNo}
+                  value={createPolicy.chqNoRefNo}
                   name="chqNoRefNo"
-                  onChange={(e) => setChqNoRefNo(e.target.value.toUpperCase())}
+                  onChange={handleChange}
                   placeholder="Enter CHQ No / Ref No."
                 />
               </div>
@@ -2141,10 +1883,10 @@ function MasterForm() {
                   id="bankName"
                   type="text"
                   name="bankName"
-                  className="input-style p-1 rounded-lg"
-                  value={bankName}
+                  className="input-style rounded"
+                  value={createPolicy.bankName}
                   placeholder="Enter Bank Name"
-                  onChange={(e) => setBankName(e.target.value.toUpperCase())}
+                  onChange={handleChange}
                 ></input>
               </div>
               {/* FIELD - 43 */}
@@ -2154,11 +1896,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="date"
                   name="chqPaymentDate"
-                  value={chqPaymentDate}
-                  onChange={(e) => setChqPaymentDate(e.target.value)}
+                  value={createPolicy.chqPaymentDate}
+                  onChange={handleChange}
                   placeholder="Select CHQ / Payment Date"
                 />
               </div>
@@ -2166,10 +1908,10 @@ function MasterForm() {
               <div className="flex flex-col p-1 mt-4 text-start w-full lg:w-1/4">
                 <label className="text-base mx-1">CHQ Status:</label>
                 <select
-                  className="input-style p-0.5 text-lg rounded-lg"
-                  value={chqStatus}
+                  className="input-style py-1.5 text-lg rounded"
+                  value={createPolicy.chqStatus}
                   name="chqStatus"
-                  onChange={(e) => setChqStatus(e.target.value)}
+                  onChange={handleChange}
                 >
                   <option className="w-1" value="">
                     --- Select CHQ Status ---
@@ -2190,12 +1932,12 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="bg-slate-200 p-1 rounded-lg"
+                  className="bg-slate-200 rounded"
                   type="number"
-                  value={advisorPayoutAmount}
+                  value={createPolicy.advisorPayoutAmount}
                   name="advisorPayoutAmount"
-                  onChange={(e) => setAdvisorPayoutAmount(e.target.value)}
-                  // placeholder="Advisor Payo Amount"
+                  onChange={handleChange}
+                  placeholder="Advisor Payout Amount"
                   readOnly
                 />
               </div>
@@ -2209,11 +1951,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className=" rounded-lg p-1"
+                  className="rounded"
                   type="number"
-                  value={advisorPayableAmount}
+                  value={createPolicy.advisorPayableAmount}
                   name="advisorPayableAmount"
-                  onChange={(e) => setAdvisorPayableAmount(e.target.value)}
+                  onChange={handleChange}
                   placeholder="Advisor Payable Amount"
                   readOnly
                 />
@@ -2226,17 +1968,13 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="number"
                   name="branchPayout"
-                  value={branchPayout}
-                  onChange={(e) => setBranchPayout(e.target.value)}
-                  onBlur={() => {
-                    calculateBranchPayableAmount();
-                    calculateProfitLoss();
-                  }}
+                  value={createPolicy.branchPayout}
+                  onChange={handleChange}
                   placeholder="Enter Branch Payout"
-                  readOnly
+                  // readOnly
                 />
               </div>
 
@@ -2247,11 +1985,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
-                  value={branchPayableAmount}
+                  value={createPolicy.branchPayableAmount}
                   name="branchPayableAmount"
-                  onChange={(e) => setBranchPayableAmount(e.target.value)}
+                  onChange={handleChange}
                   placeholder="Branch Payable Amount"
                   readOnly
                 />
@@ -2264,13 +2002,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="number"
-                  value={companyPayout}
+                  value={createPolicy.companyPayout}
                   name="companyPayout"
-                  onChange={(e) => setCompanyPayout(e.target.value)}
-                  onBlur={calculateProfitLoss}
-                  readOnly
+                  onChange={handleChange}
                 />
               </div>
               {/* FIELD - 49 */}
@@ -2280,11 +2016,11 @@ function MasterForm() {
                   <span className="text-red-600 font-bold">*</span>
                 </label>
                 <input
-                  className="input-style p-1 rounded-lg"
+                  className="input-style rounded"
                   type="text"
                   name="profitLoss"
-                  value={profitLoss}
-                  onChange={(e) => setProfitLoss(e.target.value)}
+                  value={createPolicy.profitLoss}
+                  onChange={handleChange}
                   placeholder="Profit/Loss Amount"
                   readOnly
                 />

@@ -678,7 +678,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         pauseOnHover
         theme="colored"
       />
-      <State />
+      {/* <State /> */}
     </AppProvider>
   </React.StrictMode>
 );

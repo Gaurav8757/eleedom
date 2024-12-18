@@ -4,7 +4,6 @@ import TextLoader from "../../../loader/TextLoader.jsx";
 import TableData from "./TableData.jsx";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import * as XLSX from "xlsx";
 import VITE_DATA from "../../../config/config.jsx";
 import PaginationAdmin from "./PaginationAdmin.jsx";
@@ -29,8 +28,8 @@ function ViewMasterForm() {
   const [advs, setAdv] = useState("");
   const [recalculate, setRecalculate] = useState(false);
   const [counts, setCounts] = useState(0);
-
   const name = sessionStorage.getItem("email");
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,36 +123,113 @@ function ViewMasterForm() {
   };
 
   useEffect(() => {
-    const updateData = async (data, paydata) => {
+    const updateAllDetails = async () => {
       try {
         const response = await axios.put(
-          `${VITE_DATA}/alldetails/updatedata/${data._id}`,
-          paydata,
-          { headers: { "Content-Type": "application/json" } }
+          `${VITE_DATA}/alldetails/update/specific/policy`,
+          allDetailsData,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
         );
 
-        if (response.status !== 200) {
-          console.error(`Error updating data for policy ID ${data._id}`);
-        } else if (response.status === 200) {
-          setCounts((prevCounts) => prevCounts + 1);
-          console.log("Data updated successfully");
+        if (response.status === 200) {
+          console.log(response.data.message);
+          setCounts(response.data.data.length); // Update the count based on the updated records
         }
       } catch (error) {
-        console.error(`Error updating data of od net for policy ID`, error);
+        console.error("Update failed:", error.message);
       }
     };
-
-    allDetailsData.forEach(async (data) => {
-      let paydata;
-      if (data.policyType === "COMP" && data.productCode === "PVT-CAR") {
-        paydata = { payoutOn: "OD" };
-      } else {
-        paydata = { payoutOn: "NET" };
-      }
-
-      updateData(data, paydata);
-    });
+    if (allDetailsData.length > 0) {
+      updateAllDetails();
+    }
   }, [allDetailsData]);
+
+  // useEffect(() => {
+  //   const updateData = async (data, paydata) => {
+  //     try {
+  //       const response = await axios.put(
+  //         `${VITE_DATA}/alldetails/updatedata/${data._id}`,
+  //         paydata,
+  //         { headers: { "Content-Type": "application/json" } }
+  //       );
+
+  //       if (response.status === 200) {
+  //         setCounts((prevCounts) => prevCounts + 1);
+  //         console.log("Data updated successfully");
+  //       }
+  //     } catch (error) {
+  //       // Avoid logging errors for successful updates or if no change
+  //     }
+  //   };
+
+  //   // Filter out only the data that needs to be updated (empty paydata)
+  //   allDetailsData.forEach(async (data) => {
+  //     let paydata;
+  //     if (!data.paydata || (data.policyType === "COMP" && data.productCode === "PVT-CAR" && data.paydata !== "OD") || (data.paydata !== "NET" && !(data.policyType === "COMP" && data.productCode === "PVT-CAR"))) {
+  //       // Determine if the payoutOn value needs updating based on the current state of data
+  //       if (data.policyType === "COMP" && data.productCode === "PVT-CAR") {
+  //         paydata = { payoutOn: "OD" };
+  //       } else if (data.policyType !== "COMP") {
+  //         paydata = { payoutOn: "NET" };
+  //       }
+
+  //       // Only update if paydata is different from current
+  //       if (paydata) {
+  //         updateData(data, paydata);
+  //       }
+  //     }
+  //   });
+  // }, [allDetailsData, setCounts]);
+  // useEffect(() => {
+  //   const filterPaydata = (data) => {
+  //     if (!data.paydata) {
+  //       return data.policyType === "COMP" && data.productCode === "PVT-CAR"
+  //         ? { payoutOn: "OD" }
+  //         : { payoutOn: "NET" };
+  //     }
+
+  //     if (
+  //       data.policyType === "COMP" &&
+  //       data.productCode === "PVT-CAR" &&
+  //       data.paydata !== "OD"
+  //     ) {
+  //       return { payoutOn: "OD" };
+  //     }
+
+  //     if (data.paydata !== "NET" && !(data.policyType === "COMP" && data.productCode === "PVT-CAR")) {
+  //       return { payoutOn: "NET" };
+  //     }
+
+  //     return null;
+  //   };
+
+  //   const updateAllData = async () => {
+  //     const updates = allDetailsData.map(async (data) => {
+  //       const paydata = filterPaydata(data);
+  //       if (paydata) {
+  //         try {
+  //           const response = await axios.put(
+  //             `${VITE_DATA}/alldetails/updatedata/${data._id}`,
+  //             paydata,
+  //             { headers: { "Content-Type": "application/json" } }
+  //           );
+  //           if (response.status === 200) {
+  //             setCounts((prev) => prev + 1);
+  //             console.log("Data updated successfully");
+  //           }
+  //         } catch (error) {
+  //           console.error("Update failed for ID:", data._id, error.message);
+  //         }
+  //       }
+  //     });
+
+  //     await Promise.all(updates);
+  //   };
+
+  //   updateAllData();
+  // }, [allDetailsData, setCounts]);
 
   const filteredData = allDetailsData.filter((data) => {
     // Check if data is defined
@@ -173,8 +249,7 @@ function ViewMasterForm() {
 
     return (
       // Filter conditions using optional chaining and nullish coalescing
-
-      (idLower.includes(searchId.toLowerCase()) || searchId === "") &&
+      idLower.includes(searchId.toLowerCase()) &&
       (type.includes(ptypess.toLowerCase()) || ptypess === "") &&
       (adv.includes(advs.toLowerCase()) || advs === "") &&
       (branchLower.includes(searchBranch.toLowerCase()) ||
@@ -201,166 +276,191 @@ function ViewMasterForm() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
   // const calculateAdvisorPayableAmount = (finalEntryFields, advisorPayout) => finalEntryFields - advisorPayout;
   // const calculateAdvisorPayoutAmount = (finalEntryFields, percentage) => finalEntryFields * (percentage / 100);
-  const calculateBranchPayableAmount = (finalEntryFields, branchPayout) =>
-    finalEntryFields - branchPayout;
-  const calculateBranchPayoutAmount = (finalEntryFields, branchpayoutper) =>
-    finalEntryFields * (branchpayoutper / 100);
-  const calculateCompanyPayoutAmount = (finalEntryFields, companypayoutper) =>
-    finalEntryFields * (companypayoutper / 100);
+  // const calculateBranchPayableAmount = (finalEntryFields, branchPayout) =>
+  //   finalEntryFields - branchPayout;
+  // const calculateBranchPayoutAmount = (finalEntryFields, branchpayoutper) =>
+  //   finalEntryFields * (branchpayoutper / 100);
+  // const calculateCompanyPayoutAmount = (finalEntryFields, companypayoutper) =>
+  //   finalEntryFields * (companypayoutper / 100);
+
+  // useEffect(() => {
+  //   // Check if there are matching CSLabs and allDetailsData is not empty
+  //   if (payoutSlab.length > 0 && allDetailsData.length > 0) {
+  //     payoutSlab?.forEach((matchingCSLab) => {
+  //       // const percentage = matchingCSLab.cvpercentage || 0;
+  //       const branchpercent = matchingCSLab.branchpayoutper || 0;
+  //       const companypercent = matchingCSLab.companypayoutper || 0;
+  //       allDetailsData?.forEach((data) => {
+  //         const vehicleAge1 = parseInt(data.vehicleAge);
+  //         const vehicleAgeNormalized =
+  //           data.vehicleAge === "0 years" ||
+  //           data.vehicleAge === "0" ||
+  //           data.vehicleAge1 === 0
+  //             ? 0
+  //             : 1;
+  //         const isMatching =
+  //           (matchingCSLab.vage === "NEW" && vehicleAgeNormalized === 0) ||
+  //           (matchingCSLab.vage === "OLD" && vehicleAgeNormalized !== 0);
+  //         if (
+  //           matchingCSLab.cnames === data.company &&
+  //           matchingCSLab.catnames === data.category &&
+  //           matchingCSLab.policytypes === data.policyType &&
+  //           matchingCSLab.states === data.states &&
+  //           (matchingCSLab.vfuels === data.fuel ||
+  //             matchingCSLab.vfuels === "ALL" ||
+  //             !matchingCSLab.vfuels ||
+  //             (matchingCSLab.vfuels === "OTHER THAN DIESEL" &&
+  //               data.fuel !== "DIESEL")) &&
+  //           (!matchingCSLab.vncb ||
+  //             matchingCSLab.vncb === data.ncb ||
+  //             ["BOTH", "NO"].includes(matchingCSLab.vncb)) &&
+  //           matchingCSLab.pcodes === data.productCode &&
+  //           (matchingCSLab.districts === data.district ||
+  //             matchingCSLab.districts === "All" ||
+  //             matchingCSLab.districts === "ALL") &&
+  //           matchingCSLab.payoutons === data.payoutOn &&
+  //           (matchingCSLab.sitcapacity === data.sitcapacity ||
+  //             matchingCSLab.sitcapacity === "All" ||
+  //             matchingCSLab.sitcapacity === "ALL" ||
+  //             matchingCSLab.sitcapacity === "" ||
+  //             !matchingCSLab.sitcapacity ||
+  //             matchingCSLab.sitcapacity === null ||
+  //             matchingCSLab.sitcapacity === undefined) &&
+  //           matchingCSLab.segments === data.segment &&
+  //           (matchingCSLab.voddiscount === data.odDiscount ||
+  //             !matchingCSLab.voddiscount) &&
+  //           // (matchingCSLab.advisorName === data.advisorName || matchingCSLab.advisorName === "" )&&
+  //           (isMatching ||
+  //             (matchingCSLab.vage === "1-7 YEARS" &&
+  //               vehicleAge1 >= 1 &&
+  //               vehicleAge1 <= 7) ||
+  //             (matchingCSLab.vage === "MORE THAN 7 YEARS" &&
+  //               vehicleAge1 > 7)) &&
+  //           (matchingCSLab.vcc === data.cc ||
+  //             ["ALL", "", null, undefined].includes(matchingCSLab.vcc))
+  //         ) {
+  //           const netPremium = parseFloat(data.netPremium);
+  //           const finalEntryFields = parseFloat(data.finalEntryFields);
+  //           const odPremium = parseFloat(data.odPremium);
+
+  //           let branchPayout, companyPayout;
+  //           let branchPayable, profitLoss;
+
+  //           if (
+  //             data.policyType === "COMP" &&
+  //             data.productCode === "PVT-CAR" &&
+  //             data.payoutOn === "OD"
+  //           ) {
+  //             // advisorPayout = calculateAdvisorPayoutAmount(odPremium, percentage);
+  //             // advisorPayable = calculateAdvisorPayableAmount(finalEntryFields, advisorPayout);
+  //             branchPayout = calculateBranchPayoutAmount(
+  //               odPremium,
+  //               branchpercent
+  //             );
+  //             branchPayable = calculateBranchPayableAmount(
+  //               finalEntryFields,
+  //               branchPayout
+  //             );
+  //             companyPayout = calculateCompanyPayoutAmount(
+  //               odPremium,
+  //               companypercent
+  //             );
+  //             profitLoss = companyPayout - branchPayout;
+  //           } else {
+  //             // Default calculation functions
+  //             // advisorPayout = calculateAdvisorPayoutAmount(netPremium, percentage);
+  //             // advisorPayable = calculateAdvisorPayableAmount(finalEntryFields, advisorPayout);
+  //             branchPayout = calculateBranchPayoutAmount(
+  //               netPremium,
+  //               branchpercent
+  //             );
+  //             branchPayable = calculateBranchPayableAmount(
+  //               finalEntryFields,
+  //               branchPayout
+  //             );
+  //             companyPayout = calculateCompanyPayoutAmount(
+  //               netPremium,
+  //               companypercent
+  //             );
+  //             profitLoss = companyPayout - branchPayout;
+  //           }
+  //           // Check if data needs an update
+  //           if (
+  //             !data.branchPayableAmount ||
+  //             !data.branchPayout ||
+  //             !data.companyPayout ||
+  //             !data.profitLoss
+  //           ) {
+
+  //           // Prepare data for API request
+  //           const postData = {
+  //             // advisorPayoutAmount: parseFloat(advisorPayout),
+  //             // advisorPayableAmount: parseFloat(advisorPayable.toFixed(2)),
+  //             branchPayableAmount: parseFloat(branchPayable.toFixed(2)),
+  //             branchPayout: parseFloat(branchPayout.toFixed(2)),
+  //             companyPayout: parseFloat(companyPayout.toFixed(2)),
+  //             profitLoss: parseFloat(profitLoss.toFixed(2)),
+  //             // cvpercentage: matchingCSLab.cvpercentage,
+  //             branchpayoutper: matchingCSLab.branchpayoutper,
+  //             companypayoutper: matchingCSLab.companypayoutper,
+  //           };
+  //           try {
+  //             // Send data to API
+  //             const response = axios.put(
+  //               `${VITE_DATA}/alldetails/updatedata/${data._id}`,
+  //               postData,
+  //               {
+  //                 headers: {
+  //                   "Content-Type": "application/json",
+  //                 },
+  //               }
+  //             );
+  //             // Handle response status
+  //             if (response.status !== 200) {
+  //               console.error(
+  //                 `Error updating data for policy ID ${data.policyrefno}`
+  //               );
+  //             } else {
+  //               // if (response.status === 200) {
+  //               //   setCounts(prevCounts => prevCounts + 1);
+  //               console.log("Data updated successfully");
+  //             }
+  //           } catch (error) {
+  //             console.error(`Error updating data for policy ID:`);
+  //             // }
+  //           }
+  //         }}
+  //     })
+  //     });
+  //   }
+  // }, [allDetailsData, payoutSlab, recalculate]);
 
   useEffect(() => {
-    // Check if there are matching CSLabs and allDetailsData is not empty
-    if (payoutSlab.length > 0 && allDetailsData.length > 0) {
-      payoutSlab?.forEach((matchingCSLab) => {
-        // const percentage = matchingCSLab.cvpercentage || 0;
-        const branchpercent = matchingCSLab.branchpayoutper || 0;
-        const companypercent = matchingCSLab.companypayoutper || 0;
-        allDetailsData?.forEach((data) => {
-          const vehicleAge1 = parseInt(data.vehicleAge);
-          const vehicleAgeNormalized =
-            data.vehicleAge === "0 years" ||
-            data.vehicleAge === "0" ||
-            data.vehicleAge1 === 0
-              ? 0
-              : 1;
-          const isMatching =
-            (matchingCSLab.vage === "NEW" && vehicleAgeNormalized === 0) ||
-            (matchingCSLab.vage === "OLD" && vehicleAgeNormalized !== 0);
-          if (
-            matchingCSLab.cnames === data.company &&
-            matchingCSLab.catnames === data.category &&
-            matchingCSLab.policytypes === data.policyType &&
-            matchingCSLab.states === data.states &&
-            (matchingCSLab.vfuels === data.fuel ||
-              matchingCSLab.vfuels === "ALL" ||
-              !matchingCSLab.vfuels ||
-              (matchingCSLab.vfuels === "OTHER THAN DIESEL" &&
-                data.fuel !== "DIESEL")) &&
-            (!matchingCSLab.vncb ||
-              matchingCSLab.vncb === data.ncb ||
-              ["BOTH", "NO"].includes(matchingCSLab.vncb)) &&
-            matchingCSLab.pcodes === data.productCode &&
-            (matchingCSLab.districts === data.district ||
-              matchingCSLab.districts === "All" ||
-              matchingCSLab.districts === "ALL") &&
-            matchingCSLab.payoutons === data.payoutOn &&
-            (matchingCSLab.sitcapacity === data.sitcapacity ||
-              matchingCSLab.sitcapacity === "All" ||
-              matchingCSLab.sitcapacity === "ALL" ||
-              matchingCSLab.sitcapacity === "" ||
-              !matchingCSLab.sitcapacity ||
-              matchingCSLab.sitcapacity === null ||
-              matchingCSLab.sitcapacity === undefined) &&
-            matchingCSLab.segments === data.segment &&
-            (matchingCSLab.voddiscount === data.odDiscount ||
-              !matchingCSLab.voddiscount) &&
-            // (matchingCSLab.advisorName === data.advisorName || matchingCSLab.advisorName === "" )&&
-            (isMatching ||
-              (matchingCSLab.vage === "1-7 YEARS" &&
-                vehicleAge1 >= 1 &&
-                vehicleAge1 <= 7) ||
-              (matchingCSLab.vage === "MORE THAN 7 YEARS" &&
-                vehicleAge1 > 7)) &&
-            (matchingCSLab.vcc === data.cc ||
-              ["ALL", "", null, undefined].includes(matchingCSLab.vcc))
-          ) {
-            const netPremium = parseFloat(data.netPremium);
-            const finalEntryFields = parseFloat(data.finalEntryFields);
-            const odPremium = parseFloat(data.odPremium);
-
-            let branchPayout, companyPayout;
-            let branchPayable, profitLoss;
-
-            if (
-              data.policyType === "COMP" &&
-              data.productCode === "PVT-CAR" &&
-              data.payoutOn === "OD"
-            ) {
-              // advisorPayout = calculateAdvisorPayoutAmount(odPremium, percentage);
-              // advisorPayable = calculateAdvisorPayableAmount(finalEntryFields, advisorPayout);
-              branchPayout = calculateBranchPayoutAmount(
-                odPremium,
-                branchpercent
-              );
-              branchPayable = calculateBranchPayableAmount(
-                finalEntryFields,
-                branchPayout
-              );
-              companyPayout = calculateCompanyPayoutAmount(
-                odPremium,
-                companypercent
-              );
-              profitLoss = companyPayout - branchPayout;
-            } else {
-              // Default calculation functions
-              // advisorPayout = calculateAdvisorPayoutAmount(netPremium, percentage);
-              // advisorPayable = calculateAdvisorPayableAmount(finalEntryFields, advisorPayout);
-              branchPayout = calculateBranchPayoutAmount(
-                netPremium,
-                branchpercent
-              );
-              branchPayable = calculateBranchPayableAmount(
-                finalEntryFields,
-                branchPayout
-              );
-              companyPayout = calculateCompanyPayoutAmount(
-                netPremium,
-                companypercent
-              );
-              profitLoss = companyPayout - branchPayout;
+    const updateDetailsFromBackend = async () => {
+      if (payoutSlab.length > 0 && allDetailsData.length > 0) {
+        try {
+          const response = await axios.put(
+            `${VITE_DATA}/alldetails/update/data/recalculate`,
+            { allDetailsData },
+            {
+              headers: { "Content-Type": "application/json" },
             }
-            // Check if data needs an update
-            // if (
-            //   !data.branchPayableAmount ||
-            //   !data.branchPayout ||
-            //   !data.companyPayout ||
-            //   !data.profitLoss
-            // ) {
+          );
 
-            // Prepare data for API request
-            const postData = {
-              // advisorPayoutAmount: parseFloat(advisorPayout),
-              // advisorPayableAmount: parseFloat(advisorPayable.toFixed(2)),
-              branchPayableAmount: parseFloat(branchPayable.toFixed(2)),
-              branchPayout: parseFloat(branchPayout.toFixed(2)),
-              companyPayout: parseFloat(companyPayout.toFixed(2)),
-              profitLoss: parseFloat(profitLoss.toFixed(2)),
-              // cvpercentage: matchingCSLab.cvpercentage,
-              branchpayoutper: matchingCSLab.branchpayoutper,
-              companypayoutper: matchingCSLab.companypayoutper,
-            };
-            try {
-              // Send data to API
-              const response = axios.put(
-                `${VITE_DATA}/alldetails/updatedata/${data._id}`,
-                postData,
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                }
-              );
-              // Handle response status
-              if (response.status !== 200) {
-                console.error(
-                  `Error updating data for policy ID ${data.policyrefno}`
-                );
-              } else {
-                // if (response.status === 200) {
-                //   setCounts(prevCounts => prevCounts + 1);
-                console.log("Data updated successfully");
-              }
-            } catch (error) {
-              console.error(`Error updating data for policy ID:`);
-              // }
-            }
+          if (response.status === 200) {
+            console.log(response.data.message);
+          } else {
+            console.error(response.data.message);
           }
-        });
-      });
-    }
+        } catch (error) {
+          console.error("Error in API call:", error.message);
+        }
+      }
+    };
+
+    updateDetailsFromBackend();
   }, [allDetailsData, payoutSlab, recalculate]);
 
   const handleRecalculate = () => {
@@ -633,100 +733,109 @@ function ViewMasterForm() {
 
   const exportAdvisorWiseReconData = () => {
     try {
-        const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-        const fileExtension = ".xlsx";
-        const fileName = `${name}_executive`;
+      const fileType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+      const fileExtension = ".xlsx";
+      const fileName = `${name}_executive`;
 
-        // Check if filteredData is not empty
-        if (!filteredData.length) {
-            throw new Error("No data available to export.");
-        }
+      // Check if filteredData is not empty
+      if (!filteredData.length) {
+        throw new Error("No data available to export.");
+      }
 
-        // Prepare data to export
-        const dataToExports = filteredData.map(row => [
-            row.entryDate,
-            row.company,
-            row.policyNo,
-            row.insuredName,
-            row.vehRegNo,
-            row.makeModel,
-            row.productCode,
-            row.branch,
-            row.advId,
-            row.advisorName,
-            row.odPremium,
-            row.liabilityPremium,
-            row.netPremium,
-            row.finalEntryFields,
-            row.cvpercentage,
-            row.advisorPayoutAmount,
-            row.advisorPayableAmount,
-            row.dr || "",
-            row.cr || "",
-            row.runningBalance || "",
-            row.policyPaymentMode,
-            row.payDate || "",
-            row.remarks || ""
-        ]);
+      // Prepare data to export
+      const dataToExports = filteredData.map((row) => [
+        row.entryDate,
+        row.company,
+        row.policyNo,
+        row.insuredName,
+        row.vehRegNo,
+        row.makeModel,
+        row.productCode,
+        row.branch,
+        row.advId,
+        row.advisorName,
+        row.odPremium,
+        row.liabilityPremium,
+        row.netPremium,
+        row.finalEntryFields,
+        row.cvpercentage,
+        row.advisorPayoutAmount,
+        row.advisorPayableAmount,
+        row.dr || "",
+        row.cr || "",
+        row.runningBalance || "",
+        row.policyPaymentMode,
+        row.payDate || "",
+        row.remarks || "",
+      ]);
 
-        // Define table headers
-        const tableHeaders = [
-            [
-                "Entry Date",
-                "Company Name",
-                "Policy No",
-                "Insured Name",
-                "Vehicle Reg No",
-                "Make & Model",
-                "Product Code",
-                "Branch",
-                "Advisor ID",
-                "Advisor Name",
-                "OD Premium",
-                "Liability Premium",
-                "Net Premium",
-                "Final Amount",
-                "Advisor Payout %",
-                "Advisor Payout",
-                "Advisor Payable Amount",
-                "DR",
-                "CR",
-                "Running Balance",
-                "Payment Mode",
-                "Payment Date",
-                "Remarks"
-            ]
-        ];
+      // Define table headers
+      const tableHeaders = [
+        [
+          "Entry Date",
+          "Company Name",
+          "Policy No",
+          "Insured Name",
+          "Vehicle Reg No",
+          "Make & Model",
+          "Product Code",
+          "Branch",
+          "Advisor ID",
+          "Advisor Name",
+          "OD Premium",
+          "Liability Premium",
+          "Net Premium",
+          "Final Amount",
+          "Advisor Payout %",
+          "Advisor Payout",
+          "Advisor Payable Amount",
+          "DR",
+          "CR",
+          "Running Balance",
+          "Payment Mode",
+          "Payment Date",
+          "Remarks",
+        ],
+      ];
 
-        // Create worksheet
-        const ws = XLSX.utils.aoa_to_sheet([...tableHeaders, ...dataToExports]);
+      // Create worksheet
+      const ws = XLSX.utils.aoa_to_sheet([...tableHeaders, ...dataToExports]);
 
-        // Auto-size columns based on content
-        const colWidths = tableHeaders[0].map((_, i) => ({ wpx: Math.max(...dataToExports.map(row => row[i] ? row[i].toString().length : 0)) * 8 + 50 }));
-        ws["!cols"] = colWidths;
+      // Auto-size columns based on content
+      const colWidths = tableHeaders[0].map((_, i) => ({
+        wpx:
+          Math.max(
+            ...dataToExports.map((row) =>
+              row[i] ? row[i].toString().length : 0
+            )
+          ) *
+            8 +
+          50,
+      }));
+      ws["!cols"] = colWidths;
 
-        // Create workbook and export
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Data");
-        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-        const data = new Blob([excelBuffer], { type: fileType });
-        const url = URL.createObjectURL(data);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName + fileExtension);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link); // Clean up
+      // Create workbook and export
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Data");
+      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      const data = new Blob([excelBuffer], { type: fileType });
+      const url = URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName + fileExtension);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); // Clean up
     } catch (error) {
-        console.error("Error exporting to Excel:", error);
-        toast.error("Error exporting to Excel");
+      console.error("Error exporting to Excel:", error);
+      toast.error("Error exporting to Excel");
     }
-};
+  };
 
-const handleAdvisorWiseReconData = () => {
+  const handleAdvisorWiseReconData = () => {
     exportAdvisorWiseReconData();
-};
-
+  };
 
   // delete function
   const onDeleteAllData = async (_id) => {
@@ -746,215 +855,196 @@ const handleAdvisorWiseReconData = () => {
   };
   return (
     <>
-      <section className="container-fluid relative h-screen p-0 sm:ml-48 bg-slate-100">
-        <div className="container-fluid flex justify-center p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-slate-200">
+      <section className="container-fluid relative h-screen p-0 sm:ml-48 bg-slate-50">
+        <div className="container-fluid flex justify-center p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-slate-50">
           <div className="inline-block min-w-full  w-full py-0">
-            <div className=" mb-4 mt-2 flex  justify-between max-w-auto mx-auto w-auto">
-              <h1 className="bg-blue-500 hover:bg-blue-700 p-1 my-auto px-2 rounded">
+            <div className="flex justify-between items-center  w-full ">
+              <div className="flex justify-center items-center space-x-4">
                 <button
-                  className="text-white my-auto"
+                  className="flex text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 shadow-lg font-medium rounded text-sm px-4 py-2"
                   onClick={handleRecalculate}
                 >
                   Recal
                 </button>
-              </h1>
-              <span className=" flex text-blue-700 justify-center text-center text-2xl font-semibold">
+                <button
+                  onClick={() => setIsFilterVisible(!isFilterVisible)}
+                  className={`flex ${
+                    isFilterVisible
+                      ? "bg-gradient-to-r from-red-500 via-red-600 to-red-700 focus:ring-red-300"
+                      : "focus:ring-blue-300 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+                  } text-white  hover:bg-gradient-to-br focus:ring-1 focus:outline-none  shadow-lg font-medium rounded text-sm px-4 py-2`}
+                >
+                  {isFilterVisible ? "Hide Filters" : "Show Filters"}
+                </button>
+              </div>
+              {/* Title */}
+              <span className="my-auto text-blue-700 text-2xl font-semibold">
                 All Policy List&apos;s
               </span>
-              <div className="flex">
-                {/* button 1 */}
-                <button
-                  className="text-end mx-0 flex justify-end  text-3xl font-semibold"
-                  onClick={handleExportClick}
-                >
-                  <img src="/excel.png" alt="download" height={30} width={40} />
+
+              {/* Buttons Container */}
+              <div className="flex justify-center items-center">
+                {/* Recalculate Button */}
+
+                {/* Export Button */}
+                <button onClick={handleExportClick}>
+                  <img
+                    src="/excel.png"
+                    alt="Export to Excel"
+                    height={30}
+                    width={40}
+                  />
                 </button>
-                {/* button 2 */}
-                <button
-                  className="text-end mx-0 flex justify-end  text-3xl mt-1 font-semibold"
-                  onClick={handleAdvisorWiseReconData}
-                >
-                  <img src="/dwnd.png" alt="download" height={25} width={35} />
+
+                {/* Advisor-Wise Recon Button */}
+                <button onClick={handleAdvisorWiseReconData}>
+                  <img
+                    src="/dwnd.png"
+                    alt="Download Recon Data"
+                    height={25}
+                    width={35}
+                  />
                 </button>
-                {/* button 3 */}
-                <button
-                  className="text-end   mr-1  justify-end  text-xl font-semibold "
-                  onClick={handleMisExportClick}
-                >
+
+                {/* MIS Export Button */}
+                <button onClick={handleMisExportClick}>
                   <Suspense fallback={<div>Loading...</div>}>
                     <img
                       src="/xls.png"
-                      className="rounded-xl mx-0 my-0"
+                      alt="MIS Export"
+                      className="rounded-xl"
                       height={30}
                       width={40}
-                      alt="mis "
                     />
-                    {/* <span className="text-base">MIS</span> */}
                   </Suspense>
                 </button>
 
-                <NavLink
-                  to="/dashboard/masterform"
-                  className="flex justify-center my-auto"
-                >
+                {/* Go Back Button */}
+                <NavLink to="/dashboard/masterform">
                   <button
                     type="button"
-                    className="text-white  mt-0 justify-end bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded text-sm px-2 py-1 text-center"
+                    className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 shadow-lg font-medium rounded text-sm px-4 py-2"
                   >
                     Go Back
                   </button>
                 </NavLink>
               </div>
             </div>
-            <div className="flex-wrap mb-4 flex justify-between  text-blue-500 max-w-auto mx-auto w-auto ">
-              {/* date range filter */}
-              <div className="flex justify-between items-center  p-0 text-start w-full lg:w-1/4">
-                <label className="my-auto text-sm whitespace-nowrap font-medium text-gray-900">
-                  Date:
-                </label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => handleDateRangeChange(e, "start")}
-                  className="shadow input-style w-32 my-auto ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="From Date"
-                />
-                <span className="text-justify mx-1 my-auto">to</span>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => handleDateRangeChange(e, "end")}
-                  className="shadow input-style  w-32 my-auto  ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 "
-                  placeholder="To Date"
-                />
-              </div>
 
-              <div className="flex p-0 justify-center  text-end w-full lg:w-1/4">
-                <label className="my-auto  text-sm whitespace-nowrap font-medium text-gray-900">
-                  ID:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setSearchId(e.target.value)}
-                  className="shadow input-style my-auto ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="ID"
-                />
-              </div>
+            {isFilterVisible && (
+              <div className="grid sticky top-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6 bg-white shadow-md rounded-md text-blue-500">
+                <div className="flex flex-col relative">
+                  <label className="text-base text-start font-medium text-blue-700">
+                    Date Range:
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => handleDateRangeChange(e, "start")}
+                      className="input-style w-full"
+                      placeholder="From Date"
+                    />
+                    <span className="text-sm">to</span>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => handleDateRangeChange(e, "end")}
+                      className="input-style w-full"
+                      placeholder="To Date"
+                    />
+                  </div>
+                </div>
 
-              <div className="flex justify-start p-0 text-end w-full lg:w-1/4">
-                <label className="my-auto text-sm font-medium text-gray-900">
-                  Company:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setSearchCompany(e.target.value)}
-                  className="shadow input-style  my-auto ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Company Name"
-                />
+                {[
+                  {
+                    label: "ID",
+                    placeholder: "Enter ID",
+                    onChange: setSearchId,
+                    value: searchId,
+                  },
+                  {
+                    label: "Company",
+                    placeholder: "Company Name",
+                    onChange: setSearchCompany,
+                    value: searchCompany,
+                  },
+                  {
+                    label: "Insured Name",
+                    placeholder: "Insured Name",
+                    onChange: setSearchInsuredName,
+                    value: searchInsuredName,
+                  },
+                  {
+                    label: "Branch",
+                    placeholder: "Branch Name",
+                    onChange: setSearchBranch,
+                    value: searchBranch,
+                  },
+                  {
+                    label: "Policy No",
+                    placeholder: "Policy Number",
+                    onChange: setContactNo,
+                    value: contactNo,
+                  },
+                  {
+                    label: "Policy Made By",
+                    placeholder: "Policy Made By",
+                    onChange: setPolicyMade,
+                    value: policyMade,
+                  },
+                  {
+                    label: "Product Code",
+                    placeholder: "Product Code",
+                    onChange: setPcodes,
+                    value: productcodes,
+                  },
+                  {
+                    label: "Policy Type",
+                    placeholder: "Policy Type",
+                    onChange: setPtypes,
+                    value: ptypess,
+                  },
+                  {
+                    label: "Payout On",
+                    placeholder: "Payout On",
+                    onChange: setPayon,
+                    value: payon,
+                  },
+                  {
+                    label: "Vehicle No.",
+                    placeholder: "Vehicle Registration No.",
+                    onChange: setYears,
+                    value: years,
+                  },
+                  {
+                    label: "Advisor Name",
+                    placeholder: "Advisor Name",
+                    onChange: setAdv,
+                    value: advs,
+                  },
+                ].map((input, index) => (
+                  <div className="flex flex-col" key={index}>
+                    <label className="text-base text-start font-medium text-blue-700">
+                      {input.label}:
+                    </label>
+                    <input
+                      type="search"
+                      value={input.value}
+                      onChange={(e) => input.onChange(e.target.value)}
+                      className="input-style w-full"
+                      placeholder={input.placeholder}
+                    />
+                  </div>
+                ))}
+                <button
+                  className="absolute top-2 right-2 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
+                  onClick={() => setIsFilterVisible(false)}
+                >
+                  X
+                </button>
               </div>
-              <div className="flex justify-start  text-start w-full lg:w-1/4">
-                <label className="my-auto text-sm font-medium text-gray-900">
-                  Insured Name:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setSearchInsuredName(e.target.value)}
-                  className="shadow input-style  my-auto ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Insured Name"
-                />
-              </div>
-              <div className="flex justify-start mt-4  text-start w-full lg:w-1/4">
-                <label className="my-0 text-sm font-medium text-gray-900">
-                  Branch:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setSearchBranch(e.target.value)}
-                  className="shadow input-style w-52 my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Branch Name"
-                />
-              </div>
-              <div className="flex text-center justify-start mt-4  lg:w-1/4">
-                <label className="my-0 text-sm whitespace-nowrap font-medium text-gray-900">
-                  Policy No:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setContactNo(e.target.value)}
-                  className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Policy Number"
-                />
-              </div>
-              <div className="flex text-center justify-start mt-4  lg:w-1/4">
-                <label className="my-0 text-sm whitespace-nowrap font-medium text-gray-900">
-                  Policy Made By:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setPolicyMade(e.target.value)}
-                  className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Policy Made By"
-                />
-              </div>
-              <div className="flex text-center justify-start mt-4  lg:w-1/4">
-                <label className="my-0 text-sm whitespace-nowrap font-medium text-gray-900">
-                  Product Code:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setPcodes(e.target.value)}
-                  className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Search by Product Code"
-                />
-              </div>
-
-              <div className="flex text-center justify-start mt-4  lg:w-1/4">
-                <label className="my-0 text-sm whitespace-nowrap font-medium text-gray-900">
-                  Policy Type:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setPtypes(e.target.value)}
-                  className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Policy Type"
-                />
-              </div>
-
-              <div className="flex text-center justify-start mt-4  lg:w-1/4">
-                <label className="my-0 text-sm whitespace-nowrap font-medium text-gray-900">
-                  PayoutOn:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setPayon(e.target.value)}
-                  className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Search by PayoutOn"
-                />
-              </div>
-              <div className="flex text-center justify-start mt-4  lg:w-1/4">
-                <label className="my-0 text-sm whitespace-nowrap font-medium text-gray-900">
-                  Vehicle No.:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setYears(e.target.value)}
-                  className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Vehicle Registration No."
-                />
-              </div>
-              <div className="flex text-center justify-start mt-4  lg:w-1/4">
-                <label className="my-0 text-sm whitespace-nowrap font-medium text-gray-900">
-                  Advisor Name:
-                </label>
-                <input
-                  type="search"
-                  onChange={(e) => setAdv(e.target.value)}
-                  className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                  placeholder="Search by Advisor"
-                />
-              </div>
-              <div className="flex text-center justify-start mt-4  lg:w-1/4"></div>
-            </div>
+            )}
 
             <div className="inline-block min-w-full w-full py-0 relative">
               <>
@@ -979,7 +1069,6 @@ const handleAdvisorWiseReconData = () => {
             </div>
           </div>
         </div>
-
         {/* Pagination */}
         <PaginationAdmin
           currentPage={currentPage}

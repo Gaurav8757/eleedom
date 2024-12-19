@@ -198,12 +198,15 @@ const AllInsurancePolicySchema = new mongoose.Schema(
     },
     cvpercentage:{
       type: Number,
+      default: 0,
     },
     branchpayoutper:{
       type: Number,
+      default: 0,
     },
     companypayoutper:{
       type: Number,
+      default: 0,
     },
 
     debitAmount: {

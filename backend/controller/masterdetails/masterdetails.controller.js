@@ -1,4 +1,5 @@
 // insurancePolicyController.js
+import cron from "node-cron";
 import AllInsurance from "../../models/masterDetails/masterdetailSchema.js";
 import CompanyGrid from "../../models/commSlab/companypayout.js";
 import { Counter } from "../../models/masterDetails/masterdetailSchema.js";
@@ -229,9 +230,18 @@ const calculateBranchPayoutAmount = (finalEntryFields, branchpayoutper) =>
 const calculateCompanyPayoutAmount = (finalEntryFields, companypayoutper) =>
   finalEntryFields * (companypayoutper / 100);
 
+
 export const recalculateAndUpdate = async (req, res) => {
   try {
-    const { allDetailsData } = req.body;
+    const allDetailsData = await AllInsurance.find({
+      $or: [
+        { branchpayoutper: { $in: [null, undefined, ""] } },
+        { companypayoutper: { $in: [null, undefined, ""] } },
+        { companyPayout: { $in: [null, undefined, ""] } },
+        { branchPayableAmount: { $in: [null, undefined, ""] } },
+        { branchPayout: { $in: [null, undefined, ""] } },
+      ],
+    });
 
     if (!Array.isArray(allDetailsData) || allDetailsData.length === 0) {
       return res.status(400).json({
@@ -255,7 +265,7 @@ export const recalculateAndUpdate = async (req, res) => {
       const vehicleAgeNormalized =
         data.vehicleAge === "0 years" ||
         data.vehicleAge === "0" ||
-        data.vehicleAge1 === 0
+        vehicleAge1 === 0
           ? 0
           : 1;
 
@@ -341,13 +351,14 @@ export const recalculateAndUpdate = async (req, res) => {
         !companypercent
       ) {
         const updatePayload = {
-          branchPayableAmount: parseFloat(branchPayable.toFixed(2)),
-          branchPayout: parseFloat(branchPayout.toFixed(2)),
-          companyPayout: parseFloat(companyPayout.toFixed(2)),
-          profitLoss: parseFloat(profitLoss.toFixed(2)),
-          branchpayoutper: branchpercent,
-          companypayoutper: companypercent,
+          branchPayableAmount: Number(branchPayable.toFixed(2)),
+          branchPayout: Number(branchPayout.toFixed(2)),
+          companyPayout: Number(companyPayout.toFixed(2)),
+          profitLoss: Number(profitLoss.toFixed(2)),
+          branchpayoutper: Number(branchpercent),
+          companypayoutper: Number(companypercent),
         };
+        console.log(updatePayload);
 
         return AllInsurance.findByIdAndUpdate(data._id, updatePayload, {
           new: true,
@@ -359,7 +370,7 @@ export const recalculateAndUpdate = async (req, res) => {
     const updatedRecords = results.filter((record) => record !== null);
     return res.status(200).json({
       status: "success",
-      message: `${updatedRecords.length} calculation data null.`,
+      message: `${updatedRecords.length} calculation updated successfully..!`,
       data: updatedRecords,
     });
   } catch (error) {
@@ -372,21 +383,20 @@ export const recalculateAndUpdate = async (req, res) => {
 };
 
 // Bulk update endpoint for processing all details
-export const bulkUpdateDetails = async (req, res) => {
+export const bulkUpdateDetails = async () => {
   try {
-    const allDetailsData = req.body; // Expecting an array of insurance details from the client
+    const allDetailsData = await AllInsurance.find({
+      payoutOn: { $in: [null, ""] },
+    });
 
     if (!Array.isArray(allDetailsData)) {
-      return res.status(400).json({
-        status: "error",
-        message: "Invalid data format. Expected an array of details.",
-      });
+      console.error("Invalid data format. Expected an array of details.");
+      return;
     }
 
     const updates = allDetailsData.map(async (data) => {
       let paydata;
 
-      // Determine the required update logic for each record
       if (!data.paydata) {
         if (data.policyType === "COMP" && data.productCode === "PVT-CAR") {
           paydata = { payoutOn: "OD" };
@@ -406,36 +416,77 @@ export const bulkUpdateDetails = async (req, res) => {
         paydata = { payoutOn: "NET" };
       }
 
-      // If no update is required, skip this record
-      if (!paydata) {
-        return null;
-      }
+      if (!paydata) return null;
 
-      // Update the record in the database
       return AllInsurance.findByIdAndUpdate(data._id, paydata, {
         new: true,
         runValidators: true,
       });
     });
-
-    // Wait for all updates to complete
     const results = await Promise.all(updates);
-    // Filter out null results (no updates required)
     const updatedRecords = results.filter((record) => record !== null);
-    return res.status(200).json({
-      status: "success",
-      message: `${updatedRecords.length} records updated successfully`,
-      data: updatedRecords,
-    });
+    console.log(`${updatedRecords.length} payoutOn updated successfully...!`);
   } catch (error) {
-    console.error("Error in bulk update:", error);
-
-    return res.status(500).json({
-      status: "error",
-      message: "Internal Server Error",
-    });
+    console.error("Error in payoutOn update:", error);
   }
 };
+const updateNullFieldsToZero = async () => {
+  try {
+    // Find all documents with null values in specific fields
+    const documents = await AllInsurance.find({
+      $or: [
+        { cvpercentage: { $eq: null } },
+        { branchpayoutper: { $eq: null } },
+        { companypayoutper: { $eq: null } },
+        {advisorPayableAmount: { $eq: null } },
+        { branchPayableAmount: { $eq: null } },
+        { branchPayout: { $eq: null } },
+        { companyPayout: { $eq: null } },
+        { profitLoss: { $eq: null } },
+      ],
+    });
+
+    console.log(`${documents.length} documents found with null values.`);
+
+    // Prepare updates for documents
+    const updates = documents.map((doc) => {
+      const updatedFields = {};
+
+      // Replace null values with 0 for each relevant field
+      if (doc.cvpercentage === null) updatedFields.cvpercentage = 0;
+      if (doc.branchpayoutper === null) updatedFields.branchpayoutper = 0;
+      if (doc.companypayoutper === null) updatedFields.companypayoutper = 0;
+      if (doc.advisorPayableAmount === null) updatedFields.advisorPayableAmount = 0;
+      if (doc.branchPayableAmount === null) updatedFields.branchPayableAmount = 0;
+      if (doc.branchPayout === null) updatedFields.branchPayout = 0;
+      if (doc.companyPayout === null) updatedFields.companyPayout = 0;
+      if (doc.profitLoss === null) updatedFields.profitLoss = 0;
+
+      // Update document if changes are needed
+      if (Object.keys(updatedFields).length > 0) {
+        return AllInsurance.findByIdAndUpdate(doc._id, { $set: updatedFields }, { new: true });
+      }
+
+      return null; // No update needed
+    });
+    // Wait for all updates to complete
+    const results = await Promise.all(updates);
+    // Filter and count updated documents
+    const updatedRecords = results.filter(Boolean);
+    console.log(`${updatedRecords.length} null updated successfully...!`);
+  } catch (error) {
+    console.error("Error updating null to 0:", error);
+  }
+};
+
+
+// Schedule the function to run every 1 minutes
+cron.schedule("*/1 * * * *", async () => {
+  await bulkUpdateDetails();
+  await updateNullFieldsToZero();
+  await recalculateAndUpdate();
+  
+});
 
 // // view lists
 export const viewPolicyBasedonId = async (req, res) => {

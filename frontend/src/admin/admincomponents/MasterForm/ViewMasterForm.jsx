@@ -23,11 +23,8 @@ function ViewMasterForm() {
   const [productcodes, setPcodes] = useState("");
   const [policyMade, setPolicyMade] = useState("");
   const [payon, setPayon] = useState("");
-  const [payoutSlab, setPayoutSlab] = useState([]);
   const [ptypess, setPtypes] = useState("");
   const [advs, setAdv] = useState("");
-  const [recalculate, setRecalculate] = useState(false);
-  const [counts, setCounts] = useState(0);
   const name = sessionStorage.getItem("email");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
 
@@ -60,34 +57,6 @@ function ViewMasterForm() {
     fetchData();
   }, [currentPage, itemsPerPage]);
 
-  // payout slab list api
-  useEffect(() => {
-    const fetchPayoutSlab = async () => {
-      const token = sessionStorage.getItem("token");
-      if (!token) {
-        toast.error("Not Authorized yet.. Try again! ");
-      } else {
-        try {
-          const response = await axios.get(
-            `${VITE_DATA}/company/grid/slab/view`,
-            {
-              headers: {
-                Authorization: `${token}`, // Send the token in the Authorization header
-              },
-            }
-          );
-          startTransition(() => {
-            setPayoutSlab(response.data);
-          });
-        } catch (error) {
-          console.error("Payout Grid Catched Error");
-        }
-      }
-    };
-
-    fetchPayoutSlab();
-  }, []);
-
   const onUpdateInsurance = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -107,6 +76,7 @@ function ViewMasterForm() {
         startTransition(() => {
           setAllDetailsData(response.data.allList);
           setTotalPages(response.data.totalPages);
+          
         });
       }
     } catch (error) {
@@ -121,30 +91,6 @@ function ViewMasterForm() {
       setEndDate(event.target.value);
     }
   };
-
-  useEffect(() => {
-    const updateAllDetails = async () => {
-      try {
-        const response = await axios.put(
-          `${VITE_DATA}/alldetails/update/specific/policy`,
-          allDetailsData,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-
-        if (response.status === 200) {
-          console.log(response.data.message);
-          setCounts(response.data.data.length); // Update the count based on the updated records
-        }
-      } catch (error) {
-        console.error("Update failed:", error.message);
-      }
-    };
-    if (allDetailsData.length > 0) {
-      updateAllDetails();
-    }
-  }, [allDetailsData]);
 
   // useEffect(() => {
   //   const updateData = async (data, paydata) => {
@@ -437,35 +383,32 @@ function ViewMasterForm() {
   //   }
   // }, [allDetailsData, payoutSlab, recalculate]);
 
-  useEffect(() => {
-    const updateDetailsFromBackend = async () => {
-      if (payoutSlab.length > 0 && allDetailsData.length > 0) {
-        try {
-          const response = await axios.put(
-            `${VITE_DATA}/alldetails/update/data/recalculate`,
-            { allDetailsData },
-            {
-              headers: { "Content-Type": "application/json" },
-            }
-          );
+  // useEffect(() => {
+  //   const updateDetailsFromBackend = async () => {
+  //     if (payoutSlab.length > 0 && allDetailsData.length > 0) {
+  //       try {
+  //         const response = await axios.put(
+  //           `${VITE_DATA}/alldetails/update/data/recalculate`,
+  //           { allDetailsData },
+  //           {
+  //             headers: { "Content-Type": "application/json" },
+  //           }
+  //         );
 
-          if (response.status === 200) {
-            console.log(response.data.message);
-          } else {
-            console.error(response.data.message);
-          }
-        } catch (error) {
-          console.error("Error in API call:", error.message);
-        }
-      }
-    };
+  //         if (response.status === 200) {
+  //           console.log(response.data.message);
+  //           setCounts(response.data.data.length);
+  //         } else {
+  //           console.error(response.data.message);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error in API call:", error.message);
+  //       }
+  //     }
+  //   };
 
-    updateDetailsFromBackend();
-  }, [allDetailsData, payoutSlab, recalculate]);
-
-  const handleRecalculate = () => {
-    setRecalculate((prev) => !prev);
-  };
+  //   updateDetailsFromBackend();
+  // }, [allDetailsData, payoutSlab, recalculate]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -860,12 +803,7 @@ function ViewMasterForm() {
           <div className="inline-block min-w-full  w-full py-0">
             <div className="flex justify-between items-center  w-full ">
               <div className="flex justify-center items-center space-x-4">
-                <button
-                  className="flex text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 shadow-lg font-medium rounded text-sm px-4 py-2"
-                  onClick={handleRecalculate}
-                >
-                  Recal
-                </button>
+               
                 <button
                   onClick={() => setIsFilterVisible(!isFilterVisible)}
                   className={`flex ${
@@ -1062,11 +1000,7 @@ function ViewMasterForm() {
                 )}
               </>
             </div>
-            <div className="flex z-50 w-16 h-16 inset-x-2 inset-y-0 bottom-0 right-0  justify-end items-end">
-              <div className="sticky top-0 w-16 h-16 font-bold rounded-full bg-[green]/80 flex items-center shadow-2xl shadow-red-900 justify-center">
-                <span className="absolute text-white">{counts}</span>
-              </div>
-            </div>
+          
           </div>
         </div>
         {/* Pagination */}

@@ -10,7 +10,6 @@ import {
   viewMonthlyData,
   updateByAdvisor,
   viewAllPoliciesLists,
-  bulkUpdateDetails,
   recalculateAndUpdate,
   // getMasterDetails
 } from "../../controller/masterdetails/masterdetails.controller.js";
@@ -19,17 +18,15 @@ const m_details_routes = express.Router();
 // add
 m_details_routes.post("/adddata", createAllInsurance);
 m_details_routes.get("/show/view", viewAllPoliciesLists);
+
 // update
 m_details_routes.put("/updatedata/:id", updateMasterDetails);
-m_details_routes.put("/update/specific/policy", bulkUpdateDetails);
-m_details_routes.put("/update/data/recalculate", recalculateAndUpdate);
-
-m_details_routes.put("/update/adv/percentage", updateByAdvisor);
+m_details_routes.get("/update/adv/percentage", updateByAdvisor);
 
 // view
 m_details_routes.get("/viewdata", viewAllList);
-
 m_details_routes.get("/viewdata/branch/hpur", viewHajipurList);
+
 // view
 m_details_routes.get("/viewdata/:employee_id", viewPolicyBasedonId);
 

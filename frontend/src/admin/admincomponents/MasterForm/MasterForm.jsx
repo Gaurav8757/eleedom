@@ -407,7 +407,6 @@ function MasterForm() {
       String(cslabItem.payoutons) === String(createPolicy.payoutOn)
   );
 
-  console.log(matchingCSLab);
 
   useEffect(() => {
     const calculateAmounts = () => {

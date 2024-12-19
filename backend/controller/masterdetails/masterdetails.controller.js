@@ -235,11 +235,11 @@ export const recalculateAndUpdate = async (req, res) => {
   try {
     const allDetailsData = await AllInsurance.find({
       $or: [
-        { branchpayoutper: { $in: [null, undefined, "", 0] } },
-        { companypayoutper: { $in: [null, undefined, "", 0] } },
-        { companyPayout: { $in: [null, undefined, "", 0] } },
+        { branchpayoutper: { $in: [null, undefined, ""] } },
+        { companypayoutper: { $in: [null, undefined, ""] } },
+        { companyPayout: { $in: [null, undefined, ""] } },
         { branchPayableAmount: { $in: [null, undefined, ""] } },
-        { branchPayout: { $in: [null, undefined, "", 0] } },
+        { branchPayout: { $in: [null, undefined, ""] } },
       ],
     });
 
@@ -352,6 +352,7 @@ export const recalculateAndUpdate = async (req, res) => {
       ) {
         const updatePayload = {
           policyrefno: data.policyrefno,
+          entryDate: data.entryDate,
           branchPayableAmount: Number(branchPayable.toFixed(2)),
           branchPayout: Number(branchPayout.toFixed(2)),
           companyPayout: Number(companyPayout.toFixed(2)),

@@ -235,11 +235,11 @@ export const recalculateAndUpdate = async (req, res) => {
   try {
     const allDetailsData = await AllInsurance.find({
       $or: [
-        { branchpayoutper: { $in: [null, undefined, ""] } },
-        { companypayoutper: { $in: [null, undefined, ""] } },
-        { companyPayout: { $in: [null, undefined, ""] } },
+        { branchpayoutper: { $in: [null, undefined, "", 0] } },
+        { companypayoutper: { $in: [null, undefined, "", 0] } },
+        { companyPayout: { $in: [null, undefined, "", 0] } },
         { branchPayableAmount: { $in: [null, undefined, ""] } },
-        { branchPayout: { $in: [null, undefined, ""] } },
+        { branchPayout: { $in: [null, undefined, "", 0] } },
       ],
     });
 
@@ -264,8 +264,8 @@ export const recalculateAndUpdate = async (req, res) => {
       const vehicleAge1 = parseInt(data.vehicleAge, 10);
       const vehicleAgeNormalized =
         data.vehicleAge === "0 years" ||
-        data.vehicleAge === "0" ||
-        vehicleAge1 === 0
+        data.vehicleAge === "0" || vehicleAge1 === 0 ||
+        data.vehicleAge === 0 
           ? 0
           : 1;
 
@@ -351,6 +351,7 @@ export const recalculateAndUpdate = async (req, res) => {
         !companypercent
       ) {
         const updatePayload = {
+          policyrefno: data.policyrefno,
           branchPayableAmount: Number(branchPayable.toFixed(2)),
           branchPayout: Number(branchPayout.toFixed(2)),
           companyPayout: Number(companyPayout.toFixed(2)),

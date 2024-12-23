@@ -150,6 +150,7 @@ import {
   hDaysList,
 } from "../controller/holiday/holiday.controller.js";
 import letters from "./letters/letter.routes.js";
+import { exSave } from "../controller/human_resources/salaryhr.controller.js";
 import {
   TWvehicleSlab,
   addCompGrid,
@@ -217,7 +218,7 @@ import {
   motorPolicyDownload
 } from "../controller/tataAig/quoteProposalApi.js";
 import exportDatabase from "../controller/user_controller/expController.js";
-import { exSave } from "../controller/human_resources/salaryhr.controller.js";
+
 
 // GET TATA AIG AUTH TOKEN CALL
 router.get("/tataaig/auth/details", getTokens);

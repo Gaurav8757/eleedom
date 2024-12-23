@@ -4,7 +4,7 @@ import FinanceTable from "./FinanceTable.jsx";
 import TextLoader from "../../loader/TextLoader.jsx";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 import VITE_DATA from "../../config/config.jsx";
 import Pagination from "./Paignation.jsx";
 function ViewFinance() {
@@ -22,8 +22,8 @@ function ViewFinance() {
   const [veh, setVeh] = useState("");
   const [searchInsuredName, setSearchInsuredName] = useState("");
   const [policyNo, setPolicyNo] = useState("");
-  const name = sessionStorage.getItem('finname');
-
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const name = sessionStorage.getItem("finname");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,8 +36,8 @@ function ViewFinance() {
           },
           params: {
             page: currentPage,
-            limit: itemsPerPage
-          }
+            limit: itemsPerPage,
+          },
         });
         setAllDetailsData(response.data.allList);
         setTotalPages(response.data.totalPages);
@@ -46,12 +46,12 @@ function ViewFinance() {
       }
     };
     fetchData();
-  }, [currentPage, itemsPerPage]);// Include currentPage in the dependency array
+  }, [currentPage, itemsPerPage]); // Include currentPage in the dependency array
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const page = parseInt(params.get('page')) || 1;
-    const limit = parseInt(params.get('limit')) || 1000;
+    const page = parseInt(params.get("page")) || 1;
+    const limit = parseInt(params.get("limit")) || 1000;
     setCurrentPage(page);
     setItemsPerPage(limit);
   }, []);
@@ -63,18 +63,14 @@ function ViewFinance() {
       if (!token) {
         toast.error("Not Authorized yet.. Try again!");
       } else {
-        const response = await axios.get(
-          `${VITE_DATA}/alldetails/viewdata`,
-          {
-            headers: {
-              Authorization: `${token}`,
-            },
-            params: {
-              page: currentPage, // Send current page as a parameter
-
-            }
-          }
-        );
+        const response = await axios.get(`${VITE_DATA}/alldetails/viewdata`, {
+          headers: {
+            Authorization: `${token}`,
+          },
+          params: {
+            page: currentPage, // Send current page as a parameter
+          },
+        });
         setAllDetailsData(response.data.allList);
         setTotalPages(response.data.totalPages);
       }
@@ -91,7 +87,7 @@ function ViewFinance() {
     }
   };
 
-  const filteredData = allDetailsData.filter(data => {
+  const filteredData = allDetailsData.filter((data) => {
     // Check if data is defined
 
     if (!data) return false;
@@ -105,14 +101,17 @@ function ViewFinance() {
     const vehRegLower = data.vehRegNo?.toLowerCase() || "";
     return (
       // Filter conditions using optional chaining and nullish coalescing
-      (idLower.includes(searchId.toLowerCase()) || searchId === '') &&
+      (idLower.includes(searchId.toLowerCase()) || searchId === "") &&
       (adv.includes(advs.toLowerCase()) || advs === "") &&
-      (branchLower.includes(searchBranch.toLowerCase()) || searchBranch === '') &&
-      (insuredNameLower.includes(searchInsuredName.toLowerCase()) || searchInsuredName === '') &&
-      (companyLower.includes(searchCompany.toLowerCase()) || searchCompany === '') &&
-      (vehRegLower.includes(veh.toLowerCase()) || veh === '') &&
+      (branchLower.includes(searchBranch.toLowerCase()) ||
+        searchBranch === "") &&
+      (insuredNameLower.includes(searchInsuredName.toLowerCase()) ||
+        searchInsuredName === "") &&
+      (companyLower.includes(searchCompany.toLowerCase()) ||
+        searchCompany === "") &&
+      (vehRegLower.includes(veh.toLowerCase()) || veh === "") &&
       // Update the state variable for company correctly
-      (policyLower.includes(policyNo.toLowerCase()) || policyNo === '') &&
+      (policyLower.includes(policyNo.toLowerCase()) || policyNo === "") &&
       // Ensure correct date filtering logic
       (startDate === "" || new Date(data.entryDate) >= new Date(startDate)) &&
       (endDate === "" || new Date(data.entryDate) <= new Date(endDate))
@@ -129,11 +128,12 @@ function ViewFinance() {
 
   const exportToExcel = () => {
     try {
-      const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+      const fileType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
       const fileExtension = ".xlsx";
       const fileName = `${name}_executive`;
       // Map all data without filtering by current date
-      const dataToExport = filteredData.map(row => {
+      const dataToExport = filteredData.map((row) => {
         return [
           row.entryDate,
           row.policyrefno,
@@ -186,7 +186,7 @@ function ViewFinance() {
           row.advisorPayableAmount,
           row.branchpayoutper,
           row.branchPayout,
-          row.branchPayableAmount
+          row.branchPayableAmount,
         ];
       });
 
@@ -243,7 +243,7 @@ function ViewFinance() {
         "Advisor Payable Amount",
         "Branch %",
         "Branch Payout",
-        "Branch Payable Amount"
+        "Branch Payable Amount",
       ];
       // Create worksheet
       const ws = XLSX.utils.aoa_to_sheet([tableHeaders, ...dataToExport]);
@@ -269,108 +269,117 @@ function ViewFinance() {
     exportToExcel();
   };
 
-
-const exportAdvisorWiseReconData = () => {
+  const exportAdvisorWiseReconData = () => {
     try {
-        const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-        const fileExtension = ".xlsx";
-        const fileName = `${name}_executive`;
-        // Check if filteredData is not empty
-        if (!filteredData.length) {
-            throw new Error("No data available to export.");
-        }
+      const fileType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+      const fileExtension = ".xlsx";
+      const fileName = `${name}_executive`;
+      // Check if filteredData is not empty
+      if (!filteredData.length) {
+        throw new Error("No data available to export.");
+      }
 
-        // Prepare data to export
-        const dataToExports = filteredData.map(row => [
-            row.entryDate,
-            row.company,
-            row.policyNo,
-            row.insuredName,
-            row.vehRegNo,
-            row.makeModel,
-            row.productCode,
-            row.branch,
-            row.advId,
-            row.advisorName,
-            row.odPremium,
-            row.liabilityPremium,
-            row.netPremium,
-            row.finalEntryFields,
-            row.cvpercentage,
-            row.advisorPayoutAmount,
-            row.advisorPayableAmount,
-            row.dr || "",
-            row.cr || "",
-            row.runningBalance || "",
-            row.policyPaymentMode,
-            row.payDate || "",
-            row.remarks || ""
-        ]);
+      // Prepare data to export
+      const dataToExports = filteredData.map((row) => [
+        row.entryDate,
+        row.company,
+        row.policyNo,
+        row.insuredName,
+        row.vehRegNo,
+        row.makeModel,
+        row.productCode,
+        row.branch,
+        row.advId,
+        row.advisorName,
+        row.odPremium,
+        row.liabilityPremium,
+        row.netPremium,
+        row.finalEntryFields,
+        row.cvpercentage,
+        row.advisorPayoutAmount,
+        row.advisorPayableAmount,
+        row.dr || "",
+        row.cr || "",
+        row.runningBalance || "",
+        row.policyPaymentMode,
+        row.payDate || "",
+        row.remarks || "",
+      ]);
 
-        // Define table headers
-        const tableHeaders = [
-            [
-                "Entry Date",
-                "Company Name",
-                "Policy No",
-                "Insured Name",
-                "Vehicle Reg No",
-                "Make & Model",
-                "Product Code",
-                "Branch",
-                "Advisor ID",
-                "Advisor Name",
-                "OD Premium",
-                "Liability Premium",
-                "Net Premium",
-                "Final Amount",
-                "Advisor Payout %",
-                "Advisor Payout",
-                "Advisor Payable Amount",
-                "DR",
-                "CR",
-                "Running Balance",
-                "Payment Mode",
-                "Payment Date",
-                "Remarks"
-            ]
-        ];
-        // Create worksheet
-        const ws = XLSX.utils.aoa_to_sheet([...tableHeaders, ...dataToExports]);
-        // Auto-size columns based on content
-        const colWidths = tableHeaders[0].map((_, i) => ({ wpx: Math.max(...dataToExports.map(row => row[i] ? row[i].toString().length : 0)) * 8 + 50 }));
-        ws["!cols"] = colWidths;
+      // Define table headers
+      const tableHeaders = [
+        [
+          "Entry Date",
+          "Company Name",
+          "Policy No",
+          "Insured Name",
+          "Vehicle Reg No",
+          "Make & Model",
+          "Product Code",
+          "Branch",
+          "Advisor ID",
+          "Advisor Name",
+          "OD Premium",
+          "Liability Premium",
+          "Net Premium",
+          "Final Amount",
+          "Advisor Payout %",
+          "Advisor Payout",
+          "Advisor Payable Amount",
+          "DR",
+          "CR",
+          "Running Balance",
+          "Payment Mode",
+          "Payment Date",
+          "Remarks",
+        ],
+      ];
+      // Create worksheet
+      const ws = XLSX.utils.aoa_to_sheet([...tableHeaders, ...dataToExports]);
+      // Auto-size columns based on content
+      const colWidths = tableHeaders[0].map((_, i) => ({
+        wpx:
+          Math.max(
+            ...dataToExports.map((row) =>
+              row[i] ? row[i].toString().length : 0
+            )
+          ) *
+            8 +
+          50,
+      }));
+      ws["!cols"] = colWidths;
 
-        // Create workbook and export
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Data");
-        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-        const data = new Blob([excelBuffer], { type: fileType });
-        const url = URL.createObjectURL(data);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName + fileExtension);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link); // Clean up
+      // Create workbook and export
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Data");
+      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      const data = new Blob([excelBuffer], { type: fileType });
+      const url = URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName + fileExtension);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); // Clean up
     } catch (error) {
-        console.error("Error exporting to Excel:", error);
-        toast.error("Error exporting to Excel");
+      console.error("Error exporting to Excel:", error);
+      toast.error("Error exporting to Excel");
     }
-};
+  };
 
-const handleAdvisorWiseReconData = () => {
+  const handleAdvisorWiseReconData = () => {
     exportAdvisorWiseReconData();
-};
-
+  };
 
   const exportMisToExcel = () => {
     try {
-      const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+      const fileType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
       const fileExtension = ".xlsx";
       const fileName = `${name}_executive`;
       // Map all data without filtering by current date
-      const dataToExports = filteredData.map(row => {
+      const dataToExports = filteredData.map((row) => {
         return [
           row.entryDate,
           row.company,
@@ -430,7 +439,7 @@ const handleAdvisorWiseReconData = () => {
         "Advisor Payable Amount", // corresponds to row.advisorPayableAmount
         "Branch Percentage%", // corresponds to row.branchpayoutper
         "Branch Payout", // corresponds to row.branchPayout
-        "Branch Payable Amount" // corresponds to row.branchPayableAmount
+        "Branch Payable Amount", // corresponds to row.branchPayableAmount
       ];
 
       // Create worksheet
@@ -477,113 +486,179 @@ const handleAdvisorWiseReconData = () => {
     <section className="container relative  p-0 sm:ml-40 bg-slate-200">
       <div className="container-fluid flex justify-center p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-slate-200">
         <div className="inline-block min-w-full  w-full py-0 ">
-          <div className=" m-2 flex justify-between text-blue-700 max-w-auto mx-auto w-auto ">
-            <h1></h1>
-            <span className=" flex justify-center text-center  text-3xl font-semibold  ">View All Policies</span>
-            <div className="flex ">
-              <button className="text-end  mr-1 flex justify-end  text-3xl font-semibold " onClick={handleExportClick}><img src="/excel.png" alt="download" height={50} width={40} /></button>
-               {/* button 2 */}
-               <button
-                  className="text-end mx-0 flex justify-end  text-3xl mt-1 font-semibold"
-                  onClick={handleAdvisorWiseReconData}
-                >
-                  <img src="/dwnd.png" alt="download" height={25} width={35} />
-                </button>
-              <button className="text-end   mr-1  justify-end  text-xl font-semibold " onClick={handleMisExportClick}>
-              <Suspense fallback={<div>Loading...</div>}>
-              <img src="/public/xls.png"  className="rounded-xl mx-0 my-0" height={50} width={40} alt="mis "/>
-            </Suspense> 
-              
+          <div className="flex justify-between items-center  w-full my-2">
+            <div className="flex justify-center items-center space-x-4 space-y-5">
+              <button
+                onClick={() => setIsFilterVisible(!isFilterVisible)}
+                className={`flex ${
+                  isFilterVisible
+                    ? "bg-gradient-to-r from-red-500 via-red-600 to-red-700 focus:ring-red-300"
+                    : "focus:ring-blue-300 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+                } text-white  hover:bg-gradient-to-br focus:ring-1 focus:outline-none  shadow-lg font-medium rounded text-sm px-4 py-2`}
+              >
+                {isFilterVisible ? "Hide Filters" : "Show Filters"}
               </button>
-              <NavLink to={{
-                pathname: "/finance/home/new",
-                search: `?page=${currentPage}&limit=${itemsPerPage}`
-              }} className="flex justify-center">
-                <button type="button" className="text-white  mt-2 justify-end bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded text-sm px-2 py-1 text-center me-2 mb-2 ">Go Back</button>
-              </NavLink></div>
-          </div>
-          <div className="flex-wrap flex justify-between  text-blue-500  ">
-            {/* date range filter */}
-            <div className="flex   p-0 text-start  lg:w-1/4">
-              <label className="my-0 text-lg whitespace-nowrap font-medium text-gray-900">Date:</label>
-              <input type="date" value={startDate} onChange={(e) => handleDateRangeChange(e, "start")} className="shadow input-style w-52 my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2" placeholder="From Date" />
-              <span className='text-justify mx-1 my-1 '>to</span>
-              <input type="date" value={endDate} onChange={(e) => handleDateRangeChange(e, "end")} className="shadow input-style w-52 my-0 py-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none  px-0 mb-2 " placeholder="To Date" />
             </div>
-            <div className=" p-0   text-center  lg:w-1/4">
-              <label className="my-0 text-lg font-medium text-gray-900">ID:</label>
-              <input
-                type="search"
-                onChange={(e) => setSearchId(e.target.value)}
-                className="shadow input-style w-52 my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="ID"
-              />
-            </div>
-            <div className="flex justify-start p-0 text-end  lg:w-1/4">
-              <label className="my-0 text-lg font-medium text-gray-900">Company:</label>
-              <input
-                type="search"
-                onChange={(e) => setSearchCompany(e.target.value)}
-                className="shadow input-style w-52 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Company Name"
-              />
-            </div>
-            <div className="text-start lg:w-1/4">
-              <label className="my-0 text-lg font-medium text-gray-900">Insured Name:</label>
-              <input
-                type="search"
-                onChange={(e) => setSearchInsuredName(e.target.value)}
-                className="shadow input-style w-52 my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 ml-2"
-                placeholder="Insured Name"
-              />
-            </div>
-            <div className="flex justify-start my-3  text-start lg:w-1/4">
-              <label className="my-0 text-lg font-medium text-gray-900">Branch:</label>
-              <input
-                type="search"
-                onChange={(e) => setSearchBranch(e.target.value)}
-                className="shadow input-style w-52 my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Branch Name"
-              />
-            </div>
-            <div className="flex justify-start my-3  text-start lg:w-1/4">
-              <label className="my-0 text-base whitespace-nowrap font-medium text-gray-900">Vehicle Reg. No.:</label>
-              <input
-                type="search"
-                onChange={(e) => setVeh(e.target.value)}
-                className="shadow input-style w-52 my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Vehicle Registration Number"
-              />
-            </div>
-            {/* <div className="flex justify-start my-3  text-start lg:w-1/4"></div> */}
-            <div className=" p-0 text-center mt-3 justify-start w-1/2 lg:w-1/4">
-              <label className="my-0 text-lg font-medium text-gray-900">Policy No:</label>
-              <input
-                type="search"
-                onChange={(e) => setPolicyNo(e.target.value)}
-                className="shadow p-0 text-start w-52 lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Policy Number"
-              /></div>
-            <div className=" p-0 text-center mt-3 justify-start w-1/2 lg:w-1/4">
-              <label className="my-0 text-lg whitespace-nowrap font-medium text-gray-900">
-                Advisor Name:
-              </label>
-              <input
-                type="search"
-                onChange={(e) => setAdv(e.target.value)}
-                className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Search by Advisor"
-              />
+            {/* Title */}
+            <span className="my-auto text-blue-700 text-2xl font-semibold">
+              All Policy List&apos;s
+            </span>
+
+            {/* Buttons Container */}
+            <div className="flex justify-center items-center">
+              {/* Recalculate Button */}
+
+              {/* Export Button */}
+              <button onClick={handleExportClick}>
+                <img
+                  src="/excel.png"
+                  alt="Export to Excel"
+                  height={30}
+                  width={30}
+                />
+              </button>
+
+              {/* Advisor-Wise Recon Button */}
+              <button onClick={handleAdvisorWiseReconData}>
+                <img
+                  src="/dwnd.png"
+                  alt="Download Recon Data"
+                  height={30}
+                  width={30}
+                />
+              </button>
+
+              {/* MIS Export Button */}
+              <button onClick={handleMisExportClick}>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <img
+                    src="/xls.png"
+                    alt="MIS Export"
+                    className="rounded-xl"
+                    height={30}
+                    width={30}
+                  />
+                </Suspense>
+              </button>
+
+              {/* Go Back Button */}
+              <NavLink
+                to={{
+                  pathname: "/finance/home/new",
+                  search: `?page=${currentPage}&limit=${itemsPerPage}`,
+                }}
+                className="flex justify-center"
+              >
+                <button
+                  type="button"
+                  className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 shadow-lg font-medium rounded text-sm px-4 py-2"
+                >
+                  Go Back
+                </button>
+              </NavLink>
             </div>
           </div>
 
-         
+          {isFilterVisible && (
+            <div className="grid sticky top-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6 bg-white shadow-md rounded-md text-blue-500">
+              <div className="flex flex-col relative">
+                <label className="text-base text-start font-medium text-blue-700">
+                  Date Range:
+                </label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => handleDateRangeChange(e, "start")}
+                    className="input-style w-full"
+                    placeholder="From Date"
+                  />
+                  <span className="text-sm">to</span>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => handleDateRangeChange(e, "end")}
+                    className="input-style w-full"
+                    placeholder="To Date"
+                  />
+                </div>
+              </div>
+
+              {[
+                {
+                  label: "ID",
+                  placeholder: "Enter ID",
+                  onChange: setSearchId,
+                  value: searchId,
+                },
+                {
+                  label: "Company",
+                  placeholder: "Company Name",
+                  onChange: setSearchCompany,
+                  value: searchCompany,
+                },
+                {
+                  label: "Insured Name",
+                  placeholder: "Insured Name",
+                  onChange: setSearchInsuredName,
+                  value: searchInsuredName,
+                },
+                {
+                  label: "Branch",
+                  placeholder: "Branch Name",
+                  onChange: setSearchBranch,
+                  value: searchBranch,
+                },
+                {
+                  label: "Policy No",
+                  placeholder: "Policy Number",
+                  onChange: setPolicyNo,
+                  value: policyNo,
+                },
+                {
+                  label: "Vehicle No.",
+                  placeholder: "Vehicle Registration No.",
+                  onChange: setVeh,
+                  value: veh,
+                },
+                {
+                  label: "Advisor Name",
+                  placeholder: "Advisor Name",
+                  onChange: setAdv,
+                  value: advs,
+                },
+              ].map((input, index) => (
+                <div className="flex flex-col" key={index}>
+                  <label className="text-base text-start font-medium text-blue-700">
+                    {input.label}:
+                  </label>
+                  <input
+                    type="search"
+                    value={input.value}
+                    onChange={(e) => input.onChange(e.target.value)}
+                    className="input-style w-full"
+                    placeholder={input.placeholder}
+                  />
+                </div>
+              ))}
+              <button
+                className="absolute top-2 right-2 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
+                onClick={() => setIsFilterVisible(false)}
+              >
+                X
+              </button>
+            </div>
+          )}
+
           {filteredData.length === 0 ? (
-                <TextLoader />
-            ) : (
-              <FinanceTable filteredData = {filteredData} onUpdateInsurance = {onUpdateInsurance} totalItems = {totalItems}/>
-            )}
-         
+            <TextLoader />
+          ) : (
+            <FinanceTable
+              filteredData={filteredData}
+              onUpdateInsurance={onUpdateInsurance}
+              totalItems={totalItems}
+            />
+          )}
         </div>
       </div>
       <Pagination

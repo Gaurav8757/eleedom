@@ -237,9 +237,9 @@ export const recalculateAndUpdate = async (req, res) => {
       $or: [
         { branchpayoutper: { $in: [null, undefined, ""] } },
         { companypayoutper: { $in: [null, undefined, ""] } },
-        { companyPayout: { $in: [null, undefined, ""] } },
+        { companyPayout: { $in: [0, null, undefined, ""] } },
         { branchPayableAmount: { $in: [null, undefined, ""] } },
-        { branchPayout: { $in: [null, undefined, ""] } },
+        { branchPayout: { $in: [0, null, undefined, ""] } },
       ],
     });
 
@@ -264,7 +264,7 @@ export const recalculateAndUpdate = async (req, res) => {
       const vehicleAge1 = parseInt(data.vehicleAge, 10);
       const vehicleAgeNormalized =
         data.vehicleAge === "0 years" ||
-        data.vehicleAge === "0" ||
+        data.vehicleAge === "0"  || 
         vehicleAge1 === 0
           ? 0
           : 1;
@@ -351,6 +351,7 @@ export const recalculateAndUpdate = async (req, res) => {
         !companypercent
       ) {
         const updatePayload = {
+          policyrefno: data.policyrefno,
           branchPayableAmount: Number(branchPayable.toFixed(2)),
           branchPayout: Number(branchPayout.toFixed(2)),
           companyPayout: Number(companyPayout.toFixed(2)),
@@ -388,41 +389,42 @@ export const bulkUpdateDetails = async () => {
     const allDetailsData = await AllInsurance.find({
       payoutOn: { $in: [null, ""] },
     });
-
-    if (!Array.isArray(allDetailsData)) {
-      console.error("Invalid data format. Expected an array of details.");
-      return;
-    }
-
-    const updates = allDetailsData.map(async (data) => {
-      let paydata;
-
-      if (!data.paydata) {
-        if (data.policyType === "COMP" && data.productCode === "PVT-CAR") {
+    
+      // const allDetailsData = await AllInsurance.find();
+      if (!Array.isArray(allDetailsData)) {
+        console.error("Invalid data format. Expected an array of details.");
+        return;
+      }
+  
+      const updates = allDetailsData.map(async (data) => {
+        let paydata;
+  
+        if (!data.paydata) { 
+          if (data.policyType === "COMP" && data.productCode === "PVT-CAR") {
+            paydata = { payoutOn: "OD" };
+          } else {
+            paydata = { payoutOn: "NET" };
+          }
+        } else if (
+          data.policyType === "COMP" &&
+          data.productCode === "PVT-CAR" &&
+          data.paydata !== "OD"
+        ) {
           paydata = { payoutOn: "OD" };
-        } else {
+        } else if (
+          data.paydata !== "NET" &&
+          !(data.policyType === "COMP" && data.productCode === "PVT-CAR")
+        ) {
           paydata = { payoutOn: "NET" };
         }
-      } else if (
-        data.policyType === "COMP" &&
-        data.productCode === "PVT-CAR" &&
-        data.paydata !== "OD"
-      ) {
-        paydata = { payoutOn: "OD" };
-      } else if (
-        data.paydata !== "NET" &&
-        !(data.policyType === "COMP" && data.productCode === "PVT-CAR")
-      ) {
-        paydata = { payoutOn: "NET" };
-      }
-
-      if (!paydata) return null;
-
-      return AllInsurance.findByIdAndUpdate(data._id, paydata, {
-        new: true,
-        runValidators: true,
+  
+        if (!paydata) return null;
+  
+        return AllInsurance.findByIdAndUpdate(data._id, paydata, {
+          new: true,
+          runValidators: true,
+        });
       });
-    });
     const results = await Promise.all(updates);
     const updatedRecords = results.filter((record) => record !== null);
     console.log(`${updatedRecords.length} payoutOn updated successfully...!`);

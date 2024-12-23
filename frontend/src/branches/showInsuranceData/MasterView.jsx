@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useEffect, useState, Suspense } from "react";
-import { toast } from 'react-toastify';
-import * as XLSX from 'xlsx';
+import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
 import VITE_DATA from "../../config/config.jsx";
 import TextLoader from "../../loader/TextLoader.jsx";
 
 function MasterView() {
   const [allDetailsData, setAllDetailsData] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,16 +19,16 @@ function MasterView() {
   const [policies, setPolicies] = useState("");
   const [adv, setAdv] = useState("");
 
-  const name = sessionStorage.getItem('name');
+  const name = sessionStorage.getItem("name");
   useEffect(() => {
     setItemsPerPage(100);
-  }, [])
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!name) {
-          console.error('Branch information not found in sessionStorage');
+          console.error("Branch information not found in sessionStorage");
           return;
         }
         const response = await axios.get(
@@ -39,7 +39,7 @@ function MasterView() {
         setAllDetailsData(fetchedData);
         // setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
     fetchData();
@@ -53,7 +53,7 @@ function MasterView() {
     }
   };
 
-  const filteredData = allDetailsData?.filter(data => {
+  const filteredData = allDetailsData?.filter((data) => {
     if (!data) return false;
     const idLower = data.policyrefno?.toLowerCase() || "";
     const numbers = data.policyNo?.toLowerCase() || "";
@@ -62,12 +62,15 @@ function MasterView() {
     const advisor = data.advisorName?.toLowerCase() || "";
     const policyMadeByLower = data.policyMadeBy?.toLowerCase() || "";
     return (
-      (idLower.includes(searchId.toLowerCase()) || searchId === '') &&
-      (numbers.includes(policies.toLowerCase()) || policies === '') &&
-      (advisor.includes(adv.toLowerCase()) || adv === '') &&
-      (insuredNameLower.includes(searchInsuredName.toLowerCase()) || searchInsuredName === '') &&
-      (companyLower.includes(searchCompany.toLowerCase()) || searchCompany === '') &&
-      (policyMadeByLower.includes(searchPolicyMadeBy.toLowerCase()) || searchPolicyMadeBy === '') &&
+      (idLower.includes(searchId.toLowerCase()) || searchId === "") &&
+      (numbers.includes(policies.toLowerCase()) || policies === "") &&
+      (advisor.includes(adv.toLowerCase()) || adv === "") &&
+      (insuredNameLower.includes(searchInsuredName.toLowerCase()) ||
+        searchInsuredName === "") &&
+      (companyLower.includes(searchCompany.toLowerCase()) ||
+        searchCompany === "") &&
+      (policyMadeByLower.includes(searchPolicyMadeBy.toLowerCase()) ||
+        searchPolicyMadeBy === "") &&
       (startDate === "" || new Date(data.entryDate) >= new Date(startDate)) &&
       (endDate === "" || new Date(data.entryDate) <= new Date(endDate))
     );
@@ -90,7 +93,7 @@ function MasterView() {
 
   const handleNumericInput = (e) => {
     const input = e.target.innerText;
-    const numericInput = input.replace(/[^\d.]/g, ''); // Remove any non-numeric characters
+    const numericInput = input.replace(/[^\d.]/g, ""); // Remove any non-numeric characters
     if (input !== numericInput) {
       e.target.innerText = numericInput; // Update the contentEditable element with numeric value
     }
@@ -99,7 +102,7 @@ function MasterView() {
   const handleInputChange = async (itemId, value) => {
     try {
       // Find the item in the current data state
-      const itemToUpdate = allDetailsData.find(item => item._id === itemId);
+      const itemToUpdate = allDetailsData.find((item) => item._id === itemId);
       if (!itemToUpdate) {
         throw new Error(`Item with ID ${itemId} not found.`);
       }
@@ -117,15 +120,27 @@ function MasterView() {
       let advisorPayout, advisorPayable;
 
       if (
-        itemToUpdate.policyType === 'COMP' &&
-        itemToUpdate.productCode === 'PVT-CAR' &&
-        itemToUpdate.payoutOn === 'OD'
+        itemToUpdate.policyType === "COMP" &&
+        itemToUpdate.productCode === "PVT-CAR" &&
+        itemToUpdate.payoutOn === "OD"
       ) {
-        advisorPayout = calculateAdvisorPayoutAmount(parseFloat(itemToUpdate.odPremium), parsedPercentage);
-        advisorPayable = calculateAdvisorPayableAmount(parseFloat(itemToUpdate.finalEntryFields), advisorPayout);
+        advisorPayout = calculateAdvisorPayoutAmount(
+          parseFloat(itemToUpdate.odPremium),
+          parsedPercentage
+        );
+        advisorPayable = calculateAdvisorPayableAmount(
+          parseFloat(itemToUpdate.finalEntryFields),
+          advisorPayout
+        );
       } else {
-        advisorPayout = calculateAdvisorPayoutAmount(parseFloat(itemToUpdate.netPremium), parsedPercentage);
-        advisorPayable = calculateAdvisorPayableAmount(parseFloat(itemToUpdate.finalEntryFields), advisorPayout);
+        advisorPayout = calculateAdvisorPayoutAmount(
+          parseFloat(itemToUpdate.netPremium),
+          parsedPercentage
+        );
+        advisorPayable = calculateAdvisorPayableAmount(
+          parseFloat(itemToUpdate.finalEntryFields),
+          advisorPayout
+        );
       }
 
       // Create updated item data with only necessary changes
@@ -137,7 +152,7 @@ function MasterView() {
       };
 
       // Update the state with the new calculated values
-      const updatedData = allDetailsData.map(item =>
+      const updatedData = allDetailsData.map((item) =>
         item._id === itemId ? updatedItem : item
       );
       setAllDetailsData(updatedData);
@@ -149,22 +164,27 @@ function MasterView() {
         updatedItem.advisorPayoutAmount,
         updatedItem.advisorPayableAmount
       );
-
     } catch (error) {
       console.error("Error handling advisor payout change:", error);
       toast.error("Failed to handle advisor payout change. Please try again.");
     }
   };
 
-
-
-  const updateInsuranceAPI = async (itemId, cvpercentage, advisorPayoutAmount, advisorPayableAmount) => {
+  const updateInsuranceAPI = async (
+    itemId,
+    cvpercentage,
+    advisorPayoutAmount,
+    advisorPayableAmount
+  ) => {
     try {
-      const resp = await axios.put(`${VITE_DATA}/alldetails/updatedata/${itemId}`, {
-        cvpercentage,
-        advisorPayoutAmount,
-        advisorPayableAmount
-      });
+      const resp = await axios.put(
+        `${VITE_DATA}/alldetails/updatedata/${itemId}`,
+        {
+          cvpercentage,
+          advisorPayoutAmount,
+          advisorPayableAmount,
+        }
+      );
 
       // Assuming the backend returns a success message in resp.data.status
       toast.success(`${resp.data.status}`, {
@@ -188,13 +208,20 @@ function MasterView() {
 
 
 
+
+
+
+
+  
+
   const exportToExcel = () => {
     try {
-      const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+      const fileType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
       const fileExtension = ".xlsx";
       const fileName = `${name}_BRANCH`;
       // Map all data without filtering by current date
-      const dataToExport = filteredData.map(row => {
+      const dataToExport = filteredData.map((row) => {
         return [
           row.policyrefno, // "Reference ID"
           row.entryDate, // "Entry Date"
@@ -244,7 +271,7 @@ function MasterView() {
           row.advisorPayableAmount, // "Advisor Payable Amount"
           row.branchpayoutper, // "Branch Payout %"
           row.branchPayout, // "Branch Payout"
-          row.branchPayableAmount // "Branch Payable Amount"
+          row.branchPayableAmount, // "Branch Payable Amount"
         ];
       });
 
@@ -326,11 +353,12 @@ function MasterView() {
   };
   const exportMisToExcel = () => {
     try {
-      const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+      const fileType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
       const fileExtension = ".xlsx";
       const fileName = `${name}_executive`;
       // Map all data without filtering by current date
-      const dataToExports = filteredData.map(row => {
+      const dataToExports = filteredData.map((row) => {
         return [
           row.entryDate,
           row.company,
@@ -390,7 +418,7 @@ function MasterView() {
         "Advisor Payable Amount", // corresponds to row.advisorPayableAmount
         "Branch Percentage%", // corresponds to row.branchpayoutper
         "Branch Payout", // corresponds to row.branchPayout
-        "Branch Payable Amount" // corresponds to row.branchPayableAmount
+        "Branch Payable Amount", // corresponds to row.branchPayableAmount
       ];
 
       // Create worksheet
@@ -417,208 +445,590 @@ function MasterView() {
     exportMisToExcel();
   };
   return (
-    <section className="container-fluid  p-0 sm:ml-48 bg-slate-200">
+    <section className="container sm:ml-48 bg-slate-100">
       <div className="inline-block min-w-full w-full py-0">
-        <div className="my-4  flex justify-between text-blue-700 max-w-auto mx-auto w-auto ">
-          <h1></h1>
-          <span className=" flex justify-center text-center  text-3xl font-semibold  ">View All Policies</span>
-          <div className="flex ">
-            <button className="text-end  flex justify-end  text-3xl font-semibold " onClick={handleExportClick}><img src="/excel.png" alt="download" className="w-10" /></button>
-            <button className="text-end   mr-0.5  justify-end  text-xl font-semibold  my-auto" onClick={handleMisExportClick}>  <Suspense fallback={<div>Loading...</div>}>
-              <img src="/public/xls.png" className="rounded-xl mx-0 my-auto" height={50} width={40} alt="mis " />
-            </Suspense>
+        <div className="flex justify-between items-center  w-full ">
+          <div className="flex justify-center items-center space-x-4">
+            <button
+              onClick={() => setIsFilterVisible(!isFilterVisible)}
+              className={`flex ${
+                isFilterVisible
+                  ? "bg-gradient-to-r from-red-500 via-red-600 to-red-700 focus:ring-red-300"
+                  : "focus:ring-blue-300 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+              } text-white  hover:bg-gradient-to-br focus:ring-1 focus:outline-none  shadow-lg font-medium rounded text-sm px-4 py-2`}
+            >
+              {isFilterVisible ? "Hide Filters" : "Show Filters"}
+            </button>
+          </div>
+          {/* Title */}
+          <span className="my-auto text-blue-700 text-2xl font-semibold">
+            View All Policies
+          </span>
+
+          {/* Buttons Container */}
+          <div className="flex justify-center items-center">
+            {/* Export Button */}
+            <button onClick={handleExportClick}>
+              <img
+                src="/excel.png"
+                alt="Export to Excel"
+                height={30}
+                width={40}
+              />
+            </button>
+
+            {/* MIS Export Button */}
+            <button onClick={handleMisExportClick}>
+              <Suspense fallback={<div>Loading...</div>}>
+                <img
+                  src="/xls.png"
+                  alt="MIS Export"
+                  className="rounded-xl"
+                  height={30}
+                  width={40}
+                />
+              </Suspense>
             </button>
           </div>
         </div>
+
         <div className=" relative mt-2">
           <div className="min-w-full w-full py-0  block z-50">
-            <div className="flex-wrap flex justify-between  text-blue-500  ">
-              {/* date range filter */}
-              <div className="flex   p-0 text-start w-full lg:w-1/4">
-                <label className="my-auto  text-base whitespace-nowrap font-medium text-gray-900">Date:</label>
-                <input type="date" value={startDate} onChange={(e) => handleDateRangeChange(e, "start")} className="shadow input-style w-52 my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0  ml-2" placeholder="From Date" />
-                <span className='text-justify mx-1 my-1 '>to</span>
-                <input type="date" value={endDate} onChange={(e) => handleDateRangeChange(e, "end")} className="shadow input-style w-52 my-0 py-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none  px-0  " placeholder="To Date" />
-              </div>
-              <div className=" p-0 justify-start text-center my-auto  lg:w-1/5">
-                <label className="my-auto  text-base font-medium text-gray-900">ID:</label>
-                <input
-                  type="search"
-                  onChange={(e) => setSearchId(e.target.value)}
-                  className="shadow p-0 text-start lg:w-1/2 input-style  my-auto  ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0  ml-2"
-                  placeholder="ID"
-                />
-              </div>
+            {isFilterVisible && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-5 bg-white shadow-md rounded-md text-blue-500 ">
+                <div className="flex flex-col relative">
+                  <label className="text-base text-start font-medium text-blue-700">
+                    Date Range:
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => handleDateRangeChange(e, "start")}
+                      className="input-style w-full"
+                      placeholder="From Date"
+                    />
+                    <span className="text-sm">to</span>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => handleDateRangeChange(e, "end")}
+                      className="input-style w-full"
+                      placeholder="To Date"
+                    />
+                  </div>
+                </div>
 
-
-              <div className=" flex text-start my-auto  justify-start  lg:w-1/5">
-                <label className="my-auto  text-base font-medium text-gray-900">Company:</label>
-                <input
-                  type="search"
-                  onChange={(e) => setSearchCompany(e.target.value)}
-                  className="shadow p-0 text-start lg:w-1/2 input-style  my-auto  ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 ml-2"
-                  placeholder="Company Name"
-                />
+                {[
+                  {
+                    label: "ID",
+                    placeholder: "Enter ID",
+                    onChange: setSearchId,
+                    value: searchId,
+                  },
+                  {
+                    label: "Company",
+                    placeholder: "Company Name",
+                    onChange: setSearchCompany,
+                    value: searchCompany,
+                  },
+                  {
+                    label: "Insured Name",
+                    placeholder: "Insured Name",
+                    onChange: setSearchInsuredName,
+                    value: searchInsuredName,
+                  },
+                  {
+                    label: "Policy Made By",
+                    placeholder: "Policy Made By",
+                    onChange: setSearchPolicyMadeBy,
+                    value: searchPolicyMadeBy,
+                  },
+                  {
+                    label: "Policy No",
+                    placeholder: "Policy Number",
+                    onChange: setPolicies,
+                    value: policies,
+                  },
+                  // {
+                  //   label: "Vehicle No.",
+                  //   placeholder: "Vehicle Registration No.",
+                  //   onChange: setVeh,
+                  //   value: veh,
+                  // },
+                  {
+                    label: "Advisor Name",
+                    placeholder: "Advisor Name",
+                    onChange: setAdv,
+                    value: adv,
+                  },
+                  {
+                    label: "Policy Made By",
+                    placeholder: "Policy Made By",
+                    onChange: setSearchPolicyMadeBy,
+                    value: searchPolicyMadeBy,
+                  },
+                ].map((input, index) => (
+                  <div className="flex flex-col" key={index}>
+                    <label className="text-base text-start font-medium text-blue-700">
+                      {input.label}:
+                    </label>
+                    <input
+                      type="search"
+                      value={input.value}
+                      onChange={(e) => input.onChange(e.target.value)}
+                      className="input-style w-full"
+                      placeholder={input.placeholder}
+                    />
+                  </div>
+                ))}
+                <button
+                  className="absolute top-16 right-1 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
+                  onClick={() => setIsFilterVisible(false)}
+                >
+                  X
+                </button>
               </div>
-              <div className="flex text-start my-auto justify-start  lg:w-1/5">
-                <label className="my-auto text-base   font-medium text-gray-900">Insured Name:</label>
-                <input
-                  type="search"
-                  onChange={(e) => setSearchInsuredName(e.target.value)}
-                  className="shadow p-0 text-start lg:w-1/2 input-style  my-auto ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0  ml-2"
-                  placeholder="Insured Name"
-                />
-              </div>
-              <div className=" flex justify-start p-0 text-end my-auto  w-full lg:w-1/5">
-                <label className="my-auto  text-base font-medium text-gray-900">Policy No.:</label>
-                <input
-                  type="search"
-                  onChange={(e) => setPolicies(e.target.value)}
-                  className="shadow p-0 text-start lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 ml-2"
-                  placeholder="Policy No."
-                />
-              </div>
-              <div className=" flex justify-start p-0 text-end my-auto  w-full lg:w-1/5">
-                <label className="my-auto  text-base font-medium text-gray-900">Advisor Name:</label>
-                <input
-                  type="search"
-                  onChange={(e) => setAdv(e.target.value)}
-                  className="shadow p-0 text-start lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 ml-2"
-                  placeholder="AdvisorName"
-                />
-              </div>
+            )}
 
-
-              <div className="flex text-start my-5   justify-start  lg:w-1/5">
-                <label className="my-auto  text-base font-medium whitespace-nowrap text-gray-900">Policy Made By:</label>
-                <input
-                  type="search"
-                  onChange={(e) => setSearchPolicyMadeBy(e.target.value)}
-                  className="shadow p-0 text-start lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0  ml-2"
-                  placeholder="Policy Made By"
-                /></div>
-            </div>
-
-            <table className="min-w-full text-center text-xs font-light table  bg-white border border-gray-200 divide-y divide-gray-200  ">
-
+            <table className="min-w-full text-center text-xs font-light table border border-gray-200 divide-y divide-gray-200  ">
               <div className="min-w-full  border text-center bg-slate-200 text-sm font-light table">
-                {filteredData?.length === 0 ? ( // Conditional rendering for loading state
-                  <TextLoader />
-                ) : (<>
-                  <thead className=" font-medium  bg-slate-300 sticky top-16 border border-black">
+              {filteredData?.length === 0 ? ( // Conditional rendering for loading state
+                <TextLoader />
+              ) : (
+                <>
+                  <thead className=" font-medium  bg-slate-200 sticky top-16 border border-black">
                     <tr className="text-blue-700 sticky top-16 border border-black ">
                       {/* <th scope="col" className=" border border-black">Update</th> */}
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Reference ID</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Entry Date</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Branch</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Insured Name</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Contact No</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Policy Made By</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">State</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">District</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Vehicle Reg No</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Company</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Category</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Policy Type</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Segment</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Product Code</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Sourcing</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Policy No</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Engine No.</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Chassis No</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">OD Premium</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Liability Premium</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Net Premium</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">RSA</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">GST(in Amount)</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Final Amount</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">OD Discount(%)</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">NCB(%)</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Policy Payment Mode</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Policy Start Date</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Policy End Date</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">OD Expiry</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">TP Expiry</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">IDV</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Body Type</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Make & Model</th>
-                      <th scope="col" className="px-1 pt-2 whitespace-nowrap sticky border border-black">MFG Year</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Registration Date</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Vehicle Age</th>
-                      <th scope="col" className="px-1 pt-2 whitespace-nowrap sticky border border-black">Fuel Type</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">GVW</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">C.C.</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Advisor</th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">Sub Advisor</th>
-                      <th scope="col" className="px-1  pt-2 sticky border border-black">
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Reference ID
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Entry Date
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Branch
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Insured Name
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Contact No
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Policy Made By
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        State
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        District
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Vehicle Reg No
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Company
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Category
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Policy Type
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Segment
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Product Code
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Sourcing
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Policy No
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Engine No.
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Chassis No
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        OD Premium
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Liability Premium
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Net Premium
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        RSA
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        GST(in Amount)
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Final Amount
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        OD Discount(%)
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        NCB(%)
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Policy Payment Mode
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Policy Start Date
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Policy End Date
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        OD Expiry
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        TP Expiry
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        IDV
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Body Type
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Make & Model
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 whitespace-nowrap sticky border border-black"
+                      >
+                        MFG Year
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Registration Date
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Vehicle Age
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 whitespace-nowrap sticky border border-black"
+                      >
+                        Fuel Type
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        GVW
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        C.C.
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Advisor
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
+                        Sub Advisor
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-1  pt-2 sticky border border-black"
+                      >
                         Payout On
                       </th>
-                      <th scope="col" className="px-1  pt-2 sticky border border-black">
+                      <th
+                        scope="col"
+                        className="px-1  pt-2 sticky border border-black"
+                      >
                         Advisor Payout %
                       </th>
-                      <th scope="col" className="px-1  pt-2 sticky border border-black">
+                      <th
+                        scope="col"
+                        className="px-1  pt-2 sticky border border-black"
+                      >
                         Advisor Payout
                       </th>
-                      <th scope="col" className="px-1  pt-2 sticky border border-black">
+                      <th
+                        scope="col"
+                        className="px-1  pt-2 sticky border border-black"
+                      >
                         Advisor Payable Amount
                       </th>
-                      <th scope="col" className="px-1  pt-2 sticky border border-black">
+                      <th
+                        scope="col"
+                        className="px-1  pt-2 sticky border border-black"
+                      >
                         Branch Payout %
                       </th>
-                      <th scope="col" className="px-1  pt-2 sticky border border-black">
+                      <th
+                        scope="col"
+                        className="px-1  pt-2 sticky border border-black"
+                      >
                         Branch Payout
                       </th>
-                      <th scope="col" className="px-1 pt-2 sticky border border-black">
+                      <th
+                        scope="col"
+                        className="px-1 pt-2 sticky border border-black"
+                      >
                         Branch Payable Amount
                       </th>
                     </tr>
                   </thead>
 
-                  <tbody className="divide-y divide-gray-200 overflow-y-hidden ">
+                  <tbody className="divide-y divide-gray-200 overflow-y-hidden bg-slate-200">
                     {filteredData?.map((data) => (
-                      <tr key={data._id} className="border-b dark:border-neutral-200 text-sm font-medium hover:bg-orange-100">
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.policyrefno}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.entryDate}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.branch}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.insuredName}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.contactNo}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.staffName}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.states}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.district}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.vehRegNo}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.company}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.category}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.policyType}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.segment}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.productCode}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.sourcing}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.policyNo}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.engNo}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.chsNo}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.odPremium}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.liabilityPremium}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.netPremium}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.rsa}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.taxes}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.finalEntryFields}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.odDiscount}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.ncb}</td>
-                        <td className="whitespace-nowrap px-1 py-1 border border-black">{data.policyPaymentMode}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.policyStartDate}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.policyEndDate}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.odExpiry}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.tpExpiry}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.idv}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.bodyType}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.makeModel}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.mfgYear}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.registrationDate}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.vehicleAge}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.fuel}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.gvw}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.cc}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.advisorName}</td>
-                        <td className="whitespace-nowrap px-1 py-0 border border-black">{data.subAdvisor}</td>
+                      <tr
+                        key={data._id}
+                        className="border-b  text-sm font-medium hover:bg-orange-100"
+                      >
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.policyrefno}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.entryDate}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.branch}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.insuredName}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.contactNo}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.staffName}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.states}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.district}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.vehRegNo}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.company}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.category}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.policyType}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.segment}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.productCode}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.sourcing}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.policyNo}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.engNo}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.chsNo}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.odPremium}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.liabilityPremium}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.netPremium}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.rsa}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.taxes}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.finalEntryFields}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.odDiscount}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.ncb}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1 border border-black">
+                          {data.policyPaymentMode}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.policyStartDate}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.policyEndDate}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.odExpiry}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.tpExpiry}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.idv}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.bodyType}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.makeModel}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.mfgYear}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.registrationDate}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.vehicleAge}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.fuel}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.gvw}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.cc}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.advisorName}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-0 border border-black">
+                          {data.subAdvisor}
+                        </td>
                         <td className="whitespace-nowrap px-1  py-0 border border-black">
                           {data.payoutOn}
                         </td>
@@ -627,14 +1037,20 @@ function MasterView() {
                           className="whitespace-nowrap px-0.5 w-20 h-10 py-0 border border-black text-center"
                           dir="ltr"
                           onInput={(e) => handleNumericInput(e)}
-                          onBlur={(e) => handleInputChange(data._id, e.target.innerText)}
+                          onBlur={(e) =>
+                            handleInputChange(data._id, e.target.innerText)
+                          }
                           name="cvpercentage"
                         >
                           {data.cvpercentage}
                         </td>
 
-                        <td className="whitespace-nowrap px-1 py-0  border border-black">{`₹${data.advisorPayoutAmount || 0}`}</td>
-                        <td className="whitespace-nowrap px-1 py-0  border border-black">{`₹${data.advisorPayableAmount || 0}`}</td>
+                        <td className="whitespace-nowrap px-1 py-0  border border-black">{`₹${
+                          data.advisorPayoutAmount || 0
+                        }`}</td>
+                        <td className="whitespace-nowrap px-1 py-0  border border-black">{`₹${
+                          data.advisorPayableAmount || 0
+                        }`}</td>
                         <td className="whitespace-nowrap px-1  py-0 border border-black">
                           {data.branchpayoutper}
                         </td>
@@ -643,7 +1059,8 @@ function MasterView() {
                       </tr>
                     ))}
                   </tbody>
-                </>)}
+                </>
+              )}
               </div>
             </table>
           </div>
@@ -663,16 +1080,21 @@ function MasterView() {
           </li>
           {Array.from({ length: totalPages }, (_, i) => {
             // Display buttons for currentPage and a few surrounding pages
-            const showPage = i + 1 === 1 || i + 1 === currentPage || i + 1 === totalPages || Math.abs(i + 1 - currentPage) <= 2;
+            const showPage =
+              i + 1 === 1 ||
+              i + 1 === currentPage ||
+              i + 1 === totalPages ||
+              Math.abs(i + 1 - currentPage) <= 2;
             if (showPage) {
               return (
                 <li key={i}>
                   <button
                     onClick={() => handlePageChange(i + 1)}
-                    className={`px-3 py-1 ${i + 1 === currentPage
-                      ? 'bg-green-700 text-white font-bold'
-                      : 'text-blue-600 hover:bg-blue-400 hover:text-white'
-                      } border border-blue-600`}
+                    className={`px-3 py-1 ${
+                      i + 1 === currentPage
+                        ? "bg-green-700 text-white font-bold"
+                        : "text-blue-600 hover:bg-blue-400 hover:text-white"
+                    } border border-blue-600`}
                   >
                     {i + 1}
                   </button>

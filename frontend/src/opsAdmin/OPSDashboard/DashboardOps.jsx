@@ -1,7 +1,7 @@
 import OpsDashboard from "./OpsDashboard.jsx";
 const DashboardOps = () => {
     return (
-        <div className=" sm:ml-36 p-2 bg-white">
+        <div className=" sm:ml-44 pt-3 bg-white">
          
                <OpsDashboard/>
            

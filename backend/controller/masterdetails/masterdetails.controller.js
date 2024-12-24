@@ -386,11 +386,11 @@ export const recalculateAndUpdate = async (req, res) => {
 // Bulk update endpoint for processing all details
 export const bulkUpdateDetails = async () => {
   try {
-    const allDetailsData = await AllInsurance.find({
-      payoutOn: { $in: [null, ""] },
-    });
+    // const allDetailsData = await AllInsurance.find({
+    //   payoutOn: { $in: [null, ""] },
+    // });
     
-      // const allDetailsData = await AllInsurance.find();
+      const allDetailsData = await AllInsurance.find();
       if (!Array.isArray(allDetailsData)) {
         console.error("Invalid data format. Expected an array of details.");
         return;
@@ -412,10 +412,8 @@ export const bulkUpdateDetails = async () => {
         ) {
           paydata = { payoutOn: "OD" };
         } else if (
-          data.paydata !== "NET" &&
-          !(data.policyType === "COMP" && data.productCode === "PVT-CAR")
-        ) {
-          paydata = { payoutOn: "NET" };
+          !(data.policyType === "COMP" && data.productCode === "PVT-CAR") &&  data.paydata !== "NET") {
+          paydata = { payoutOn: "NET" }
         }
   
         if (!paydata) return null;

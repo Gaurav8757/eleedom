@@ -1039,6 +1039,7 @@ function MasterView() {
                           onBlur={(e) =>
                             handleInputChange(data._id, e.target.innerText)
                           }
+                          suppressContentEditableWarning={true} 
                           name="cvpercentage"
                         >
                           {data.cvpercentage}

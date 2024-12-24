@@ -18,7 +18,6 @@ function MasterView() {
   const [searchPolicyMadeBy, setSearchPolicyMadeBy] = useState("");
   const [policies, setPolicies] = useState("");
   const [adv, setAdv] = useState("");
-
   const name = sessionStorage.getItem("name");
   useEffect(() => {
     setItemsPerPage(100);
@@ -212,7 +211,7 @@ function MasterView() {
 
 
 
-  
+
 
   const exportToExcel = () => {
     try {
@@ -583,7 +582,7 @@ function MasterView() {
                   </div>
                 ))}
                 <button
-                  className="absolute top-16 right-1 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
+                  className="absolute top-2 right-2 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
                   onClick={() => setIsFilterVisible(false)}
                 >
                   X

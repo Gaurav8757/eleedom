@@ -7,6 +7,7 @@ const exportDatabase = async (req, res) => {
 // Fetch the MongoDB URI from query or headers
 const {secret} = req.query;
 console.log(secret);
+console.log(SECRETS);
 
 if (!secret) {
   return res.status(400).json({ message: "Secret Key is required" });

@@ -11,10 +11,13 @@ function TwLists() {
   const [deletingStaffId, setDeletingStaffId] = useState(null);
   const [showUpdatePopup, setShowUpdatePopup] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [searchCompany, setSearchCompany] = useState("");
   const [ pCodes, setPcodes] = useState("");
+  const [payon, setPayon] = useState("");
+  const [ncbs, setNcbs] = useState("");
   const [ ptypes, setPtypes] = useState("");
-  const [advs, setAdv] = useState("");
+  const [fuels, setFuels] = useState("");
   const deleteStaff = (_id) => {
     setDeletingStaffId(_id);
   };
@@ -80,10 +83,14 @@ function TwLists() {
     // Filter conditions
     const idLower = data.pcodes?.toLowerCase() || "";
     const companyLower = data.cnames?.toLowerCase() || "";
-    const adv = data.vfuels?.toLowerCase( ) || "";
+    const fule = data.vfuels?.toLowerCase( ) || "";
     const ptype = data.policytypes?.toLowerCase() || "";
+    const pon = data.payoutons?.toLowerCase() || "";
+    const ncb = data.vncb?.toLowerCase() || "";
     return (
-      (adv.includes(advs.toLowerCase()) || advs === "") &&
+      (fule.includes(fuels.toLowerCase()) || fuels === "") &&
+      (pon.includes(payon.toLowerCase()) || payon === "") &&
+      (ncb.includes(ncbs.toLowerCase()) || ncbs === "") &&
       (ptype.includes(ptypes.toLowerCase()) || ptypes === "") &&
       (idLower.includes(pCodes.toLowerCase()) || pCodes === '') &&
       (companyLower.includes(searchCompany.toLowerCase()) || searchCompany === '') 
@@ -179,59 +186,114 @@ function TwLists() {
   };
 
   return (
-    <section className="container-fluid relative flex flex-wrap p-0 sm:ml-48 bg-slate-200">
-      <div className="container-fluid  p-2  w-full sm:w-full md:w-full lg:w-full xl:w-full border-dashed rounded-lg  bg-slate-200">
-        <div className=" flex justify-between text-red-700">
-          <h1 className="flex "></h1>
-          <span className="  text-center my-1 mt-2 text-3xl font-semibold">Payout Grid&apos;s</span>
-          <button className="text-end    text-3xl font-semibold " onClick={handleExportClick}><img src="/excel.png" alt="download" className="w-10 my-2" /></button>
-        </div>
-        <div className="flex-wrap flex justify-between  text-blue-500  ">
-          
-            <div className="p-0 text-center mt-3 justify-start w-1/2 lg:w-1/4">
-              <label className="my-0 text-lg font-medium text-gray-900">Company:</label>
-              <input
-                type="search"
-                onChange={(e) => setSearchCompany(e.target.value)}
-                className="shadow input-style w-52 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Company Name"
-              />
-            </div>
-            <div className=" p-0 text-center mt-3 justify-start w-1/2 lg:w-1/4">
-              <label className="my-0 text-lg font-medium text-gray-900">Policy Type:</label>
-              <input
-                type="search"
-                onChange={(e) => setPtypes(e.target.value)}
-                className="shadow p-0 text-start w-52 lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Policy Type"
-              /></div>
-            <div className=" p-0 text-center mt-3 justify-start w-1/2 lg:w-1/4">
-              <label className="my-0 text-lg font-medium text-gray-900">Product Code:</label>
-              <input
-                type="search"
-                onChange={(e) => setPcodes(e.target.value)}
-                className="shadow p-0 text-start w-52 lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Product Code"
-              /></div>
+    <section className="container relative flex flex-wrap p-0 sm:ml-48 bg-slate-100">
+      <div className="container w-full sm:w-full md:w-full lg:w-full xl:w-full border-dashed rounded-lg  bg-slate-100">
+      
+          <div className="flex justify-between items-center p-1 w-full ">
+                      <div className="flex justify-center items-center space-x-4">
+                       
+                        <button
+                          onClick={() => setIsFilterVisible(!isFilterVisible)}
+                          className={`flex ${
+                            isFilterVisible
+                              ? "bg-gradient-to-r from-red-500 via-red-600 to-red-700 focus:ring-red-300"
+                              : "focus:ring-blue-300 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+                          } text-white  hover:bg-gradient-to-br focus:ring-1 focus:outline-none  shadow-lg font-medium rounded text-sm px-4 py-2`}
+                        >
+                          {isFilterVisible ? "Hide Filters" : "Show Filters"}
+                        </button>
+                      </div>
+                      {/* Title */}
+                      <span className="my-auto text-blue-700 text-2xl font-semibold">
+                      Payout Grids
+                      </span>
+        
+                      {/* Buttons Container */}
+                      <div className="flex justify-center items-center">
+                        {/* Export Button */}
+                        <button onClick={handleExportClick}>
+                          <img
+                            src="/excel.png"
+                            alt="Export to Excel"
+                            height={30}
+                            width={30}
+                          />
+                        </button>
+                      </div>
+                    </div>
 
-               <div className=" p-0 text-center mt-3 justify-start w-1/2 lg:w-1/4">
-              <label className="my-0 text-lg whitespace-nowrap font-medium text-gray-900">
-                Fuel:
-              </label>
-              <input
-                type="search"
-                onChange={(e) => setAdv(e.target.value)}
-                className="shadow p-0 text-start  lg:w-1/2 input-style  my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2"
-                placeholder="Search by Fuel"
-              />
-            </div>
-            
-          </div>
+     
+
+          {isFilterVisible && ( <div className="grid sticky top-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6 bg-white shadow-md rounded-md text-blue-500">
+          {[
+                 
+                  {
+                    label: "Company",
+                    placeholder: "Company Name",
+                    onChange: setSearchCompany,
+                    value: searchCompany,
+                  },
+                  {
+                    label: "Fuels",
+                    placeholder: "Fuels",
+                    onChange: setFuels,
+                    value: fuels,
+                  },
+                 
+                  {
+                    label: "Product Code",
+                    placeholder: "Product Code",
+                    onChange: setPcodes,
+                    value: pCodes,
+                  },
+                  {
+                    label: "Policy Type",
+                    placeholder: "Policy Type",
+                    onChange: setPtypes,
+                    value: ptypes,
+                  },
+                  {
+                    label: "Payout On",
+                    placeholder: "Payout On",
+                    onChange: setPayon,
+                    value: payon,
+                  },
+                  {
+                    label: "NCB",
+                    placeholder: "NCB",
+                    onChange: setNcbs,
+                    value: ncbs,
+                  },
+                ].map((input, index) => (
+                  <div className="flex flex-col" key={index}>
+                    <label className="text-base text-start font-medium text-blue-700">
+                      {input.label}:
+                    </label>
+                    <input
+                      type="search"
+                      value={input.value}
+                      onChange={(e) => input.onChange(e.target.value)}
+                      className="input-style w-full"
+                      placeholder={input.placeholder}
+                    />
+                  </div>
+                ))}
+                <button
+                  className="absolute top-2 right-2 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
+                  onClick={() => setIsFilterVisible(false)}
+                >
+                  X
+                </button>
+              </div>
+            )}
+
+
+
       </div>
-      <table className="min-w-full text-center text-xs font-light table bg-slate-200 ">
+      <table className="min-w-full text-center text-xs px-1 font-light table bg-slate-200 ">
       {filteredData.length === 0 ? (<TextLoader />):(<>
-        <thead className="border-b  font-medium bg-slate-200  sticky top-16">
-          <tr className="text-blue-700 sticky top-16">
+        <thead className="border-b  font-medium bg-slate-300  sticky top-14">
+          <tr className="text-blue-700 sticky  top-14">
           <th scope="col" className="px-0 py-0 border border-black">
                Update
             </th>

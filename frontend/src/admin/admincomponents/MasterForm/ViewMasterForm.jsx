@@ -24,6 +24,7 @@ function ViewMasterForm() {
   const [policyMade, setPolicyMade] = useState("");
   const [payon, setPayon] = useState("");
   const [ptypess, setPtypes] = useState("");
+  const [ncb, setNcb] = useState("");
   const [advs, setAdv] = useState("");
   const name = sessionStorage.getItem("email");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
@@ -108,6 +109,7 @@ function ViewMasterForm() {
     const year = data.vehRegNo?.toLowerCase() || "";
     const adv = data.advisorName?.toLowerCase() || "";
     const type = data.policyType?.toLowerCase() || "";
+    const ncbs = data.ncb?.toLowerCase() || "";
 
     return (
       // Filter conditions using optional chaining and nullish coalescing
@@ -126,6 +128,7 @@ function ViewMasterForm() {
       (year.includes(years.toLowerCase()) || years === "") &&
       (product.includes(productcodes.toLowerCase()) || productcodes === "") &&
       (payouts.includes(payon.toLowerCase()) || payon === "") &&
+      (ncbs.includes(ncb.toLowerCase()) || ncb === "") &&
       // Ensure correct date filtering logic
       (startDate === "" || new Date(data.entryDate) >= new Date(startDate)) &&
       (endDate === "" || new Date(data.entryDate) <= new Date(endDate))
@@ -689,6 +692,12 @@ function ViewMasterForm() {
                     placeholder: "Advisor Name",
                     onChange: setAdv,
                     value: advs,
+                  },
+                  {
+                    label: "NCB",
+                    placeholder: "NCB",
+                    onChange: setNcb,
+                    value: ncb,
                   },
                 ].map((input, index) => (
                   <div className="flex flex-col" key={index}>

@@ -264,8 +264,13 @@ export const recalculateAndUpdate = async (req, res) => {
       const vehicleAge1 = parseInt(data.vehicleAge, 10);
       const vehicleAgeNormalized =
         data.vehicleAge === "0 years" ||
+<<<<<<< HEAD
         data.vehicleAge === "0"  || 
         vehicleAge1 === 0
+=======
+        data.vehicleAge === "0" || vehicleAge1 === 0 ||
+        data.vehicleAge === 0 
+>>>>>>> b3d0dcc97794924b13cc3a0c0a1c82fda82064b8
           ? 0
           : 1;
 
@@ -352,6 +357,10 @@ export const recalculateAndUpdate = async (req, res) => {
       ) {
         const updatePayload = {
           policyrefno: data.policyrefno,
+<<<<<<< HEAD
+=======
+          entryDate: data.entryDate,
+>>>>>>> b3d0dcc97794924b13cc3a0c0a1c82fda82064b8
           branchPayableAmount: Number(branchPayable.toFixed(2)),
           branchPayout: Number(branchPayout.toFixed(2)),
           companyPayout: Number(companyPayout.toFixed(2)),

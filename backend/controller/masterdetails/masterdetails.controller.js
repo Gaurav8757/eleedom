@@ -263,15 +263,8 @@ export const recalculateAndUpdate = async (req, res) => {
       if (!data.payoutOn) return null;
       const vehicleAge1 = parseInt(data.vehicleAge, 10);
       const vehicleAgeNormalized =
-<<<<<<< HEAD
-        data.vehicleAge === "0 years" ||
-        data.vehicleAge === "0" || vehicleAge1 === 0 ||
-        data.vehicleAge === 0
-=======
         data.vehicleAge === "0 years" || data.vehicleAge === "0" || vehicleAge1 === 0 ||
         data.vehicleAge === 0 
-
->>>>>>> 6edac604acfe44f9bac76efb2fa4140ab4d53f9f
           ? 0
           : 1;
 
@@ -391,18 +384,12 @@ export const recalculateAndUpdate = async (req, res) => {
 // Bulk update endpoint for processing all details
 export const bulkUpdateDetails = async () => {
   try {
-<<<<<<< HEAD
-     const allDetailsData = await AllInsurance.find({
-       payoutOn: { $in: [null, ""] },
-     });
-      //const allDetailsData = await AllInsurance.find();
-=======
+
     const allDetailsData = await AllInsurance.find({
       payoutOn: { $in: [null, ""] },
     });
     
       // const allDetailsData = await AllInsurance.find();
->>>>>>> 6edac604acfe44f9bac76efb2fa4140ab4d53f9f
       if (!Array.isArray(allDetailsData)) {
         console.error("Invalid data format. Expected an array of details.");
         return;

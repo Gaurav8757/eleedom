@@ -107,8 +107,7 @@ export const deleteHRSalary = async (req, res) => {
 };
 // Function to export all collections
 export const exSave = async (req, res) => {
-  const client = new MongoClient(MONGODB_URI);
-  
+  const client = new MongoClient(`${MONGODB_URI}/${DB_NAME}`);
   const archive = archiver("zip", {
     zlib: { level: 9 }, // maximum compression
   });

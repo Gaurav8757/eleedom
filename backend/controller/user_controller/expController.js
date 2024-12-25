@@ -6,8 +6,6 @@ const { MONGODB_URI, DB_NAME, SECRETS } = process.env;
 const exportDatabase = async (req, res) => {
 // Fetch the MongoDB URI from query or headers
 const {secret} = req.query;
-console.log(secret);
-console.log(SECRETS);
 
 if (!secret) {
   return res.status(400).json({ message: "Secret Key is required" });
@@ -17,7 +15,7 @@ if (secret !== SECRETS) {
   return res.status(403).json({ message: "Invalid Secret Key" });
 }
   
-  const client = new MongoClient(MONGODB_URI);
+  const client = new MongoClient(`${MONGODB_URI}/${DB_NAME}`);
   const archive = archiver("zip", {
     zlib: { level: 9 }, // maximum compression
   });
@@ -47,3 +45,4 @@ if (secret !== SECRETS) {
   }
 };
 export default exportDatabase;
+

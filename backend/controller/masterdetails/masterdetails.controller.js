@@ -234,12 +234,12 @@ const calculateCompanyPayoutAmount = (finalEntryFields, companypayoutper) =>
 export const recalculateAndUpdate = async (req, res) => {
   try {
     const allDetailsData = await AllInsurance.find({
-      $or: [
-        { branchpayoutper: { $in: [null, undefined, ""] } },
-        { companypayoutper: { $in: [null, undefined, ""] } },
-        { companyPayout: { $in: [0, null, undefined, ""] } },
-        { branchPayableAmount: { $in: [null, undefined, ""] } },
-        { branchPayout: { $in: [0, null, undefined, ""] } },
+     $or: [
+       { branchpayoutper: { $in: [null, undefined, ""] } },
+       { companypayoutper: { $in: [null, undefined, ""] } },
+       { companyPayout: { $in: [0, null, undefined, ""] } },
+       { branchPayableAmount: { $in: [null, undefined, ""] } },
+       { branchPayout: { $in: [0, null, undefined, ""] } },
       ],
     });
 
@@ -265,7 +265,7 @@ export const recalculateAndUpdate = async (req, res) => {
       const vehicleAgeNormalized =
         data.vehicleAge === "0 years" ||
         data.vehicleAge === "0" || vehicleAge1 === 0 ||
-        data.vehicleAge === 0 
+        data.vehicleAge === 0
           ? 0
           : 1;
 
@@ -285,7 +285,7 @@ export const recalculateAndUpdate = async (req, res) => {
             (slab.vfuels === "OTHER THAN DIESEL" && data.fuel !== "DIESEL")) &&
           (!slab.vncb ||
             slab.vncb === data.ncb ||
-            ["BOTH", "YES", "NO"].includes(slab.vncb)) &&
+            ["BOTH"].includes(slab.vncb)) &&
           slab.pcodes === data.productCode &&
           (slab.districts === data.district ||
             slab.districts === "All" ||
@@ -342,16 +342,15 @@ export const recalculateAndUpdate = async (req, res) => {
       }
 
       // Prepare the update data
-      if (
-        !data.companyPayout ||
-        !data.branchPayableAmount ||
-        !data.branchPayout ||
-        !data.profitLoss ||
-        !branchpercent ||
-        !companypercent
-      ) {
+        if (
+          !data.companyPayout ||
+          !data.branchPayableAmount ||
+          !data.branchPayout ||
+          !data.profitLoss ||
+          !branchpercent ||
+          !companypercent
+        ) {
         const updatePayload = {
-          policyrefno: data.policyrefno,
           entryDate: data.entryDate,
           branchPayableAmount: Number(branchPayable.toFixed(2)),
           branchPayout: Number(branchPayout.toFixed(2)),
@@ -360,13 +359,12 @@ export const recalculateAndUpdate = async (req, res) => {
           branchpayoutper: Number(branchpercent),
           companypayoutper: Number(companypercent),
         };
-        console.log(updatePayload);
 
         return AllInsurance.findByIdAndUpdate(data._id, updatePayload, {
           new: true,
           runValidators: true,
         });
-      }
+    }
     });
     const results = await Promise.all(updates);
     const updatedRecords = results.filter((record) => record !== null);
@@ -387,20 +385,18 @@ export const recalculateAndUpdate = async (req, res) => {
 // Bulk update endpoint for processing all details
 export const bulkUpdateDetails = async () => {
   try {
-    // const allDetailsData = await AllInsurance.find({
-    //   payoutOn: { $in: [null, ""] },
-    // });
-    
-      const allDetailsData = await AllInsurance.find();
+     const allDetailsData = await AllInsurance.find({
+       payoutOn: { $in: [null, ""] },
+     });
+      //const allDetailsData = await AllInsurance.find();
       if (!Array.isArray(allDetailsData)) {
         console.error("Invalid data format. Expected an array of details.");
         return;
       }
-  
+
       const updates = allDetailsData.map(async (data) => {
         let paydata;
-  
-        if (!data.paydata) { 
+        if (!data.paydata) {
           if (data.policyType === "COMP" && data.productCode === "PVT-CAR") {
             paydata = { payoutOn: "OD" };
           } else {
@@ -416,9 +412,8 @@ export const bulkUpdateDetails = async () => {
           !(data.policyType === "COMP" && data.productCode === "PVT-CAR") &&  data.paydata !== "NET") {
           paydata = { payoutOn: "NET" }
         }
-  
-        if (!paydata) return null;
-  
+       if (!paydata) return null;
+
         return AllInsurance.findByIdAndUpdate(data._id, paydata, {
           new: true,
           runValidators: true,
@@ -431,6 +426,7 @@ export const bulkUpdateDetails = async () => {
     console.error("Error in payoutOn update:", error);
   }
 };
+
 const updateNullFieldsToZero = async () => {
   try {
     // Find all documents with null values in specific fields

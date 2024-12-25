@@ -351,7 +351,6 @@ export const recalculateAndUpdate = async (req, res) => {
         !companypercent
       ) {
         const updatePayload = {
-          policyrefno: data.policyrefno,
           entryDate: data.entryDate,
           branchPayableAmount: Number(branchPayable.toFixed(2)),
           branchPayout: Number(branchPayout.toFixed(2)),

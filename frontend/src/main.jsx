@@ -678,7 +678,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         pauseOnHover
         theme="colored"
       />
+<<<<<<< HEAD
      {/* <State /> */}
+=======
+      {/* <State /> */}
+>>>>>>> 6edac604acfe44f9bac76efb2fa4140ab4d53f9f
     </AppProvider>
   </React.StrictMode>
 );

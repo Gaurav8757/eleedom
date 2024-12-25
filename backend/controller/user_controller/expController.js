@@ -15,7 +15,7 @@ if (secret !== SECRETS) {
   return res.status(403).json({ message: "Invalid Secret Key" });
 }
   
-  const client = new MongoClient(`${MONGODB_URI}/${DB_NAME}`);
+  const client = new MongoClient(MONGODB_URI);
   const archive = archiver("zip", {
     zlib: { level: 9 }, // maximum compression
   });

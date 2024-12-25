@@ -388,7 +388,7 @@ const router = createBrowserRouter(
       </Route>
 
       {/* BRANCHES ROUTES */}
-      <Route path="/branches/login" element={<BranchLaout />} />
+      <Route path="/branches/branch/home/login" element={<BranchLaout />} />
       <Route path="/branches" element={<LoginAll />} />
       <Route path="/branches/forget" element={<ForgetPassBranch />} />
       <Route

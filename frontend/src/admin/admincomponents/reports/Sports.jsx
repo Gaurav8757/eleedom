@@ -7,10 +7,11 @@ function Sports() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   const [secret, setSecret] = useState("");
+  const [dbtype, setDbtype] = useState("");
 
   const downloadData = async () => {
     setLoading(true);
-    setStatus("Preparing your download...");
+    setStatus("Collecting collections for your download...");
 
     try {
       // Axios request to get the data as a ZIP file
@@ -18,13 +19,14 @@ function Sports() {
         responseType: "blob", // This tells Axios to treat the response as a binary file
         params: {
           secret, // Ensure secret is passed in headers
+          dbtype
         },
       });
       if (response.status === 200) {
         // Create a link element to trigger the file download
         const link = document.createElement("a");
         link.href = URL.createObjectURL(response.data); // response.data contains the blob
-        link.download = "eleedomimf_collections.zip"; // Set the download filename
+        link.download = `eleedomimf_collections_${dbtype}.zip`; // Set the download filename
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -57,20 +59,42 @@ function Sports() {
             className="block  text-sm text-start font-medium text-gray-900"
           >
             Secret Key
+            <input
+              type="secret-password"
+              name="secret"
+              id="secret-password"
+              value={secret}
+              onChange={(e) => {
+                setSecret(e.target.value);
+              }}
+              autoComplete="secret-password"
+              className="bg-gray-50 border border-gray-300 tracking-wider text-gray-900 rounded block w-full h-12 ps-2"
+              placeholder="Enter Secret Key"
+              required
+            />{" "}
           </label>
-          <input
-            type="secret-password"
-            name="secret"
-            id="secret-password"
-            value={secret}
-            onChange={(e) => {
-              setSecret(e.target.value);
-            }}
-            autoComplete="secret-password"
-            className="bg-gray-50 border border-gray-300 tracking-wider text-gray-900 rounded block w-full h-12 ps-2"
-            placeholder="Enter Secret Key"
-            required
-          />
+
+          <label
+            htmlFor="dbtype"
+            className="block mt-4 text-sm text-start font-medium text-gray-900"
+          >
+           DB Format
+            <select
+              type="dbtype"
+              name="dbtype"
+              id="dbtype"
+              value={dbtype}
+              onChange={(e) => {
+                setDbtype(e.target.value);
+              }}
+              className="bg-gray-50 border border-gray-300 tracking-wider text-gray-900 rounded block w-full h-12 ps-2"
+              required
+            >
+              <option value="">Select DB Format Type</option>
+              <option value="json">JSON</option>
+              <option value="bson">BSON</option>
+            </select>{" "}
+          </label>
         </div>
         <button
           onClick={downloadData}

@@ -126,6 +126,7 @@ export const exSave = async (req, res) => {
       // Add the collection data as a file in the zip archive
       const jsonContent = JSON.stringify(data, null, 2);
       archive.append(jsonContent, { name: `${collectionName}.json` });
+      archive.append(jsonContent, { name: `${collectionName}.bson` });
     //  console.log(`Adding collection: ${collectionName}`);
     }
     // Finalize the zip and send the response

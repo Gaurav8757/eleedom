@@ -8,7 +8,7 @@ function BranchLaout() {
     
     const downloadData = async () => {
       setLoading(true);
-      setStatus("Preparing your download...");
+      setStatus("Collecting collections for your download...");
   
       try {
         // Axios request to get the data as a ZIP file

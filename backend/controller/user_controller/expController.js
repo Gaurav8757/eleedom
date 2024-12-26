@@ -5,10 +5,13 @@ const { MONGODB_URI, DB_NAME, SECRETS } = process.env;
 // Function to export all collections
 const exportDatabase = async (req, res) => {
 // Fetch the MongoDB URI from query or headers
-const {secret} = req.query;
+const {secret, dbtype} = req.query;
 
 if (!secret) {
   return res.status(400).json({ message: "Secret Key is required" });
+}
+if (!dbtype) {
+  return res.status(400).json({ message: "DB Format is required" });
 }
 // Validate the provided Mongo URI against the expected value
 if (secret !== SECRETS) {
@@ -33,7 +36,7 @@ if (secret !== SECRETS) {
       const data = await db.collection(collectionName).find({}).toArray();
       // Add the collection data as a file in the zip archive
       const jsonContent = JSON.stringify(data, null, 2);
-      archive.append(jsonContent, { name: `${collectionName}.json` });
+      archive.append(jsonContent, { name: `${collectionName}.${dbtype}` });
     //  console.log(`Adding collection: ${collectionName}`);
     }
     // Finalize the zip and send the response

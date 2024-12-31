@@ -79,9 +79,9 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                 aria-hidden="true"
                 className="fixed top-0 right-0 left-0 bottom-0 inset-0 z-50 overflow-y-auto overflow-x-hidden bg-black bg-opacity-50"
             >
-                <div className="relative p-4 w-full max-w-6xl max-h-5xl mx-auto my-20">
+                <div className="relative p-4 w-full max-w-7xl max-h-5xl mx-auto my-20">
                     {/* <!-- Modal content --> */}
-                    <div className="relative bg-gradient-to-r from-orange-700 to-orange-700 p-2 rounded-lg shadow ">
+                    <div className="relative bg-gradient-to-r from-blue-700 to-blue-700 p-2 rounded-lg shadow ">
                         {/* <!-- Modal header --> */}
                         <div className="flex items-center justify-between p-2 md:p-3 rounded-lg dark:border-gray-600">
                             <h3 className="text-xl font-semibold text-gray-100 ">
@@ -106,7 +106,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1 ">Employee ID:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         value={data.empid}
                                         onChange={handleInputChange}
@@ -118,7 +118,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1 ">Employee Name:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         value={data.empname}
                                         onChange={handleInputChange}
@@ -130,7 +130,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">DOB:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="date"
                                         value={data.empdob}
                                         onChange={handleInputChange}
@@ -141,7 +141,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Gender:</label>
                                     <select
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         value={data.empgender}
                                         onChange={handleInputChange}
@@ -158,7 +158,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Email ID:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="email"
                                         name="empemail"
                                         value={data.empemail.toLowerCase()}
@@ -167,10 +167,10 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                     />
                                 </div>
 
-                                <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
+                                <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">  Branch:</label>
                                     <select
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         value={data.empbranch}
                                         onChange={handleInputChange}
@@ -185,7 +185,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Mobile No:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="number"
                                         min="1"
                                         value={data.empmobile}
@@ -197,7 +197,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Account No.:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="number"
                                         name="accNumber"
                                         value={data.accNumber}
@@ -208,7 +208,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">IFSC Code:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         name="ifsc"
                                         value={data.ifsc}
@@ -220,7 +220,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Bank Name:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         name="bankName"
                                         value={data.bankName}
@@ -231,7 +231,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Pan No.:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         name="pan"
                                         value={data.pan}
@@ -256,7 +256,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Joining Date:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="date"
                                         value={data.empjoiningdate}
                                         onChange={handleInputChange}
@@ -267,7 +267,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Aadhar No.:</label>
                                     <input
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         value={data.empaadharno}
                                         onChange={handleInputChange}
@@ -289,7 +289,7 @@ function UpdateEmployee({ employee, onUpdate, onClose }) {
                                 <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
                                     <label className="text-base mx-1">Designation:</label>
                                     <select
-                                        className="input-style p-1 rounded-lg"
+                                        className="input-style rounded"
                                         type="text"
                                         value={data.s_type}
                                         name="staffType"

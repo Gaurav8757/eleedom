@@ -306,8 +306,8 @@ export default function ViewGenPolicy() {
   
 
   return (
-    <section className="container-fluid relative h-screen p-0 sm:ml-64 bg-orange-100 ">
-      <div className="container-fluid flex justify-center pt-4  border-gray-200 border-dashed rounded-lg   bg-orange-100">
+    <section className="container-fluid relative h-screen p-0 sm:ml-64 bg-blue-100 ">
+      <div className="container-fluid flex justify-center pt-4  border-gray-200 border-dashed rounded-lg   bg-blue-100">
         <div className=" relative  min-w-full w-full ">
           <div className="flex justify-between px-2 ">
             <div className="flex justify-center ">
@@ -327,7 +327,7 @@ export default function ViewGenPolicy() {
                 })}
               </select>
             </div>
-            <h1 className="text-orange-700  font-semibold text-3xl w-auto mb-0 hidden sm:hidden md:block lg:block xl:block">
+            <h1 className="text-blue-700  font-semibold text-3xl w-auto mb-0 hidden sm:hidden md:block lg:block xl:block">
               Employee Generate Salary Lists
             </h1>
             <div className="flex">
@@ -343,21 +343,21 @@ export default function ViewGenPolicy() {
               >
                 <button
                   type="button"
-                  className="text-white justify-end bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 font-medium rounded text-sm px-3 py-1 text-center my-auto"
+                  className="text-white justify-end bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded text-sm px-3 py-1 text-center my-auto"
                 >
                   Go Back
                 </button>
               </NavLink>
             </div>
           </div>
-          <div className="inline-block min-w-full w-full py-0  my-5 bg-orange-200">
-            <table className="min-w-full text-center text-sm font-light table bg-orange-200">
+          <div className="inline-block min-w-full w-full py-0  my-5 bg-blue-200">
+            <table className="min-w-full text-center text-sm font-light table bg-blue-200">
               {filteredData.length === 0 ? (
                 <TextLoader />
               ) : (
                 <>
                   <thead className="border-b font-medium bg-slate-100 sticky top-0 ">
-                    <tr className="text-orange-700 sticky top-0">
+                    <tr className="text-blue-700 sticky top-0">
                       <th scope="col" className="px-1 py-0 border border-black">
                         Select
                       </th>

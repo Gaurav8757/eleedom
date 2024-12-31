@@ -159,13 +159,13 @@ function AddEmployee() {
   return (
     <section className="container-fluid relative p-0 sm:ml-64 bg-white">
       <div className="container-fluid justify-center rounded-lg bg-white">
-        <h1 className="font-semibold text-3xl my-4 text-orange-700">Add Employee</h1>
-        <div className="relative w-full lg:w-full p-0 rounded-xl shadow-xl text-2xl items-center bg-gradient-to-r from-slate-200 to-slate-200">
+      <div className="relative w-full lg:w-full mt-20 p-0 rounded-xl shadow-xl text-2xl items-center bg-gradient-to-r from-slate-200 to-slate-200">
+      <h1 className="font-semibold text-3xl py-5 text-blue-700">Add Employee</h1>
           <form className="flex flex-wrap justify-between" method="POST" encType="multipart/form-data">
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Employee Name:</label>
               <select
-                className="input-style p-1 ps-2 rounded-lg"
+                className="input-style ps-2 rounded"
                 type="text"
                 name="empname"
                 value={empname}
@@ -182,7 +182,7 @@ function AddEmployee() {
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Email ID:</label>
               <input
-                className="input-style p-1 rounded-lg"
+                className="input-style rounded"
                 type="email"
                 name="empemail"
                 autoComplete="false"
@@ -196,7 +196,7 @@ function AddEmployee() {
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Employee ID:</label>
               <input
-                className="input-style p-1 rounded-lg"
+                className="input-style rounded"
                 type="text"
                 name="empid"
                 value={emp}
@@ -209,7 +209,7 @@ function AddEmployee() {
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Joining Date:</label>
               <input
-                className="input-style p-1 rounded-lg"
+                className="input-style rounded"
                 type="text"
                 value={joining}
                 name="empjoiningdate"
@@ -222,7 +222,7 @@ function AddEmployee() {
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Designation:</label>
               <select
-                className="input-style p-1 rounded-lg"
+                className="input-style rounded"
                 type="text"
                 value={staffType}
                 name="staffType"
@@ -239,7 +239,7 @@ function AddEmployee() {
             <div className="flex flex-col p-2 mt-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Branch:</label>
               <select
-                className="input-style p-1 rounded-lg"
+                className="input-style rounded"
                 type="text"
                 name="empbranch"
                 value={branch}
@@ -260,7 +260,7 @@ function AddEmployee() {
               <label className="text-base mx-1">Create Password:</label>
               <div className="relative">
                 <input
-                  className="bg-gray-50 border p-1.5 text-base border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full"
+                  className="border  text-base border-gray-300 text-gray-900 rounded focus:ring-primary-500 focus:border-primary-500 block w-full"
                   type={showPassword ? 'text' : 'password'}
                   value={emppassword}
                   autoComplete="false"
@@ -272,7 +272,7 @@ function AddEmployee() {
                   type="button"
                   onClick={handleTogglePassword}
                   aria-autocomplete="none"
-                  className="absolute inset-y-0 p-1.5 right-1 bottom-0 px-3 flex items-center focus:outline-none"
+                  className="absolute inset-y-0  right-1 bottom-0 px-3 items-center focus:outline-none"
                 >
                   {showPassword ? (
                     <img src="/view.png" height={5} width={25} alt="show"/>
@@ -288,7 +288,7 @@ function AddEmployee() {
             <div className="flex flex-col mt-2 p-2 text-start w-full lg:w-1/5"></div>
             <div className="w-full p-2 my-10">
               <button
-                className="text-white bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300  shadow-lg shadow-green-400/50 hover:text-black hover:text-base font-medium rounded text-sm px-4 py-2 text-center"
+                className="text-white bg-gradient-to-r from-green-600 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300  shadow-lg shadow-green-400/50 hover:text-black hover:text-base font-medium rounded text-sm px-4 py-2 text-center"
                 onClick={handleSubmit}
                 type="button"
               >

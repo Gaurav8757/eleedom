@@ -226,7 +226,7 @@ function DashboardHr() {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full bg-orange-800">
+      <nav className="fixed top-0 z-50 w-full bg-blue-800">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <button onClick={toggleSidebar} className="inline-flex items-center p-2 text-sm text-white rounded-lg sm:hidden hover:bg-gradient-to-r from-orange-700 to-orange-600 focus:outline-none focus:ring-1 focus:ring-black">
@@ -281,8 +281,8 @@ function DashboardHr() {
       </nav>
 
       {/* aside bar */}
-      <aside id="logo-sidebar" className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} bg-orange-800 border-r   sm:translate-x-0 `} aria-label="Sidebar">
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-orange-800">
+      <aside id="logo-sidebar" className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} bg-blue-800 border-r   sm:translate-x-0 `} aria-label="Sidebar">
+        <div className="h-full px-3 pb-4 overflow-y-auto bg-blue-800">
           <ul className="space-y-2 font-medium text-base">
             {dashboardRouted.map((route, idx) => (
               <li key={idx}>

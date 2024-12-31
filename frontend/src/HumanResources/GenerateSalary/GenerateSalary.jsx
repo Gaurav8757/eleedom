@@ -579,10 +579,11 @@ function GenerateSalary() {
   return (
     <section className="container-fluid h-screen relative p-0 sm:ml-64 bg-white">
       <div className="container-fluid flex w-full lg:w-full px-2   flex-col justify-center  border-gray-200 border-dashed rounded bg-white">
-        <h1 className="font-semibold text-3xl text-orange-700 py-2 ">
+       
+        <div className="relative mt-4 rounded-xl shadow-xl text-2xl  items-center bg-slate-200">
+        <h1 className="font-semibold text-3xl text-blue-700 py-4 mb-4">
           Generate Employee Salary
         </h1>
-        <div className="relative  p-0  rounded-xl shadow-xl text-2xl  items-center bg-slate-200">
           <div className="flex flex-wrap justify-between">
             <div className="flex flex-col p-2 text-start w-full lg:w-1/6">
               <label className="text-base mx-1">Salary Payment Date:</label>
@@ -829,7 +830,7 @@ function GenerateSalary() {
             </div>
           </div>
 
-          <div className="w-full col-span-4 mt-5 mb-4 text-white border-b border border-orange-700 bg-orange-700"></div>
+          <div className="w-full col-span-4 mt-5 mb-4 text-white border-b border border-blue-700 bg-blue-700"></div>
           <div className="flex flex-wrap justify-between">
             {/* next part starts here */}
             <div className="flex flex-col p-2  text-start w-full lg:w-1/5">
@@ -953,7 +954,7 @@ function GenerateSalary() {
             <div className="flex flex-col p-2 mt-4 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Final Salary Amount:</label>
               <input
-                className="input-style bg-green-100  p-1 rounded"
+                className="input-style bg-blue-100  p-1 rounded"
                 type="number"
                 rows={2}
                 name="finalAmountSalary"
@@ -967,7 +968,7 @@ function GenerateSalary() {
             <div className="flex flex-col p-2  text-start w-full lg:w-1/3">
               <label className="text-base mx-1">Salary in Words:</label>
               <input
-                className="input-style bg-green-100  p-1 rounded"
+                className="input-style bg-blue-100  p-1 rounded"
                 type="text"
                 name=""
                 value={toWords.convert(finalAmountSalary || 0)}
@@ -978,7 +979,7 @@ function GenerateSalary() {
             </div>
             <div className="flex flex-col p-2  text-start w-full lg:w-1/5"></div>
             {/* part-3 */}
-            <div className="w-full col-span-4 my-4 text-white border-b border border-orange-500 bg-orange-700">
+            <div className="w-full col-span-4 my-4 text-white border-b border border-blue-500 bg-blue-700">
               Employee Contribution/Deduction
             </div>
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
@@ -1049,7 +1050,7 @@ function GenerateSalary() {
               />
             </div>
 
-            <div className="w-full col-span-4 my-4 text-white border-b border border-orange-500 bg-orange-700">
+            <div className="w-full col-span-4 my-4 text-white border-b border border-blue-500 bg-blue-700">
               Other Expenses
             </div>
 
@@ -1082,7 +1083,7 @@ function GenerateSalary() {
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5"></div>
             <div className="w-full my-10 p-2">
               <button
-                className="text-white bg-gradient-to-r leading-4 from-green-500 via-green-600 to-green-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded shadow-lg shadow-green-500/50  dark:shadow-lg dark:shadow-green-800/80 text-sm px-5 py-2.5 text-center me-2 mb-2"
+                className="text-white bg-gradient-to-r leading-4 tracking-wider font-semibold from-green-600 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-700 dark:focus:ring-green-800 rounded shadow-lg shadow-green-500/50  dark:shadow-lg dark:shadow-green-800/80 text-sm px-5 py-2.5 text-center me-2 mb-2"
                 onClick={handleSubmit}
                 type="button"
               >

@@ -78,15 +78,15 @@ export default function ViewSalary() {
 
 
     return (
-        <section className="container-fluid relative  h-screen p-0 sm:ml-64 bg-orange-100">
-            <div className="container-fluid flex justify-center   border-gray-200 border-dashed rounded-lg dark:border-gray-700  bg-orange-100">
+        <section className="container-fluid relative  h-screen p-0 sm:ml-64 bg-blue-100">
+            <div className="container-fluid flex justify-center   border-gray-200 border-dashed rounded-lg dark:border-gray-700  bg-blue-100">
                 <div className="inline-block min-w-full w-full py-0 ">
 
-                    <div className=" w-xl flex justify-center  text-orange-700">
+                    <div className=" w-xl flex justify-center  text-blue-700">
                         <h1></h1>
                         <h1 className="flex justify-center text-3xl my-2  font-semibold w-full">Employee Salary List&apos;s</h1>
                         <NavLink to="/hr/home/addsalary" className="flex justify-end text-red-700 my-auto me-2">
-                            <button type="button" className="text-white justify-end bg-gradient-to-r whitespace-nowrap from-orange-500 via-orange-600 to-orange-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 font-medium rounded text-sm px-3 py-2 text-center  ">Go Back</button>
+                            <button type="button" className="text-white justify-end bg-gradient-to-r whitespace-nowrap from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded text-sm px-3 py-2 text-center  ">Go Back</button>
                         </NavLink>
                     </div>
 
@@ -94,7 +94,7 @@ export default function ViewSalary() {
                         <table className="min-w-full text-center  text-sm font-light ">
                         {APIData.length === 0 ? (<TextLoader />) : (<>
                             <thead className="border-b font-medium bg-slate-200 sticky top-16">
-                                <tr className="text-orange-700 sticky text-base top-16">
+                                <tr className="text-blue-700 sticky text-base top-16">
                                     <th scope="col" className="px-1 py-1 border border-black">
                                         Employee Name
                                     </th>
@@ -111,7 +111,7 @@ export default function ViewSalary() {
                                 </tr>
                             </thead>
                             {/* body */}
-                            <tbody className="divide-y divide-gray-200 bg-orange-200">
+                            <tbody className="divide-y divide-gray-200 bg-blue-200">
                                 {APIData.filter(data => data.flags === true).map((data) => {
                                     return (
                                         <tr

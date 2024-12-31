@@ -53,15 +53,15 @@ function AddSalary() {
   return (
     <section className="container-fluid relative  p-0 sm:ml-64 bg-white">
       <div className="container-fluid  justify-center px-2  border-gray-200 border-dashed rounded-lg  bg-white">
-      <h1 className="font-semibold text-3xl py-2 text-orange-700 ">Add Salary</h1>
-        <div className="relative w-full lg:w-full  p-0 rounded-xl shadow-xl text-2xl  items-center bg-slate-200">
-
+      
+        <div className="relative w-full lg:w-full mt-20 rounded-xl shadow-xl text-2xl  items-center bg-slate-200">
+        <h1 className="font-semibold text-3xl py-2 text-blue-700 ">Add Salary</h1>
           <div className="flex flex-wrap justify-between p-4">
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Employee:</label>
               {/* // Render the dropdown in your form */}
               <select
-                className="input-style rounded-lg text-base p-1"
+                className="input-style py-2 rounded text-base ps-2"
                 name="empadd"
                 value={selectedEmployee}
                 onChange={(e) => {
@@ -75,7 +75,7 @@ function AddSalary() {
                 }}
               >
                 <option value="" className="text-base">
-                   --------- Select Employee ----------
+                   ----------- Select Employee ----------
                 </option>
                 {sortedAPIData.map((employee) => (
                  
@@ -89,7 +89,7 @@ function AddSalary() {
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Monthly Salary:</label>
               <input
-                className="input-style p-1 rounded-lg"
+                className="input-style rounded"
                 type="number"
                 min="0"
                 name="monthsalary"
@@ -101,7 +101,7 @@ function AddSalary() {
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label className="text-base mx-1">Monthly Leave:</label>
               <input
-                className="input-style p-1 rounded-lg"
+                className="input-style rounded"
                 type="number"
                 min="0"
                 name="monthleave"

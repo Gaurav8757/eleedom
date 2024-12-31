@@ -260,7 +260,7 @@ function ReportEmp() {
 
       headers.push(
         <th
-          className={`border   border-orange-700 text-lg px-10 py-2 sticky  ${
+          className={`border   border-blue-700 text-lg px-10 py-2 sticky  ${
             isHoliday === true
               ? "bg-cyan-400 "
               : weekdayIndex === 0
@@ -380,14 +380,14 @@ function ReportEmp() {
   };
 
   return (
-    <section className={`container-fluid relative  p-0 sm:ml-64 bg-orange-200`}>
+    <section className={`container-fluid relative  p-0 sm:ml-64 bg-blue-200`}>
       <div
-        className={`container-fluid flex justify-center border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-orange-100`}
+        className={`container-fluid flex justify-center border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-blue-100`}
       >
         <div className="inline-block max-w-full w-full ">
-          <div className="flex w-xl  mt-2 text-orange-500">
+          <div className="flex w-xl  mt-2 text-blue-500">
             <h1></h1>
-            <h1 className="flex justify-center text-3xl w-full text-orange-700 font-semibold">
+            <h1 className="flex justify-center text-3xl w-full text-blue-700 font-semibold">
               Employee&apos;s Attendance Report
             </h1>
             <button className="" onClick={handleExportClick}>
@@ -396,7 +396,7 @@ function ReportEmp() {
             <NavLink to="/hr/home/addemployee" className="my-auto me-2 ms-1">
               <button
                 type="button"
-                className="text-white  justify-end bg-gradient-to-r whitespace-nowrap from-orange-500 via-orange-600 to-orange-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 font-medium rounded text-sm px-3 py-1.5 text-center  "
+                className="text-white  justify-end bg-gradient-to-r whitespace-nowrap from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded text-sm px-3 py-1.5 text-center  "
               >
                 Go Back
               </button>
@@ -404,7 +404,7 @@ function ReportEmp() {
           </div>
 
           {/* year */}
-          <div className="flex justify-between items-center my-5 mt-5  text-orange-600  ">
+          <div className="flex justify-between items-center my-5 mt-5  text-blue-600  ">
             <h1 className="font-bold text-lg flex-wrap xl:flex-nowrap">
               Current MM-YY:{" "}
               <span className="text-green-600 ">
@@ -420,7 +420,7 @@ function ReportEmp() {
                   id="year"
                   value={year}
                   onChange={handleYearChange}
-                  className="p-1 ml-2 rounded-lg text-lg text-red-900"
+                  className="p-1 ml-2 rounded-lg text-lg text-blue-900 font-semibold"
                 >
                   {renderYears()}
                 </select>
@@ -434,7 +434,7 @@ function ReportEmp() {
                   id="month"
                   value={month}
                   onChange={handleMonthChange}
-                  className="p-1 ml-2 rounded-lg text-lg text-red-900"
+                  className="p-1 ml-2 rounded-lg text-lg text-blue-900 font-semibold"
                 >
                   {renderMonths()}
                 </select>
@@ -447,16 +447,16 @@ function ReportEmp() {
             <div className="flex min-w-full w-full    ">
               <table className="min-w-full text-center  divide-y divide-gray-200 text-sm font-light table border  border-black">
                 <thead className="sticky bg-slate-100 top-16">
-                  <tr className="border border-black z-50 text-orange-700 text-sm ">
+                  <tr className="border border-black z-50 text-blue-700 text-sm ">
                     <th
                       scope="col"
-                      className="sticky text-base  whitespace-nowrap border border-orange-700"
+                      className="sticky text-base  whitespace-nowrap border border-blue-700"
                     >
                       Employee ID
                     </th>
                     <th
                       scope="col"
-                      className="sticky text-base whitespace-nowrap border border-orange-700"
+                      className="sticky text-base whitespace-nowrap border border-blue-700"
                     >
                       Employee Name
                     </th>
@@ -464,37 +464,37 @@ function ReportEmp() {
                     {/* {renderTableRows()} */}
                     <th
                       scope="col"
-                      className="sticky whitespace-wrap border border-orange-700 "
+                      className="sticky whitespace-wrap border border-blue-700 "
                     >
                       Total Working Days
                     </th>
                     <th
                       scope="col"
-                      className="sticky whitespace-wrap border text-green-800 border-orange-700 bg-green-200"
+                      className="sticky whitespace-wrap border text-green-800 border-blue-700 bg-green-200"
                     >
                       Present Day
                     </th>
                     <th
                       scope="col"
-                      className="sticky whitespace-wrap border border-orange-700 bg-red-200 text-red-700"
+                      className="sticky whitespace-wrap border border-blue-700 bg-red-200 text-red-700"
                     >
                       Absent Day
                     </th>
                     <th
                       scope="col"
-                      className="sticky whitespace-wrap border border-orange-700 bg-yellow-200 text-yellow-700"
+                      className="sticky whitespace-wrap border border-blue-700 bg-yellow-200 text-yellow-700"
                     >
                       Half Day
                     </th>
                     <th
                       scope="col"
-                      className="sticky  whitespace-nowrap border border-orange-700 bg-cyan-200 text-cyan-700"
+                      className="sticky  whitespace-nowrap border border-blue-700 bg-cyan-200 text-cyan-700"
                     >
                       HoliDay
                     </th>
                     <th
                       scope="col"
-                      className="sticky whitespace-nowrap border border-orange-700 bg-green-500"
+                      className="sticky whitespace-nowrap border border-blue-700 bg-green-500"
                     >
                       Attendance(%)
                     </th>
@@ -502,7 +502,7 @@ function ReportEmp() {
                 </thead>
 
                 {/* td data */}
-                <tbody className="bg-orange-200 divide-y  overflow-hidden">
+                <tbody className="bg-blue-200 divide-y  overflow-hidden">
                   {renderCalendar()}
                 </tbody>
               </table>

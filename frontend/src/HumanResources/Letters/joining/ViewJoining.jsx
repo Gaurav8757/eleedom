@@ -166,10 +166,10 @@ function ViewJoining() {
 
   return (
     <section className="container-fluid relative p-0 sm:ml-64 bg-slate-200">
-      <div className="container-fluid flex justify-center p-2  border-gray-200 border-dashed rounded-lg dark:border-gray-700  bg-orange-200">
+      <div className="container-fluid flex justify-center p-2  border-gray-200 border-dashed rounded-lg dark:border-gray-700  bg-blue-200">
         <div className="inline-block min-w-full w-full py-0 ">
 
-          <div className="overflow-x-none w-xl flex mt-2 text-orange-700">
+          <div className="overflow-x-none w-xl flex mt-2 text-blue-700">
             <h1></h1>
             <h1 className="flex justify-center text-3xl w-full font-semibold">Joining Letter List&apos;s</h1>
             <button className="" onClick={handleExportClick}><img src="/excel.png" alt="download" className="w-10" /></button>
@@ -214,7 +214,7 @@ function ViewJoining() {
             </div>
 
           </div>
-          <table className="min-w-full text-center text-sm font-light table bg-orange-200 ">
+          <table className="min-w-full text-center text-sm font-light table bg-blue-200 ">
           {filteredData.length === 0 ? (<TextLoader />) : (<>
             <thead className="border-b  font-medium bg-slate-200  sticky top-16">
               <tr className="text-blue-700 sticky top-16">

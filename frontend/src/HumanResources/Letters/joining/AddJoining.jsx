@@ -219,22 +219,22 @@ function AddJoining() {
   return (
     <section className="container-fluid relative  sm:ml-64 bg-white">
       <div className="container-fluid  justify-center p-2 border-gray-200 border-dashed rounded-lg bg-white">
-        <h1 className="font-semibold text-3xl mb-2 text-orange-700">Create Joining Letter</h1>
-        <div className="relative w-full p-0  rounded-xl shadow-xl text-2xl items-center bg-slate-200">
-
+      
+        <div className="relative w-full pt-5  rounded-xl shadow-xl text-2xl items-center bg-slate-200">
+        <h1 className="font-semibold text-3xl mb-10 text-blue-700">Create Joining Letter</h1>
           <div className="flex flex-wrap justify-between">
             <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
               <label htmlFor="emp" className="text-base mx-1">Select Offered Employee</label>
               <select
               id="emp"
-                className="input-style p-1 text-base rounded-lg"
+                className="input-style text-base rounded py-2 ps-2"
                 value={selectedItemId}
                 name="selectedItemId"
                 onChange={handleDropdownChange}
               >
                 <option value="">----------- Select Employee ----------</option>
                 {APIData.map((item) => (
-                  <option key={item._id} value={item._id} data-id={item._id}>
+                  <option key={item._id} value={item._id} data-id={item._id} className="ps-2">
                     {item.ofname}
                   </option>
                 ))}
@@ -245,7 +245,7 @@ function AddJoining() {
               <label htmlFor="email" className="text-base mx-1">Email ID<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="email"
-                className="input-style bg-red-200 p-1 rounded-lg"
+                className="input-style bg-red-200 rounded"
                 type="text"
                 value={selectedItemData.ofemail}
                 name="ofemail"
@@ -258,7 +258,7 @@ function AddJoining() {
               <label htmlFor="contact" className="text-base mx-1">Contact No:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="contact"
-                className="input-style bg-red-200 p-1 rounded-lg"
+                className="input-style bg-red-200 rounded"
                 type="text"
                 value={selectedItemData.ofmobile}
                 name="ofmobile"
@@ -270,7 +270,7 @@ function AddJoining() {
               <label htmlFor="des" className="text-base mx-1">Employee Type(Designation):<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="des"
-                className="input- bg-red-200 p-1 rounded-lg"
+                className="input- bg-red-200 rounded"
                 type="text"
                 value={selectedItemData.ofdesignation}
                 name="ofdesignation"
@@ -282,7 +282,7 @@ function AddJoining() {
               <label htmlFor="address" className="text-base mx-1">Address:<sup className="text-red-600 font-bold">*</sup></label>
               <textarea
               id="address"
-                className="input-style bg-red-200 p-1 rounded-lg"
+                className="input-style bg-red-200 rounded"
                 type="text"
                 cols={20}
                 value={selectedItemData.ofaddress}
@@ -298,7 +298,7 @@ function AddJoining() {
               <label htmlFor="gross" className="text-base mx-1">Gross Salary<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="gross"
-                className="input-style bg-red-200 p-1 rounded-lg"
+                className="input-style bg-red-200 rounded"
                 type="text"
                 value={selectedItemData.ofgrosalary}
                 name="ofgrosalary"
@@ -311,7 +311,7 @@ function AddJoining() {
               <label htmlFor="words" className="text-base mx-1">Salary in Words:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="words"
-                className="input-style bg-red-200 p-1 rounded-lg"
+                className="input-style bg-red-200 rounded"
                 type="text"
                 value={selectedItemData.ofsalaryWords}
                 name="ofsalaryWords"
@@ -323,7 +323,7 @@ function AddJoining() {
               <label htmlFor="join" className="text-base mx-1">Joining Date:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="join"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="text"
                 value={selectedItemData.joinempdate}
                 name="joinempdate"
@@ -336,7 +336,7 @@ function AddJoining() {
               <label htmlFor="hr" className="text-base mx-1">HR Sign Date:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="hr"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="text"
                 value={selectedItemData.joinsigndate}
                 name="joinsigndate"
@@ -349,7 +349,7 @@ function AddJoining() {
               <label htmlFor="basic" className="text-base mx-1">Basic Salary %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="basic"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinbasicSalaryPercent}
                 name="joinbasicSalaryPercent"
@@ -368,7 +368,7 @@ function AddJoining() {
               <label htmlFor="hra" className="text-base mx-1">HRA %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="hra"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinhrapercentage}
                 name="joinhrapercentage"
@@ -382,7 +382,7 @@ function AddJoining() {
               <label htmlFor="ma" className="text-base mx-1">Medical Allowance %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="ma"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinmapercent}
                 name="joinmapercent"
@@ -396,7 +396,7 @@ function AddJoining() {
               <label htmlFor="ka" className="text-base mx-1">Kit Allowance %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="ka"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinkitallowpercent}
                 name="joinkitallowpercent"
@@ -408,7 +408,7 @@ function AddJoining() {
               <label htmlFor="ab" className="text-base mx-1">Additional Benefits %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="ab"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinbenefitspercent}
                 name="joinbenefitspercent"
@@ -420,7 +420,7 @@ function AddJoining() {
               <label htmlFor="sal" className="text-base mx-1">Basic Salary Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="sal"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinbasicSalary}
                 name="joinbasicSalary"
@@ -433,7 +433,7 @@ function AddJoining() {
               <label htmlFor="hrm" className="text-base mx-1">HRA Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="hrm"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinhrapercentageamount}
                 name="joinhrapercentageamount"
@@ -447,7 +447,7 @@ function AddJoining() {
               <label htmlFor="maa" className="text-base mx-1">Medical Allowance Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="maa"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinma}
                 name="joinma"
@@ -461,7 +461,7 @@ function AddJoining() {
               <label htmlFor="kaa" className="text-base mx-1">Kit Allowance Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="kaa"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinkitallowance}
                 name="joinkitallowance"
@@ -475,7 +475,7 @@ function AddJoining() {
               <label htmlFor="aba" className="text-base mx-1">Additinal Benefits Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="aba"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinbenefitsamount}
                 name="joinbenefitsamount"
@@ -489,7 +489,7 @@ function AddJoining() {
               <label htmlFor="pi" className="text-base mx-1">Performance Incentive %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="pi"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinpipercent}
                 name="joinpipercent"
@@ -503,7 +503,7 @@ function AddJoining() {
               <label htmlFor="pf" className="text-base mx-1">PF %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="pf"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinpfpercent}
                 name="joinpfpercent"
@@ -515,7 +515,7 @@ function AddJoining() {
               <label htmlFor="stock" className="text-base mx-1">Stock %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="stock"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinstockpercent}
                 name="joinstockpercent"
@@ -528,7 +528,7 @@ function AddJoining() {
               <label htmlFor="esi" className="text-base mx-1">ESI %:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="esi"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joinesipercent}
                 name="joinesipercent"
@@ -541,7 +541,7 @@ function AddJoining() {
               <label htmlFor="car" className="text-base mx-1">Car:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="car"
-                className="input-style rounded-lg p-1"
+                className="input-style rounded"
                 type="number"
                 value={selectedItemData.joincar}
                 name="joincar"
@@ -554,7 +554,7 @@ function AddJoining() {
               <label htmlFor="pia" className="text-base mx-1">Performance Incentive Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="pia"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinpi}
                 name="joinpi"
@@ -567,7 +567,7 @@ function AddJoining() {
               <label htmlFor="pfa" className="text-base mx-1">PF Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="pfa"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinpf}
                 name="joinpf"
@@ -581,7 +581,7 @@ function AddJoining() {
               <label htmlFor="sa" className="text-base mx-1">Stock Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="sa"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinstock}
                 name="joinstock"
@@ -594,7 +594,7 @@ function AddJoining() {
               <label htmlFor="esa" className="text-base mx-1">ESI Amount:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="esa"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joinesi}
                 name="joinesi"
@@ -609,7 +609,7 @@ function AddJoining() {
               <label htmlFor="ts" className="text-base mx-1">Total Salary:<sup className="text-red-600 font-bold">*</sup></label>
               <input
               id="ts"
-                className="input-style bg-red-200 rounded-lg p-1"
+                className="input-style bg-red-200 rounded"
                 type="number"
                 value={selectedItemData.joiningtotal}
                 name="joiningtotal"
@@ -623,7 +623,7 @@ function AddJoining() {
 
           <div className="flex justify-center p-2 text-center w-full pb-5 mt-5 gap-10">
             <button
-              className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 hover:text-black dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded text-base px-4 py-1.5 text-center"
+              className="text-white bg-gradient-to-r from-green-600 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 hover:text-black dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded text-base px-4 py-1.5 text-center"
               onClick={handleSubmit}
               type="button"
               disabled={formSubmitted}

@@ -164,12 +164,12 @@ const getCurrentDateAndTime = () => {
       };
     
     return (
-        <section className="container-fluid relative p-0 sm:ml-64 bg-orange-50">
-            <div className="container-fluid items-center pt-2 px-2 border-gray-200 border-dashed rounded bg-orange-100">
-                <h1 className='text-xl xl:text-2xl lg:text-2xl tracking-wide py-2 text-center uppercase font-medium text-orange-700'>Leave History</h1>
+        <section className="container-fluid relative p-0 sm:ml-64 bg-blue-50">
+            <div className="container-fluid items-center pt-2 px-2 border-gray-200 border-dashed rounded bg-blue-100">
+                <h1 className='text-xl xl:text-2xl lg:text-2xl tracking-wide py-2 text-center uppercase font-semibold text-blue-700'>Leave History</h1>
                 {APIData.length === 0 ? (<TextLoader />):(<>   {APIData.map((data) =>
                     data.leaveDetails?.map((leave) => (
-                        <div key={leave._id} className="w-full max-w-auto px-4 py-4 mb-5 text-gray-900 bg-orange-600 rounded shadow-2xl shadow-yellow-700 bg-blend-saturation">
+                        <div key={leave._id} className="w-full max-w-auto px-4 py-4 mb-5 text-gray-900 bg-blue-500 rounded shadow-2xl shadow-blue-700 bg-blend-saturation">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center whitespace-nowrap text-white bg-[#050708]/20 focus:ring-[#050708]/20 text-xs lg:text-sm sm:text-xs rounded px-2 py-1 text-center">
                                     <span className="font-semibold text-black me-1">EMP ID:</span>
@@ -229,11 +229,11 @@ const getCurrentDateAndTime = () => {
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <span htmlFor="Rem" className="mb-2 text-xs xl:text-xl lg:text-sm sm:text-sm font-semibold text-gray-50">Remarks</span>
-                                    <textarea type="text" rows="1" name="remarks" id="Rem" value={leave.remarks || ''} onChange={(e) => handleInputChange(e, data._id, leave._id, leave.status)} className="xl:w-36 lg:w-32 md:w-28 sm:w-20 w-16  text-start  text-xs xl:text-base lg:text-sm sm:text-xs  font-semibold text-black rounded overflow-hidden bg-orange-200 border-hidden " />
+                                    <textarea type="text" rows="1" name="remarks" id="Rem" value={leave.remarks || ''} onChange={(e) => handleInputChange(e, data._id, leave._id, leave.status)} className="xl:w-36 lg:w-32 md:w-28 sm:w-20 w-16  text-start  text-xs xl:text-base lg:text-sm sm:text-xs  font-semibold text-black rounded overflow-hidden bg-blue-200 border-hidden " />
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <span htmlFor="stat" className="mb-2 text-xs xl:text-xl lg:text-sm sm:text-sm font-semibold text-gray-50">Status</span>
-                                    <select name="status" id="stat" value={leave.status || ''} onChange={(e) => handleInputChange(e, data._id, leave._id, leave.remarks)} className="p-1 xl:w-32 cursor-pointer lg:w-32 md:w-16 sm:w-14 w-12 text-start  text-xs xl:text-base lg:text-sm sm:text-xs  font-semibold text-black rounded overflow-hidden ps-1 bg-orange-200 border-hidden">
+                                    <select name="status" id="stat" value={leave.status || ''} onChange={(e) => handleInputChange(e, data._id, leave._id, leave.remarks)} className="p-1 xl:w-32 cursor-pointer lg:w-32 md:w-16 sm:w-14 w-12 text-start  text-xs xl:text-base lg:text-sm sm:text-xs  font-semibold text-black rounded overflow-hidden ps-1 bg-blue-200 border-hidden">
                                         <option value="" className="">Select Status</option>
                                         <option value="approved" className="font-bold text-green-700 hover:cursor-pointer">Approve</option>
                                         <option value="rejected" className="font-bold text-red-700 cursor-pointer">Reject</option>

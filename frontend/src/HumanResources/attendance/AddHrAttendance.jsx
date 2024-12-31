@@ -108,24 +108,24 @@ function AddHrAttendance() {
   }
   const empnam = sessionStorage.getItem('name');
   return (
-    <section className="container-fluid relative flex flex-wrap p-0 sm:ml-64 bg-orange-100">
-    <div className="container-fluid flex justify-center w-full sm:w-full md:w-full lg:w-full xl:w-full border-dashed rounded-lg  bg-orange-100">
+    <section className="container-fluid relative flex flex-wrap p-0 sm:ml-64 bg-slate-100">
+    <div className="container-fluid flex justify-center w-full sm:w-full md:w-full lg:w-full xl:w-full border-dashed rounded-lg  bg-slate-100">
       <div className="inline-block min-w-full   w-full py-0 ">
-        <h2 className="text-xl sm:text-2xl  md:text-2xl lg:text-2xl xl:text-3xl tracking-wider text-orange-700 text-center  font-medium">Attendance</h2>
+        <h2 className="text-xl sm:text-2xl  md:text-2xl lg:text-2xl xl:text-3xl tracking-wider text-blue-600 text-center  font-medium">Attendance</h2>
         <div className="overflow-x-auto my-0 ">
           {/* name, date, time */}
           <div className='flex justify-between bg-slate-200 shadow-2xl border border-slate-100 py-1 text-xl sm:text-md md:text-xl lg:text-xl xl:text-xl'>
               <span className="text-start font-semibold text-base ">
-                Your Name: <span className="font-base tracking-wide text-orange-700">{empnam}</span>
+                Your Name: <span className="font-base tracking-wide text-blue-600">{empnam}</span>
               </span>
-              <span className="text-start font-semibold text-base">Time: <span className='font-medium   tracking-wide text-orange-700   md:text-base xl:text-base   sm:text-base'> {ctime}</span> </span>
-              <span className="text-start font-semibold text-base">Date: <span className='font-medium  tracking-wide text-orange-700 md:text-base xl:text-base  sm:text-base'> {dates}</span> </span>
+              <span className="text-start font-semibold text-base">Time: <span className='font-medium   tracking-wide text-blue-600   md:text-base xl:text-base   sm:text-base'> {ctime}</span> </span>
+              <span className="text-start font-semibold text-base">Date: <span className='font-medium  tracking-wide text-blue-600 md:text-base xl:text-base  sm:text-base'> {dates}</span> </span>
             </div>
           {/* part-2 */}
           <div className='flex flex-wrap '>
           <div className=" w-full sm:w-full md:w-full lg:w-full xl:w-1/2">
           <div className='flex justify-center text-center '>
-            <h1 className='text-xl xl:text-2xl lg:text-2xl tracking-wide text-start font-medium text-orange-700 me-10'>Make Attendance</h1>
+            <h1 className='text-xl xl:text-2xl lg:text-2xl tracking-wide text-start font-medium text-blue-700 me-10'>Make Attendance</h1>
             </div>
             <div className="flex flex-wrap mx-2 text-center justify-center mt-4">
            
@@ -199,7 +199,7 @@ function AddHrAttendance() {
             </div>
             
             <div className='text-center my-8 mx-4 flex justify-center'>
-              <button className='text-white cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-10 duration-300  bg-orange-700 hover:bg-orange-600 focus:ring-1 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded text-base px-3 py-1 text-center me-2 mb-2"' onClick={handleToggleAttendance}>Submit</button>
+              <button className='text-white cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-10 duration-300  bg-blue-600 hover:bg-blue-700 focus:ring-1 focus:outline-none focus:ring-green-300 dark:focus:ring-blue-800 tracking-wider font-medium rounded text-base px-4 py-2 text-center "' onClick={handleToggleAttendance}>Submit</button>
             </div>
           </div>
           <LeaveApplication  />

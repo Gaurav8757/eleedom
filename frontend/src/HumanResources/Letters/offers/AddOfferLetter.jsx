@@ -159,15 +159,15 @@ function AddOfferLetter() {
 
     return (
         <section className="container-fluid relative h-screen p-0 sm:ml-64 bg-white">
-            <div className="container-fluid  flex-col flex justify-center p-2 border-gray-200 border-dashed rounded-lg  bg-white">
-            <h1 className="font-semibold text-3xl my-1 text-orange-700">Create Offer Letter</h1>
-                <div className="relative w-full lg:w-full pt-20  rounded-xl shadow-xl text-2xl items-center bg-slate-200">
-                    
+            <div className="container-fluid  flex-col flex justify-center p-2 border-gray-200 border-dashed rounded  bg-white">
+           
+                <div className="relative w-full lg:w-full pt-5  rounded-xl shadow-xl text-2xl items-center bg-slate-200">
+                <h1 className="font-semibold text-3xl mb-10 text-blue-700">Create Offer Letter</h1>
                     <div className="flex flex-wrap justify-between">
                         <div className="flex flex-col  p-2 text-start w-full lg:w-1/5">
                             <label className="text-base mx-1">Date:<sup className="text-red-600 font-bold">*</sup></label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 name="ofdate"
                                 value={ofdate}
@@ -179,7 +179,7 @@ function AddOfferLetter() {
                         <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                             <label className="text-base mx-1">Name:<sup className="text-red-600 font-bold">*</sup></label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 name="ofname"
                                 value={ofname}
@@ -192,7 +192,7 @@ function AddOfferLetter() {
                         <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                             <label className="text-base mx-1">Email ID:<sup className="text-red-600 font-bold">*</sup></label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="email"
                                 value={ofemail}
                                 name="ofemail"
@@ -205,7 +205,7 @@ function AddOfferLetter() {
                         <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                             <label className="text-base mx-1">Contact No:<sup className="text-red-600 font-bold">*</sup></label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 value={ofmobile}
                                 name="ofmobile"
@@ -217,7 +217,7 @@ function AddOfferLetter() {
                         <div className="flex flex-col p-2 text-start w-full lg:w-1/5">
                             <label className="text-base mx-1">Employee Type(Designation):<sup className="text-red-600 font-bold">*</sup></label>
                             <select
-                                className="input-style p-1 text-base rounded-lg"
+                                className="input-style text-base rounded"
                                 type="text"
                                 value={ofdesignation}
                                 name="ofdesignation"
@@ -236,7 +236,7 @@ function AddOfferLetter() {
                         <div className="flex flex-col p-2 text-start w-full lg:w-1/5 mt-4">
                             <label className="text-base mx-1">Address:<sup className="text-red-600 font-bold">*</sup></label>
                             <textarea
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 cols={20}
                                 value={ofaddress}
@@ -248,7 +248,7 @@ function AddOfferLetter() {
                         <div className="flex flex-col p-2 text-start w-full lg:w-1/5 mt-4">
                             <label className="text-base mx-1">Gross Salary:<sup className="text-red-600 font-bold">*</sup></label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 value={ofgrosalary}
                                 name="ofgrosalary"
@@ -265,7 +265,7 @@ function AddOfferLetter() {
                         <div className="flex flex-col p-2 text-start w-full lg:w-1/5 mt-4">
                             <label className="text-base mx-1">Salary in Words:<sup className="text-red-600 font-bold">*</sup></label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 value={ofsalaryWords}
                                 name="ofsalaryWords"
@@ -276,7 +276,7 @@ function AddOfferLetter() {
                         <div className="flex flex-col p-2 text-start w-full lg:w-1/5 mt-4">
                             <label className="text-base mx-1">Valid upto:<sup className="text-red-600 font-bold">*</sup></label>
                             <input
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 value={ofvalidDate}
                                 name="ofvalidDate"
@@ -288,7 +288,7 @@ function AddOfferLetter() {
                         
                         <label className="text-base mx-1">Branch Location:<sup className="text-red-600 font-bold">*</sup></label>
                             <select
-                                className="input-style p-1 rounded-lg"
+                                className="input-style rounded"
                                 type="text"
                                 value={oflocation}
                                 name="oflocation"
@@ -306,7 +306,7 @@ function AddOfferLetter() {
 
                     <div className="flex justify-center p-2 text-center w-full my-2 mt-5 gap-5">
                         <button
-                            className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded text-sm px-4 py-2 text-center"
+                            className="text-white bg-gradient-to-r from-green-600 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded text-sm px-4 py-2 text-center"
                             onClick={handleSubmit}
                             type="button"
                             disabled={formSubmitted}

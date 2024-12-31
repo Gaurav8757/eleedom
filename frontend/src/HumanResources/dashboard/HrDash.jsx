@@ -350,7 +350,7 @@ function HrDash() {
                         </span>
                     </div>
 
-                    <div className="mb-2 xl:mb-4  grid xl:flex lg:grid md:grid sm:grid items-center xl:justify-between h-16 sm:h-20  p-1 lg:p-1 lg:h-16 xl:h-12  rounded-b bg-red-800 shadow-2xl drop-shadow-2xl shadow-orange-950">
+                    <div className="mb-2 xl:mb-4  grid xl:flex lg:grid md:grid sm:grid items-center xl:justify-between h-16 sm:h-20  p-1 lg:p-1 lg:h-16 xl:h-12  rounded-b bg-red-800 shadow-2xl drop-shadow-2xl shadow-red-950">
                         <span className="sm:block mx-1 sm:mx-2 lg:mx-1 xl:mx-2 px-2 py-0.5 rounded text-xs sm:text-xs md:text-sm lg:text-base xl:text-base font-semibold text-black-500 bg-[white]/60 focus:ring-[#050708]/50 uppercase">
                             REJECTED / TOTAL
                         </span>
@@ -369,7 +369,7 @@ function HrDash() {
                 {/* part-2 div */}
                 <div className="block ">
                     <h1 className="uppercase font-serif text-sm sm:text-base lg:text-xl xl:text-2xl">LETTER&apos;S</h1>
-                    <div className="mb-2 xl:mb-3 grid xl:flex lg:grid md:grid sm:grid items-center xl:justify-between h-16 p-1 lg:p-1 sm:h-20 lg:h-16 xl:h-12 rounded bg-orange-700 shadow-2xl drop-shadow-2xl shadow-orange-950 ">
+                    <div className="mb-2 xl:mb-3 grid xl:flex lg:grid md:grid sm:grid items-center xl:justify-between h-16 p-1 lg:p-1 sm:h-20 lg:h-16 xl:h-12 rounded bg-blue-500 shadow-2xl drop-shadow-2xl shadow-blue-950 ">
 
                         <span className="sm:block mx-1 sm:mx-2 lg:mx-1 xl:mx-2 px-2 py-0.5 rounded text-xs sm:text-xs md:text-sm lg:text-base xl:text-base font-semibold text-black-500 bg-[white]/60 focus:ring-[#050708]/50 uppercase">
                             Joining / offer
@@ -384,18 +384,11 @@ function HrDash() {
                             </animated.span>
                         </span>
                     </div>
-
-
-
                 </div>
-
-
-
-
 
                 <div className="block col-span-2">
                     <h1 className="uppercase font-serif text-sm sm:text-base lg:text-xl xl:text-2xl">SALARIES/EMP</h1>
-                    <div className="mb-1 xl:mb-0 sm:mb-0 grid xl:flex lg:flex md:flex sm:flex items-center xl:justify-between  lg:justify-between md:justify-between sm:justify-between h-16 p-1 lg:p-1 sm:h-12 md:h-12  lg:h-12 xl:h-12 rounded-t bg-orange-700 shadow-2xl drop-shadow-2xl shadow-orange-950 ">
+                    <div className="mb-1 xl:mb-0 sm:mb-0 grid xl:flex lg:flex md:flex sm:flex items-center xl:justify-between  lg:justify-between md:justify-between sm:justify-between h-16 p-1 lg:p-1 sm:h-12 md:h-12  lg:h-12 xl:h-12 rounded-t bg-sky-500 shadow-2xl drop-shadow-2xl shadow-blue-950 ">
                         <span className="sm:block mx-1 sm:mx-2 lg:mx-1 xl:mx-2 px-2 py-0.5 rounded text-xs sm:text-xs md:text-sm lg:text-base xl:text-base font-semibold text-black-500 bg-[white]/60 focus:ring-[#050708]/50 uppercase">
                             SALARY CREATED / ACTIVE EMP
                         </span>
@@ -410,8 +403,8 @@ function HrDash() {
                         </span>
                     </div>
 
-                    <div className="mb-1 xl:mb-0 sm:mb-0 grid xl:flex lg:flex md:flex sm:flex items-center xl:justify-between  lg:justify-between md:justify-between sm:justify-between h-16 p-1 lg:p-1 sm:h-12 md:h-12  lg:h-12 xl:h-12 rounded-b bg-orange-700 shadow-2xl drop-shadow-2xl shadow-orange-950 ">
-                        <span className="sm:block mx-1 sm:mx-2 lg:mx-1 xl:mx-2 px-2 py-0.5 rounded my-auto text-xs sm:text-xs md:text-sm lg:text-base xl:text-base font-semibold text-black-500 bg-[white]/60 focus:ring-[#050708]/50 uppercase">
+                    <div className="mb-1 xl:mb-0 sm:mb-0 grid xl:flex lg:flex md:flex sm:flex items-center xl:justify-between  lg:justify-between md:justify-between sm:justify-between h-16 p-1 lg:p-1 sm:h-12 md:h-12  lg:h-12 xl:h-12 rounded-b bg-cyan-500 shadow-2xl drop-shadow-2xl shadow-cyan-950 ">
+                        <span className="sm:block mx-1 sm:mx-2 lg:mx-1 xl:mx-2 px-2 py-0.5 rounded my-auto text-xs sm:text-xs md:text-sm lg:text-base xl:text-base font-semibold text-black-500  focus:ring-[#050708]/50 uppercase">
                             <span className="bg-[black]/60 text-white px-2 py-0.5 rounded ">{monthlySalary.prevMonth}</span>  SLIP&apos;S / CREATED
                         </span>
                         <span>
@@ -425,8 +418,8 @@ function HrDash() {
                         </span>
                     </div>
 
-                    <div className="mb-1 xl:mb-0 sm:mb-0 grid xl:flex lg:flex md:flex sm:flex items-center xl:justify-between  lg:justify-between md:justify-between sm:justify-between h-16 p-1 lg:p-1 sm:h-12 md:h-12  lg:h-12 xl:h-12 rounded-b bg-orange-700 shadow-2xl drop-shadow-2xl shadow-orange-950 ">
-                        <span className="sm:block mx-1 sm:mx-2 lg:mx-1 xl:mx-2 px-2 py-0.5 rounded my-auto text-xs sm:text-xs md:text-sm lg:text-base xl:text-base font-semibold text-black-500 bg-[white]/60 focus:ring-[#050708]/50 uppercase">
+                    <div className="mb-1 xl:mb-0 sm:mb-0 grid xl:flex lg:flex md:flex sm:flex items-center xl:justify-between  lg:justify-between md:justify-between sm:justify-between h-16 p-1 lg:p-1 sm:h-12 md:h-12  lg:h-12 xl:h-12 rounded-b bg-blue-500 shadow-2xl drop-shadow-2xl shadow-blue-950 ">
+                        <span className="sm:block mx-1 sm:mx-2 lg:mx-1 xl:mx-2 px-2 py-0.5 rounded my-auto text-xs sm:text-xs md:text-sm lg:text-base xl:text-base font-semibold text-black-500 focus:ring-[#050708]/50 uppercase">
                             <span className="bg-[black]/60 text-white px-2 py-0.5 rounded ">{monthlySalary.currentMonth}</span>  SLIP&apos;S / CREATED
                         </span>
                         <span>
@@ -443,7 +436,7 @@ function HrDash() {
 
                     <h1 className=" mt-4 uppercase font-serif text-xs sm:text-sm lg:text-lg xl:text-2xl">INCREMENTED SALARIES</h1>
                     {incName.map((name) => (
-                        <div key={name._id} className="mb-1 xl:mb-0 sm:mb-0 grid xl:flex lg:flex md:flex sm:flex items-center xl:justify-between  lg:justify-between md:justify-between sm:justify-between h-16 p-1 lg:p-1 sm:h-12 md:h-12  lg:h-12 xl:h-12 rounded-t bg-orange-700 shadow-2xl drop-shadow-2xl shadow-orange-950 ">
+                        <div key={name._id} className="mb-1 xl:mb-0 sm:mb-0 grid xl:flex lg:flex md:flex sm:flex items-center xl:justify-between  lg:justify-between md:justify-between sm:justify-between h-16 p-1 lg:p-1 sm:h-12 md:h-12  lg:h-12 xl:h-12 rounded-t bg-blue-700 shadow-2xl drop-shadow-2xl shadow-blue-950 ">
                             <span className="sm:block mx-1 sm:mx-2 lg:mx-1 xl:mx-2 px-2 py-0.5 rounded text-xs sm:text-xs md:text-sm lg:text-base xl:text-base font-semibold text-black-500 bg-[white]/60 focus:ring-[#050708]/50 uppercase">
                                 {name.empname}
                             </span>
@@ -490,5 +483,6 @@ function HrDash() {
         </>
     )
 }
+
 
 export default HrDash;

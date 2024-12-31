@@ -132,12 +132,12 @@ function HrAttendance() {
   }, [value, attendanceStatus]);
 
   return (
-    <section className="container-fluid relative p-0 sm:ml-64 bg-orange-100">
-      <div className="container-fluid flex justify-center p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-orange-100">
+    <section className="container-fluid relative p-0 sm:ml-64 bg-blue-100">
+      <div className="container-fluid flex justify-center p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-blue-100">
         <div className="w-full">
-          <h1 className="text-3xl tracking-wider font-medium text-orange-700 py-2">Attendance</h1>
+          <h1 className="text-3xl tracking-wider font-medium text-blue-700 py-2">Attendance</h1>
           <div className='flex justify-start'>
-        <div className='text-lg font-semibold text-orange-800'>
+        <div className='text-lg font-semibold text-blue-800'>
         Present Days: <span className='me-4 text-xl font-semibold text-green-600'> {presentDays}</span>
         Absent Days:   <span className='me-4 text-xl font-semibold text-red-600'>{absentDays} </span> 
         Half Day :     <span className=' me-4 text-xl font-semibold text-yellow-600'>{halfday}</span>

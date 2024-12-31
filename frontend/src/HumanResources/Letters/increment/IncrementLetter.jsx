@@ -48,7 +48,7 @@ function IncrementLetter({ offers, onClose }) {
                     aria-hidden="true"
                     className="fixed top-0 right-0 left-0 bottom-0 inset-0 z-50 overflow-y-auto overflow-x-hidden bg-black bg-opacity-50">
                     <div className="relative p-4 w-full max-w-7xl max-h-7xl mx-auto my-20 backdrop-blur-lg">
-                        <div className="flex flex-col bg-orange-700 border shadow-sm rounded-xl pointer-events-auto ">
+                        <div className="flex flex-col bg-blue-700 border shadow-sm rounded-xl pointer-events-auto ">
                             <div className="flex justify-between items-center py-3 px-4">
                                 <div className='flex justify-end mx-5'>
                                     <button onClick={downloadPDF} className="flex justify-end my-0 mx-4 px-4 py-2 bg-blue-500 hover:bg-blue-800  text-white rounded shadow-md">

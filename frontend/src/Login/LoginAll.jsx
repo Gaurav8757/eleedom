@@ -50,6 +50,7 @@ function LoginAll() {
   const [loginType, setLoginType] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emp, setEmp] = useState([]);
+  const [loading, setLoading] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
 
@@ -122,6 +123,9 @@ function LoginAll() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return; // Prevent multiple submissions
+
+  setLoading(true);
     try {
       let response;
       switch (loginType) {
@@ -226,7 +230,7 @@ function LoginAll() {
           break;
 
         default:
-          response = await axios.post(`${VITE_DATA}/ops/login`, {
+          response = await axios.post(`${VITE_DATA}/ops`, {
             opsemail: email,
             opspassword: password,
           });
@@ -236,6 +240,7 @@ function LoginAll() {
       if (response) {
         const token = sessionStorage.getItem("token");
         if (!token) {
+          setLoading(false);
           toast.error("No token found. Please log in again.");
           return;
         }
@@ -327,10 +332,12 @@ function LoginAll() {
       }
     } catch (error) {
       toast.error(
-        `Error: ${
-          error.response?.data?.message || "An unexpected error occurred"
+        `${
+          error.response?.data?.message || "Choose Login Type"
         }`
       );
+    }finally {
+      setLoading(false); // Reset loading state after the process completes
     }
   };
 
@@ -504,9 +511,12 @@ function LoginAll() {
                   </div>
                   <button
                     type="submit"
-                    className="w-full transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-10 duration-300 flex justify-center py-2 px-4 rounded hover:bg-blue-600 bg-blue-800  focus:ring-1 focus:ring-blue-900 text-base font-semibold text-white shadow-sm focus-visible:outline focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-50"
+                    disabled={loading} // Disable button when loading
+                    className={`w-full transition ease-in-out delay-150 ${
+                      loading ? "bg-gray-400" : "hover:-translate-y-1 hover:scale-10 hover:bg-blue-600 bg-blue-800"
+                    } flex justify-center py-2 px-4 rounded text-base font-semibold text-white shadow-sm`}
                   >
-                    SIGN IN
+                    {loading ? "Signing In..." : "SIGN IN"}
                   </button>
                 </form>
               </div>

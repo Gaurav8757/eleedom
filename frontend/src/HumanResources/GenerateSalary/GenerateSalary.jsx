@@ -99,7 +99,7 @@ function GenerateSalary() {
   }, [year, months, empName, empList]);
 
   const handleEmployeeChange = (selectedEmployee) => {
-    const selectedEmp = empList.find((emp) => emp.empname === selectedEmployee);
+    const selectedEmp = empList.find((emp) => emp?.empname === selectedEmployee);
     setEmpname(selectedEmployee);
     setEmpId(selectedEmp.empid);
     setempUniqueId(selectedEmp._id);

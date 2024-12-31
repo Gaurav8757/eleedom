@@ -57,7 +57,7 @@ function GenerateSalary() {
   const [bankNamed, setBankName] = useState();
   const [salDate, setSalDate] = useState("");
   const [dateInput, setDateInput] = useState("");
-  const [inWords, setInWords] = useState("");
+  // const [inWords, setInWords] = useState("");
 
   useEffect(() => {
     // Fetch the list of employees when the component mounts
@@ -125,8 +125,16 @@ function GenerateSalary() {
     const daysOfMonth = eachDayOfInterval({ start: startDate, end: endDate });
     const formattedDays = daysOfMonth.map((day) => day.getDay());
 
+    // const filteredDetails = employee.employeeDetails.filter((detail) => {
+    //   // eslint-disable-next-line no-unused-vars
+    //   const [day, month, year] = detail.date.split("/").map(Number);
+    //   return year === selectedYear && month === selectedMonth;
+    // });
     const filteredDetails = employee.employeeDetails.filter((detail) => {
-      // eslint-disable-next-line no-unused-vars
+      if (!detail.date) {
+        console.log("Invalid date:", detail);
+        return false;
+      }
       const [day, month, year] = detail.date.split("/").map(Number);
       return year === selectedYear && month === selectedMonth;
     });
@@ -176,13 +184,13 @@ function GenerateSalary() {
     const workday = workingDaysCount - holiDayCount;
 
     console.log(
-      "Working Days:(workingDaysCount + holiDayCount) " +
+      "Working Days:(workingDaysCount + holiDayCount) = " +
         workday +
         " sunday: " +
         sundayCount +
         " P-days: " +
         totalPresentDays +
-        " Holidays: " + 
+        " Holidays: " +
         holiDayCount
     );
 
@@ -232,7 +240,8 @@ function GenerateSalary() {
 
   useEffect(() => {
     const handleSalary = () => {
-      let salary = (monthSalary / total) * (presentDay + sundays + holidayCount);
+      let salary =
+        (monthSalary / total) * (presentDay + sundays + holidayCount);
       const halfSalary = (monthSalary / 30.5) * 0.5 * halfDay;
       salary = parseFloat(salary) + parseFloat(halfSalary);
       setSalaries(salary.toFixed(2));
@@ -441,10 +450,6 @@ function GenerateSalary() {
   };
 
   let genSalary = months + "/" + year;
-
-  console.log(inWords);
-  
-
   const toWords = new ToWords({
     localeCode: "en-IN",
     converterOptions: {
@@ -558,7 +563,7 @@ function GenerateSalary() {
         setEmpESI("");
         setEmpLoanemi("");
         setFinalDeduction("");
-        setInWords("");
+
         setOtherDeduction("");
         setLoading(false);
       } else {
@@ -960,17 +965,16 @@ function GenerateSalary() {
             </div>
 
             <div className="flex flex-col p-2  text-start w-full lg:w-1/3">
-            <label className="text-base mx-1">Salary in Words:</label>
-            <input
+              <label className="text-base mx-1">Salary in Words:</label>
+              <input
                 className="input-style bg-green-100  p-1 rounded"
                 type="text"
                 name=""
                 value={toWords.convert(finalAmountSalary || 0)}
-                onChange={(e) => setInWords(e.target.value)}
+                // onChange={(e) => setInWords(e.target.value)}
                 placeholder="₹ 0"
                 disabled
               />
-              
             </div>
             <div className="flex flex-col p-2  text-start w-full lg:w-1/5"></div>
             {/* part-3 */}

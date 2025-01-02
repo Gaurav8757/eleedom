@@ -47,17 +47,17 @@ export const viewLeger = async (req, res) => {
     }
 
     if (fromDate) {
-      filter.entryDate = { ...filter.entryDate, $gte: fromDate }; // Combine with $lte if toDate exists
+      filter.paymentCompanyDate = { ...filter.paymentCompanyDate, $gte: fromDate }; // Combine with $lte if toDate exists
     }
 
     if (toDate) {
-      filter.entryDate = { ...filter.entryDate, $lte: toDate }; // Combine with $gte if fromDate exists
+      filter.paymentCompanyDate = { ...filter.paymentCompanyDate, $lte: toDate }; // Combine with $gte if fromDate exists
     }
 
     // Fetch filtered and sorted data from the database with specific fields
     const policies = await Allinsurance.find(filter)
       .select(
-        "paymentCompanyDate entryDate policyNo advisorName insuredName company debitCompanyAmount paymentCompanyType _id finalEntryFields paymentCompanyRefNo creditCompanyAmount"
+        "paymentCompanyDate advId entryDate policyNo advisorName insuredName company debitCompanyAmount paymentCompanyType _id finalEntryFields paymentCompanyRefNo creditCompanyAmount"
       )
       .sort({ entryDate: 1 }); // Sort by entryDate in descending order
 

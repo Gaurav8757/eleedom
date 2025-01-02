@@ -10,7 +10,6 @@ function Ledger3() {
   const [paymentMode, setPaymentMode] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [filterOptions, setFilterOptions] = useState({
-    // advisorName: "",
     policyNo: "",
     insuredName: "",
     fromDate: "",
@@ -170,13 +169,13 @@ function Ledger3() {
 
       let totalBalance = 0;
       const dataToSave = modifiedData.map((item) => {
-        const currentYear = new Date().getFullYear();
-        const startDate = new Date(`${currentYear}-01-01`);
-        const endDate = new Date(`${currentYear}-12-31`);
-        const entryDate = new Date(item.entryDate);
+        // const currentYear = new Date().getFullYear();
+        // const startDate = new Date(`${currentYear}-01-01`);
+        // const endDate = new Date(`${currentYear}-12-31`);
+        const entryDate = item.entryDate;
         let debitCompanyAmount = 0;
 
-        if (entryDate >= startDate && entryDate <= endDate) {
+        if (entryDate >= filterOptions.fromDate && entryDate <= filterOptions.toDate) {
           debitCompanyAmount = parseFloat(item.finalEntryFields) || 0;
         }
 

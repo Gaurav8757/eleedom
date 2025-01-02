@@ -232,10 +232,12 @@ function DailyViewLeger() {
                                     {filteredData.map((item) => {
                                         if (item.advisorName === filterOptions.advisorName || filterOptions.insuredName || filterOptions.policyNo || filterOptions.fromDate || filterOptions.toDate) {
                                             let debitAmount;
-                                            const currentYear = new Date().getFullYear();
-                                            const startDate = new Date(`${currentYear}-01-01`);
-                                            const endDate = new Date(`${currentYear}-12-31`);
+                                            // const currentYear = new Date().getFullYear();
+                                            const startDate = filterOptions.fromDate;
+                                            const endDate = filterOptions.toDate;
                                             const entryDate = new Date(item.entryDate);
+                                            console.log(entryDate);
+                                            
                                             if (entryDate >= startDate && entryDate <= endDate) {
                                                 // Calculate the debitAmount
                                                 debitAmount = parseFloat(item.finalEntryFields - (item.advisorPayoutAmount || 0));

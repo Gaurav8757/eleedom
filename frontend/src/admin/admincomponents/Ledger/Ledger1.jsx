@@ -438,7 +438,7 @@ function Ledger1() {
                             <td>{`₹ ${debitAmount.toFixed(0)}`}</td>
                             <td className="">
                               <input
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
                                 type="date"
                                 value={item.paymentDate}
                                 onChange={(e) => handleDatesChange(item._id, e.target.value)}
@@ -446,7 +446,7 @@ function Ledger1() {
                             </td>
                             <td className="">
                               <select
-                                className="bg-gray-50 mx-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-40 ps-2 p-1"
+                                className="bg-gray-50 mx-4 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-40 ps-2 p-1"
                                 type="text"
                                 value={item.paymentType}
                                 onChange={(e) => handlePayTypeChange(item._id, e.target.value)}>
@@ -464,7 +464,7 @@ function Ledger1() {
                             </td>
                             <td>
                               <input
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
                                 type="text"
                                 value={item.paymentRefNo}
                                 onChange={(e) => handlePayRefChange(item._id, e.target.value)}
@@ -472,7 +472,7 @@ function Ledger1() {
                             </td>
                             <td>
                               <input
-                                className="bg-gray-50 border mx-4 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                                className="bg-gray-50 border mx-4 border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
                                 type="number"
                                 min="0"
                                 value={item.creditAmount}

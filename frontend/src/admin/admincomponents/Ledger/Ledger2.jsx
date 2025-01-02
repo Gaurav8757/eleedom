@@ -302,7 +302,7 @@ function Ledger2() {
 
   return (
     <section className="container-fluid relative  p-0 sm:ml-48 bg-white">
-      <div className="container-fluid  p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-white">
+      <div className="container-fluid  p-1 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-white">
       <div className="flex justify-between">
           <h1></h1>
         <h1 className="font-semibold text-3xl my-auto text-blue-700">Monthly Leger</h1>
@@ -438,7 +438,7 @@ function Ledger2() {
                             <td>{`₹ ${item.company ==="GO-DIGIT" ? debitMonthlyAmount.toFixed(2): debitMonthlyAmount.toFixed(0)}`}</td>
                             <td className="">
                               <input
-                                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1`}
+                                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1`}
                                 type="date"
                                 value={item.paymentMonthlyDate}
                                 name="paymentMonthlyDate"
@@ -447,7 +447,7 @@ function Ledger2() {
                             </td>
                             <td className="">
                               <select
-                                className={`bg-gray-50 mx-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-40 ps-2 p-1`}
+                                className={`bg-gray-50 mx-4 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-40 ps-2 p-1`}
                                 type="text"
                                 name="paymentMonthlyType"
                                 value={item.paymentMonthlyType}
@@ -466,7 +466,7 @@ function Ledger2() {
                             </td>
                             <td>
                               <input
-                                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1`}
+                                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1`}
                                 type="text"
                                 name="paymentMonthlyRefNo"
                                 value={item.paymentMonthlyRefNo}
@@ -476,7 +476,7 @@ function Ledger2() {
                             </td>
                             <td>
                               <input
-                                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1`}
+                                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1`}
                                 type="number"
                                 min="0"
                                 name="creditMonthlyAmount"

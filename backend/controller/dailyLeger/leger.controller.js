@@ -1,5 +1,5 @@
 import Allinsurance from "../../models/masterDetails/masterdetailSchema.js";
-import DailyLeger from "../../models/dailyLeger/dailyleger.js"
+import DailyLeger from "../../models/dailyLeger/dailyleger.js";
 export const addDailyLeger = async (req, res) => {
   const entries = req.body;
   try {
@@ -27,19 +27,47 @@ export const addDailyLeger = async (req, res) => {
 };
 
 // // VIEW  ALL DATA OF VEHICLE SLAB
-// export const viewDailyLeger = async (req, res) => {
-//   try {
-//     // Fetch all VehicleSlab documents from the database
-//     const leger = await DailyLeger.find();
-//     // Respond with the retrieved documents
-//     return res.status(200).json(leger);
-//   } catch (error) {
-//     // Handle errors
-//     console.error("Error fetching Daily Leger Leger:", error);
-//     return res.status(500).json({ error: "Failed to fetch Daily Leger" });
-//   }
-// };
+export const viewLeger = async (req, res) => {
+  try {
+    const { policyNo, insuredName, fromDate, toDate, company } = req.query;
 
+    // Construct filter object dynamically
+    const filter = {};
+
+    if (policyNo) {
+      filter.policyNo = policyNo; // Add regex if needed for case-insensitivity
+    }
+
+    if (insuredName) {
+      filter.insuredName = insuredName; // Add regex if needed for case-insensitivity
+    }
+
+    if (company) {
+      filter.company = company; // Exact match
+    }
+
+    if (fromDate) {
+      filter.entryDate = { ...filter.entryDate, $gte: fromDate }; // Combine with $lte if toDate exists
+    }
+
+    if (toDate) {
+      filter.entryDate = { ...filter.entryDate, $lte: toDate }; // Combine with $gte if fromDate exists
+    }
+
+    // Fetch filtered and sorted data from the database with specific fields
+    const policies = await Allinsurance.find(filter)
+      .select(
+        "paymentCompanyDate entryDate policyNo advisorName insuredName company debitCompanyAmount paymentCompanyType _id finalEntryFields paymentCompanyRefNo creditCompanyAmount"
+      )
+      .sort({ entryDate: 1 }); // Sort by entryDate in descending order
+
+    // Send the response
+    return res.status(200).json({ allList: policies });
+  } catch (error) {
+    console.error("Error fetching filtered data:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 
 // Update entry in Daily Ledger
@@ -67,12 +95,36 @@ export const updateDailyLeger = async (req, res) => {
     const bulkOperations = [];
 
     // Iterate over each update and construct bulk write operations
-    updates.forEach(update => {
-      const { advId, advisorName, debitCompanyAmount, debitMonthlyAmount, entryDate, policyNo, insuredName, debitAmount, paymentDate,paymentMonthlyDate,paymentCompanyDate, paymentType,paymentMonthlyType, paymentCompanyType, paymentRefNo,paymentMonthlyRefNo ,paymentCompanyRefNo, creditAmount,creditMonthlyAmount,creditCompanyAmount, balance, balanceMonthly, balanceCompany } = update;
-      
+    updates.forEach((update) => {
+      const {
+        advId,
+        advisorName,
+        debitCompanyAmount,
+        debitMonthlyAmount,
+        entryDate,
+        policyNo,
+        insuredName,
+        debitAmount,
+        paymentDate,
+        paymentMonthlyDate,
+        paymentCompanyDate,
+        paymentType,
+        paymentMonthlyType,
+        paymentCompanyType,
+        paymentRefNo,
+        paymentMonthlyRefNo,
+        paymentCompanyRefNo,
+        creditAmount,
+        creditMonthlyAmount,
+        creditCompanyAmount,
+        balance,
+        balanceMonthly,
+        balanceCompany,
+      } = update;
+
       // Construct the filter criteria
       const filter = { advId, advisorName, entryDate, policyNo, insuredName };
-      
+
       // Construct the update operation
       const updateOperation = {
         $set: {
@@ -93,25 +145,27 @@ export const updateDailyLeger = async (req, res) => {
           creditCompanyAmount,
           balance,
           balanceMonthly,
-          balanceCompany
-        }
+          balanceCompany,
+        },
       };
-      
+
       // Add the update operation to the bulk operations array
       bulkOperations.push({
         updateOne: {
           filter,
-          update: updateOperation
-        }
+          update: updateOperation,
+        },
       });
     });
-
-
     // Perform bulk updates using bulkWrite method
     await Allinsurance.bulkWrite(bulkOperations);
-    return res.status(200).json({ message: "Daily Leger Updated Successfully...!" });
+    return res
+      .status(200)
+      .json({ message: "Daily Leger Updated Successfully...!" });
   } catch (error) {
-    return res.status(500).json({ message: "Error updating Leger: " + error.message });
+    return res
+      .status(500)
+      .json({ message: "Error updating Leger: " + error.message });
   }
 };
 
@@ -176,21 +230,32 @@ export const updateMonthlyLeger = async (req, res) => {
 
     // Iterate over each update and perform individual updates
     for (const update of updates) {
-      const { entryDate, paymentCompanyDate, paymentCompanyType, paymentCompanyRefNo, creditCompanyAmount } = update;
+      const {
+        entryDate,
+        paymentCompanyDate,
+        paymentCompanyType,
+        paymentCompanyRefNo,
+        creditCompanyAmount,
+      } = update;
 
       // Check if all specified fields are non-empty for the current update
-      if (paymentCompanyDate || paymentCompanyType || paymentCompanyRefNo || creditCompanyAmount) {
+      if (
+        paymentCompanyDate ||
+        paymentCompanyType ||
+        paymentCompanyRefNo ||
+        creditCompanyAmount
+      ) {
         // Construct the filter criteria
         const filter = { entryDate };
 
         // Construct the update operation
         const updateOperation = {
           $set: {
-            paymentCompanyDate: paymentCompanyDate || '',
-            paymentCompanyType: paymentCompanyType || '',
-            paymentCompanyRefNo: paymentCompanyRefNo || '',
-            creditCompanyAmount: parseFloat(creditCompanyAmount) || 0
-          }
+            paymentCompanyDate: paymentCompanyDate || "",
+            paymentCompanyType: paymentCompanyType || "",
+            paymentCompanyRefNo: paymentCompanyRefNo || "",
+            creditCompanyAmount: parseFloat(creditCompanyAmount) || 0,
+          },
         };
 
         // Perform individual update using findOneAndUpdate method
@@ -198,8 +263,12 @@ export const updateMonthlyLeger = async (req, res) => {
       }
     }
 
-    return res.status(200).json({ message: "Company Leger Updated Successfully" });
+    return res
+      .status(200)
+      .json({ message: "Company Leger Updated Successfully" });
   } catch (error) {
-    return res.status(500).json({ message: "Error updating Company Leger: " + error.message });
+    return res
+      .status(500)
+      .json({ message: "Error updating Company Leger: " + error.message });
   }
 };

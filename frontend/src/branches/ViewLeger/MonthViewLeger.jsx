@@ -229,13 +229,14 @@ function MonthViewLeger() {
 
                 <tbody>
                   {filteredData.map((item) => {
+                      if (
+                        item.advisorName === filterOptions.advisorName || filterOptions.insuredName || filterOptions.policyNo || filterOptions.fromDate || filterOptions.toDate //heck if the entry date year matches the current year
+                      ) {
                     const entryDate = new Date(item.entryDate);
-                    const currentYear = new Date().getFullYear();
-                    const startDate = new Date(`${currentYear}-01-01`);
-                    const endDate = new Date(`${currentYear}-12-31`);
-                    if (
-                      item.advisorName === filterOptions.advisorName || filterOptions.insuredName || filterOptions.policyNo || filterOptions.fromDate || filterOptions.toDate //heck if the entry date year matches the current year
-                    ) {
+                    // const currentYear = new Date().getFullYear();
+                    const startDate = filterOptions.fromDate;
+                    const endDate = filterOptions.toDate;
+                  
                       if (entryDate >= startDate && entryDate <= endDate) {
                         let debitMonthlyAmount;
                         debitMonthlyAmount = parseFloat(item.finalEntryFields - (item.advisorPayoutAmount || 0));

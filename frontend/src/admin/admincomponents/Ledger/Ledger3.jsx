@@ -7,6 +7,7 @@ import TextLoader from "./../../../loader/TextLoader";
 function Ledger3() {
   let balance = 0;
   const [comp, setCompany] = useState([]);
+  const [loding, setLoading] = useState(false);
   const [paymentMode, setPaymentMode] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [filterOptions, setFilterOptions] = useState({
@@ -27,7 +28,7 @@ function Ledger3() {
       if (filterOptions.company) {
         queryParams.company = filterOptions.company; // Keep it unencoded
       }
-
+setLoading(true);
       // Make GET request to backend with filterOptions as query parameters
       const response = await axios.get(`${VITE_DATA}/leger/view`, {
         params: queryParams,
@@ -41,9 +42,12 @@ function Ledger3() {
         },
       });
       // Assuming the response contains the filtered data under `allList`
+      setLoading(false);
       return response?.data?.allList;
+      
     } catch (error) {
       console.error("Error fetching filtered data:", error);
+      setLoading(false);
       toast.error(
         error.response?.data?.message ||
           "Failed to fetch data. Please try again."
@@ -444,7 +448,7 @@ function Ledger3() {
               </button>
             </div>
           </div>
-          {isFilterApplied() && filteredData > 0 ? (
+          {loding ? (
             <TextLoader />
           ) : (
             <div className="relative overflow-x-auto shadow-md sm:rounded">

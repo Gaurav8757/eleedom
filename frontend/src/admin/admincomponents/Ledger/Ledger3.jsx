@@ -31,15 +31,15 @@ function Ledger3() {
     fetchData();
   }, []);
   
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get(`${VITE_DATA}/alldetails/view/policies`);
-  //     const responseData = response.data; // Assuming data is stored in response.data
-  //     setData(responseData.allList);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${VITE_DATA}/alldetails/view/policies`);
+      const responseData = response.data; // Assuming data is stored in response.data
+      setData(responseData.allList);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -231,7 +231,7 @@ function Ledger3() {
       const response = await axios.put(`${VITE_DATA}/leger/daily/update`, dataToSave);
       if (response.status === 200) {
         toast.success(`Company Ledger Updated Successfully...!`);
-        // fetchData();
+        fetchData();
         // Optionally, clear filtered data after submission
         setFilteredData([]);
       }

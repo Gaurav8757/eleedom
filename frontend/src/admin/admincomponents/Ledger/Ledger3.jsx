@@ -175,6 +175,72 @@ function Ledger3() {
     return Object.values(filterOptions).some(option => option !== "");
   };
 
+  // const handleSubmit = async () => {
+  //   try {
+  //     const modifiedData = filteredData.filter(item => (
+  //       item.paymentCompanyDate || item.paymentCompanyType || item.paymentCompanyRefNo || item.creditCompanyAmount
+  //     ));
+  //     if (modifiedData.length === 0) {
+  //       toast.info("Please make changes to submit.");
+  //       return;
+  //     }
+
+  //     let totalBalance = 0;
+  //     const dataToSave = modifiedData.map(item => {
+  //       const currentYear = new Date().getFullYear();
+  //       const startDate = new Date(`${currentYear}-01-01`);
+  //       const endDate = new Date(`${currentYear}-12-31`);
+  //       const entryDate = new Date(item.entryDate);
+  //       let debitCompanyAmount = 0;
+
+  //       if (entryDate >= startDate && entryDate <= endDate) {
+  //         debitCompanyAmount = parseFloat(item.finalEntryFields) || 0;
+  //       }
+
+  //       const paymentCompanyDate = item.paymentCompanyDate || '';
+  //       const paymentCompanyType = item.paymentCompanyType || '';
+  //       const paymentCompanyRefNo = item.paymentCompanyRefNo || '';
+  //       const creditCompanyAmount = parseFloat(item.creditCompanyAmount) || 0;
+
+  //       if (debitCompanyAmount === creditCompanyAmount) {
+  //         totalBalance -= debitCompanyAmount - creditCompanyAmount;
+  //       } else {
+  //         totalBalance += debitCompanyAmount - creditCompanyAmount;
+  //       }
+  //       debitCompanyAmount = item.company === "GO-DIGIT" ? debitCompanyAmount.toFixed(2) : debitCompanyAmount.toFixed(0)
+
+
+  //       return {
+  //         _id: item._id, // Assuming _id is the unique identifier for each item
+  //         advId: item.advId,
+  //         insuredName: item.insuredName,
+  //         advisorName: item.advisorName,
+  //         policyNo: item.policyNo,
+  //         entryDate: item.entryDate,
+  //         debitCompanyAmount,
+  //         company: item.company,
+  //         paymentCompanyDate,
+  //         paymentCompanyType,
+  //         paymentCompanyRefNo,
+  //         creditCompanyAmount,
+  //         balanceCompany: totalBalance
+  //       };
+  //     });
+
+  //     // Send the modified data to the backend API
+  //     const response = await axios.put(`${VITE_DATA}/leger/daily/update`, dataToSave);
+  //     if (response.status === 200) {
+  //       toast.success(`Company Ledger Updated Successfully...!`);
+  //       fetchData();
+  //       // Optionally, clear filtered data after submission
+  //       setFilteredData([]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error saving data:', error.response?.data?.message || error.message);
+  //     toast.error(`${error.response ? error.response.data.message : error.message}`);
+  //   }
+  // };
+
   const handleSubmit = async () => {
     try {
       const modifiedData = filteredData.filter(item => (
@@ -184,34 +250,38 @@ function Ledger3() {
         toast.info("Please make changes to submit.");
         return;
       }
-
+  
       let totalBalance = 0;
       const dataToSave = modifiedData.map(item => {
         const currentYear = new Date().getFullYear();
-        const startDate = new Date(`${currentYear}-01-01`);
-        const endDate = new Date(`${currentYear}-12-31`);
-        const entryDate = new Date(item.entryDate);
+        const yearsToCheck = [currentYear, currentYear - 1]; // Current year and previous year
         let debitCompanyAmount = 0;
-
-        if (entryDate >= startDate && entryDate <= endDate) {
-          debitCompanyAmount = parseFloat(item.finalEntryFields) || 0;
-        }
-
+  
+        // Check entryDate against each year's range
+        yearsToCheck.forEach(year => {
+          const startDate = new Date(`${year}-01-01`);
+          const endDate = new Date(`${year}-12-31`);
+          const entryDate = new Date(item.entryDate);
+  
+          if (entryDate >= startDate && entryDate <= endDate) {
+            debitCompanyAmount += parseFloat(item.finalEntryFields) || 0;
+          }
+        });
+  
         const paymentCompanyDate = item.paymentCompanyDate || '';
         const paymentCompanyType = item.paymentCompanyType || '';
         const paymentCompanyRefNo = item.paymentCompanyRefNo || '';
         const creditCompanyAmount = parseFloat(item.creditCompanyAmount) || 0;
-
+  
         if (debitCompanyAmount === creditCompanyAmount) {
           totalBalance -= debitCompanyAmount - creditCompanyAmount;
         } else {
           totalBalance += debitCompanyAmount - creditCompanyAmount;
         }
-        debitCompanyAmount = item.company === "GO-DIGIT" ? debitCompanyAmount.toFixed(2) : debitCompanyAmount.toFixed(0)
-
-
+        debitCompanyAmount = item.company === "GO-DIGIT" ? debitCompanyAmount.toFixed(2) : debitCompanyAmount.toFixed(0);
+  
         return {
-          _id: item._id, // Assuming _id is the unique identifier for each item
+          _id: item._id,
           advId: item.advId,
           insuredName: item.insuredName,
           advisorName: item.advisorName,
@@ -226,7 +296,7 @@ function Ledger3() {
           balanceCompany: totalBalance
         };
       });
-
+  
       // Send the modified data to the backend API
       const response = await axios.put(`${VITE_DATA}/leger/daily/update`, dataToSave);
       if (response.status === 200) {
@@ -240,8 +310,7 @@ function Ledger3() {
       toast.error(`${error.response ? error.response.data.message : error.message}`);
     }
   };
-
-
+  
 
   function getCurrentDate() {
     const today = new Date();

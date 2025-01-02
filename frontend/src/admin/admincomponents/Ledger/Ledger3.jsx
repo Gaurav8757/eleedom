@@ -18,18 +18,19 @@ function Ledger3() {
     company: ""
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${VITE_DATA}/alldetails/view/policies`);
-        const responseData = response.data; // Assuming data is stored in response.data
-        setData(responseData.allList);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(`${VITE_DATA}/alldetails/view/policies`);
+  //       const responseData = response.data; // Assuming data is stored in response.data
+  //       setData(responseData.allList);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
   const fetchData = async () => {
     try {
       const response = await axios.get(`${VITE_DATA}/alldetails/view/policies`);

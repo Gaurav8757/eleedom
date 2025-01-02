@@ -262,6 +262,7 @@ function Ledger3() {
           const startDate = new Date(`${year}-01-01`);
           const endDate = new Date(`${year}-12-31`);
           const entryDate = new Date(item.entryDate);
+
   
           if (entryDate >= startDate && entryDate <= endDate) {
             debitCompanyAmount += parseFloat(item.finalEntryFields) || 0;
@@ -504,9 +505,9 @@ function Ledger3() {
 
                     if (item.company === filterOptions.company || filterOptions.insuredName || filterOptions.policyNo || filterOptions.fromDate || filterOptions.toDate) {
                       let debitCompanyAmount;
-                      const currentYear = new Date().getFullYear();
-                      const startDate = new Date(`${currentYear}-01-01`);
-                      const endDate = new Date(`${currentYear}-12-31`);
+                      // const currentYear = new Date().getFullYear();
+                      const startDate = filterOptions.fromDate;
+                      const endDate = filterOptions.endDate;
                       const entryDate = new Date(item.entryDate);
                       if (entryDate >= startDate && entryDate <= endDate) {
                         debitCompanyAmount = parseFloat(item.finalEntryFields);
@@ -527,7 +528,7 @@ function Ledger3() {
                             <td className="whitespace-wrap w-1/4">{`₹ ${item.company === "GO-DIGIT" ? debitCompanyAmount.toFixed(2) : debitCompanyAmount.toFixed(0)}`}</td>
                             <td className="">
                               <input
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
                                 type="date"
                                 name="paymentCompanyDate"
                                 value={item.paymentCompanyDate}
@@ -536,7 +537,7 @@ function Ledger3() {
                             </td>
                             <td className="">
                               <select
-                                className="bg-gray-50 mx-4 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-40 ps-2 p-1"
+                                className="bg-gray-50 mx-4 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-40 ps-2 p-1"
                                 type="text"
                                 value={item.paymentCompanyType}
                                 name="paymentCompanyType"
@@ -551,7 +552,7 @@ function Ledger3() {
                             </td>
                             <td>
                               <input
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
                                 type="text"
                                 value={item.paymentCompanyRefNo}
                                 onChange={(e) => handlePayRefChange(item._id, e.target.value)}
@@ -559,7 +560,7 @@ function Ledger3() {
                             </td>
                             <td>
                               <input
-                                className="bg-gray-50 border mx-4 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                                className="bg-gray-50 border mx-4 border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
                                 type="number"
                                 min="0"
                                 value={item.creditCompanyAmount}

@@ -352,6 +352,19 @@ function FinanceDashboard() {
     from: { number: 0 },
   });
 
+  // Determine the financial year start and end dates
+ const today = new Date();
+ const financialYearStart = new Date(
+   today.getMonth() + 1 >= 4 ? today.getFullYear() : today.getFullYear() - 1,
+   3, // April (zero-based index)
+   1
+ );
+ const financialYearEnd = new Date(
+   today.getMonth() + 1 >= 4 ? today.getFullYear() + 1 : today.getFullYear(),
+   2, // March (zero-based index)
+   31
+ );
+
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (!token) {
@@ -535,9 +548,10 @@ function FinanceDashboard() {
           const currentYear = new Date().getFullYear();
 
           const filteredYearlyData = allData.filter((item) => {
-            const itemDate = new Date(item.entryDate);
-            const itemYear = itemDate.getFullYear();
-            return itemYear === currentYear;
+            const itemYear = new Date(item.entryDate);
+            return (
+              itemYear >= financialYearStart && itemYear <= financialYearEnd
+            );
           });
 
           const filteredMonthlyData = allData.filter((item) => {
@@ -1031,9 +1045,10 @@ function FinanceDashboard() {
 
     const filteredYearlyData = filteredData1.filter((item) => {
       const itemYear = new Date(item.entryDate).getFullYear();
-      return itemYear === new Date().getFullYear();
+      return (
+        itemYear >= financialYearStart && itemYear <= financialYearEnd
+      );
     });
-
     const filteredMonthlyData = filteredData1.filter((item) => {
       const itemDate = new Date(item.entryDate);
       const itemYear = itemDate.getFullYear();

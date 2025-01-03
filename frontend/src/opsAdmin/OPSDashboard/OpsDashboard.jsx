@@ -151,8 +151,11 @@ function OpsDashboard() {
 
     const filteredYearlyData = filteredData.filter((item) => {
       const itemYear = new Date(item.entryDate).getFullYear();
-      return itemYear === new Date().getFullYear();
+      return (
+        itemYear >= financialYearStart && itemYear <= financialYearEnd
+      );
     });
+    
 
     const filteredMonthlyData = filteredData.filter((item) => {
       const itemDate = new Date(item.entryDate);
@@ -226,7 +229,9 @@ function OpsDashboard() {
 
       const filteredYearlyData = allData.filter((item) => {
         const itemYear = new Date(item.entryDate).getFullYear();
-        return itemYear === currentYear;
+        return (
+          itemYear >= financialYearStart && itemYear <= financialYearEnd
+        );
       });
 
       const filteredMonthlyData = allData.filter((item) => {

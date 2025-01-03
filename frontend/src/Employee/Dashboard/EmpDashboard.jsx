@@ -329,9 +329,10 @@ function EmpDashboard() {
           const currentYear = new Date().getFullYear();
 
           const filteredYearlyData = data.filter((item) => {
-            const itemDate = new Date(item.currdate);
-            const itemYear = itemDate.getFullYear();
-            return itemYear === currentYear;
+            const itemYear = new Date(item.entryDate);
+            return (
+              itemYear >= financialYearStart && itemYear <= financialYearEnd
+            );
           });
 
           const filteredMonthlyData = data.filter((item) => {
@@ -536,10 +537,6 @@ function EmpDashboard() {
           const currentDay = new Date().getDate();
           const currentYear = new Date().getFullYear();
 
-          // const filteredYearlyData = empPolicy.filter(item => {
-          //     const itemDate = new Date(item.entryDate);
-          //     return itemDate.getFullYear() === currentYear;
-          // });
           const filteredYearlyData = empPolicy.filter((item) => {
             const itemYear = new Date(item.entryDate);
             return (

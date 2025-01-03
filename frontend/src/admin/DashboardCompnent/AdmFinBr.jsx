@@ -425,9 +425,10 @@ function AdmFinBr() {
           const currentYear = new Date().getFullYear();
 
           const filteredYearlyData = data.filter((item) => {
-            const itemDate = new Date(item.currdate);
-            const itemYear = itemDate.getFullYear();
-            return itemYear === currentYear;
+            const itemYear = new Date(item.entryDate);
+            return (
+              itemYear >= financialYearStart && itemYear <= financialYearEnd
+            );
           });
 
           const filteredMonthlyData = data.filter((item) => {
@@ -619,9 +620,10 @@ function AdmFinBr() {
           const currentYear = new Date().getFullYear();
 
           const filteredYearlyData = allData.filter((item) => {
-            const itemDate = new Date(item.entryDate);
-            const itemYear = itemDate.getFullYear();
-            return itemYear === currentYear;
+            const itemYear = new Date(item.entryDate);
+            return (
+              itemYear >= financialYearStart && itemYear <= financialYearEnd
+            );
           });
 
           const filteredMonthlyData = allData.filter((item) => {
@@ -721,6 +723,7 @@ function AdmFinBr() {
                   (item) =>
                     new Date(item.entryDate).getFullYear() === currentYear
                 ).length,
+                
                 mtd: employeeData.filter((item) => {
                   const itemDate = new Date(item.entryDate);
                   return (

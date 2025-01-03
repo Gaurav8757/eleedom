@@ -9,7 +9,6 @@ function DashBranches() {
   const [branchWiseData, setBranchWiseData] = useState([]);
 
   const [empWiseAttendance, setEmpWiseAttendance] = useState([]);
-
   const [APIData, setAPIData] = useState([]);
   // const [employees, setEmployees] = useState([]);
   // const [employeePolicyCounts, setEmployeePolicyCounts] = useState({});
@@ -343,9 +342,10 @@ function DashBranches() {
           const currentYear = new Date().getFullYear();
 
           const filteredYearlyData = data.filter((item) => {
-            const itemDate = new Date(item.currdate);
-            const itemYear = itemDate.getFullYear();
-            return itemYear === currentYear;
+            const itemYear = new Date(item.currdate);
+            return (
+              itemYear >= financialYearStart && itemYear <= financialYearEnd
+            );
           });
 
           const filteredMonthlyData = data.filter((item) => {

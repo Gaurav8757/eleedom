@@ -136,7 +136,7 @@ function MonthViewLeger() {
             <div className="flex  justify-evenly my-4">
               <input
                 type="date"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                 placeholder="From Date"
                 value={filterOptions.fromDate}
                 onChange={(e) =>
@@ -145,7 +145,7 @@ function MonthViewLeger() {
               />
               <input
                 type="date"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                 placeholder="To Date"
                 value={filterOptions.toDate}
                 onChange={(e) =>
@@ -154,7 +154,7 @@ function MonthViewLeger() {
               /><span className="text-sm my-auto">OR</span>
               <select
                 type="text"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                 placeholder="Advisor Name"
                 value={filterOptions.advisorName}
                 onChange={(e) => {
@@ -162,7 +162,7 @@ function MonthViewLeger() {
                   setFilterOptions({ ...filterOptions, advisorName: e.target.value });
                 }}
               >
-                <option value="">-------- Select Advisor ----------</option>
+                <option value="">--------- Select Advisor -----------</option>
                 {advisors
                   .sort((a, b) => {
                     // Check if both a.branch and b.branch are strings before comparing
@@ -184,14 +184,14 @@ function MonthViewLeger() {
               </select> <span className="text-sm my-auto">OR</span>
               <input
                 type="text"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                 placeholder="Policy Number"
                 value={filterOptions.policyNo}
                 onChange={(e) => setFilterOptions({ ...filterOptions, policyNo: e.target.value })}
               /><span className="text-sm my-auto">OR</span>
               <select
                 type="text"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                 placeholder="Insured Name"
                 value={filterOptions.insuredName}
                 onChange={(e) => {
@@ -232,7 +232,7 @@ function MonthViewLeger() {
                       if (
                         item.advisorName === filterOptions.advisorName || filterOptions.insuredName || filterOptions.policyNo || filterOptions.fromDate || filterOptions.toDate //heck if the entry date year matches the current year
                       ) {
-                    const entryDate = new Date(item.entryDate);
+                    const entryDate = item.entryDate;
                     // const currentYear = new Date().getFullYear();
                     const startDate = filterOptions.fromDate;
                     const endDate = filterOptions.toDate;
@@ -248,9 +248,9 @@ function MonthViewLeger() {
                         }
                         return (
                           <tr key={item._id} className="odd:bg-white text-sm even:bg-gray-100 border-b dark:border-gray-700 hover:bg-orange-100 ">
-                            <td className="whitespace-nowrap">{item.entryDate}</td>
-                            <td className="whitespace-wrap w-1/12">{item.policyNo}</td>
-                            <td className="whitespace-wrap w-1/12">{item.company}</td>
+                            <td className="whitespace-nowrap my-3">{item.entryDate}</td>
+                            <td className="whitespace-wrap">{item.policyNo}</td>
+                            <td className="whitespace-wrap">{item.company}</td>
                             <td>{item.insuredName}</td>
                             <td>{`₹ ${item.finalEntryFields.toFixed(0)}`}</td>
                             <td>{`₹ ${item.advisorPayoutAmount}`}</td>

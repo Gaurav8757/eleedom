@@ -36,7 +36,7 @@ function DailyViewLeger() {
                 setUniqueNames(uniqueNames);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                toast.error("Error fetching data");
+                toast.error(error);
             }
         };
         fetchData();
@@ -118,7 +118,6 @@ function DailyViewLeger() {
         });
         setFilteredData([]);
     };
-
    
 
     const isFilterApplied = () => {
@@ -127,17 +126,18 @@ function DailyViewLeger() {
 
     return (
         <section className="container-fluid relative  p-0 sm:ml-48 bg-white">
-            <div className="container-fluid  p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-white">
+            <div className="container-fluid border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-white">
+              
+                <div className="relative w-full lg:w-full p-0 lg:p-1 rounded-xl shadow-xl text-2xl items-center bg-slate-200">
                 <div className="flex justify-center">
                     <h1></h1>
-                    <h1 className="font-semibold my-auto text-3xl mb-2 text-blue-700">Daily Leger</h1>
+                    <h1 className="font-semibold my-auto text-3xl mb-5 text-blue-700">Daily Leger</h1>
                 </div>
-                <div className="relative w-full lg:w-full p-0 lg:p-1 rounded-xl shadow-xl text-2xl items-center bg-slate-200">
                     <div className="flex justify-between flex-col">
                         <div className="flex  justify-evenly my-4">
                             <input
                                 type="date"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                                 placeholder="From Date"
                                 value={filterOptions.fromDate}
                                 onChange={(e) =>
@@ -146,7 +146,7 @@ function DailyViewLeger() {
                             />
                             <input
                                 type="date"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                                 placeholder="To Date"
                                 value={filterOptions.toDate}
                                 onChange={(e) =>
@@ -155,7 +155,7 @@ function DailyViewLeger() {
                             /><span className="text-sm my-auto">OR</span>
                             <select
                                 type="text"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                                 placeholder="Advisor Name"
                                 value={filterOptions.advisorName}
                                 onChange={(e) => {
@@ -185,14 +185,14 @@ function DailyViewLeger() {
                             </select> <span className="text-sm my-auto">OR</span>
                             <input
                                 type="text"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                                 placeholder="Policy Number"
                                 value={filterOptions.policyNo}
                                 onChange={(e) => setFilterOptions({ ...filterOptions, policyNo: e.target.value })}
                             /><span className="text-sm my-auto">OR</span>
                             <select
                                 type="text"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded focus:ring-blue-500 focus:border-blue-500 w-1/6 ps-2 p-1"
                                 placeholder="Insured Name"
                                 value={filterOptions.insuredName}
                                 onChange={(e) => {
@@ -235,8 +235,8 @@ function DailyViewLeger() {
                                             // const currentYear = new Date().getFullYear();
                                             const startDate = filterOptions.fromDate;
                                             const endDate = filterOptions.toDate;
-                                            const entryDate = new Date(item.entryDate);
-                                            console.log(entryDate);
+                                            const entryDate = item.entryDate;
+                                            // console.log(entryDate);
                                             
                                             if (entryDate >= startDate && entryDate <= endDate) {
                                                 // Calculate the debitAmount
@@ -251,8 +251,8 @@ function DailyViewLeger() {
                                                     <tr key={item._id} className="odd:bg-white text-sm even:bg-gray-100 border-b dark:border-gray-700 hover:bg-orange-100 ">
                                                         <td className="whitespace-nowrap">{item.entryDate}</td>
 
-                                                        <td className="whitespace-wrap w-1/12">{item.policyNo}</td>
-                                                        <td className="whitespace-wrap w-1/12">{item.company}</td>
+                                                        <td className="whitespace-wrap py-2">{item.policyNo}</td>
+                                                        <td className="whitespace-wrap">{item.company}</td>
                                                         <td>{item.insuredName}</td>
                                                         <td>{`₹ ${item.finalEntryFields}`}</td>
                                                         <td>{`₹ ${item.advisorPayoutAmount}`}</td>

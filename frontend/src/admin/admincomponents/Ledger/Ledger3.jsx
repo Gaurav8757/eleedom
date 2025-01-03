@@ -452,7 +452,7 @@ function Ledger3() {
               </button>
             </div>
           </div>
-          {loding ? (
+          {loding && isFilterApplied() ? (
             <TextLoader />
           ) : (
             <div className="relative overflow-x-auto shadow-md sm:rounded">

@@ -668,8 +668,10 @@ function DashBranches() {
         const currentYear = new Date().getFullYear();
 
         const filteredYearlyData = fetchedData.filter((item) => {
-          const itemDate = new Date(item.entryDate);
-          return itemDate.getFullYear() === currentYear;
+          const itemYear = new Date(item.entryDate);
+          return (
+            itemYear >= financialYearStart && itemYear <= financialYearEnd
+          );
         });
 
         const filteredMonthlyData = fetchedData.filter((item) => {
@@ -1027,9 +1029,12 @@ function DashBranches() {
       return (!startDate || itemDate >= start) && (!endDate || itemDate <= end);
     });
 
+
     const filteredYearlyData = filteredData1.filter((item) => {
-      const itemYear = new Date(item.entryDate).getFullYear();
-      return itemYear === new Date().getFullYear();
+      const itemYear = new Date(item.entryDate);
+      return (
+        itemYear >= financialYearStart && itemYear <= financialYearEnd
+      );
     });
 
     const filteredMonthlyData = filteredData1.filter((item) => {

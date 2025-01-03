@@ -265,7 +265,7 @@ function ViewOfferLetter() {
                 </div>
               ))}
               <button
-                className="absolute top-12 right-2 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
+                className="absolute top-16 right-2 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
                 onClick={() => setIsFilterVisible(false)}
               >
                 X

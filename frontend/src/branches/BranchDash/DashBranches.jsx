@@ -309,6 +309,19 @@ function DashBranches() {
     from: { number: 0 },
   });
 
+   // Determine the financial year start and end dates
+ const today = new Date();
+ const financialYearStart = new Date(
+   today.getMonth() + 1 >= 4 ? today.getFullYear() : today.getFullYear() - 1,
+   3, // April (zero-based index)
+   1
+ );
+ const financialYearEnd = new Date(
+   today.getMonth() + 1 >= 4 ? today.getFullYear() + 1 : today.getFullYear(),
+   2, // March (zero-based index)
+   31
+ );
+
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (!token) {
@@ -491,17 +504,26 @@ function DashBranches() {
               (item) => item.branch.toLowerCase() === br
             );
 
+            // acc[br] = {
+            //   ytd: Math.round(
+            //     branchData
+            //       .filter(
+            //         (item) =>
+            //           new Date(item.entryDate).getFullYear() === currentYear
+            //       )
+            //       .reduce(
+            //         (sum, item) => sum + parseFloat(item.netPremium || 0),
+            //         0
+            //       )
+            //   ),
             acc[br] = {
               ytd: Math.round(
                 branchData
-                  .filter(
-                    (item) =>
-                      new Date(item.entryDate).getFullYear() === currentYear
-                  )
-                  .reduce(
-                    (sum, item) => sum + parseFloat(item.netPremium || 0),
-                    0
-                  )
+                  .filter((item) => {
+                    const entryDate = new Date(item.entryDate);
+                    return entryDate >= financialYearStart && entryDate <= financialYearEnd;
+                  })
+                  .reduce((sum, item) => sum + parseFloat(item.netPremium || 0), 0)
               ),
 
               mtd: Math.round(

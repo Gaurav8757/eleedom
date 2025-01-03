@@ -28,7 +28,7 @@ function Ledger3() {
       if (filterOptions.company) {
         queryParams.company = filterOptions.company; // Keep it unencoded
       }
-setLoading(true);
+      setLoading(true);
       // Make GET request to backend with filterOptions as query parameters
       const response = await axios.get(`${VITE_DATA}/leger/view`, {
         params: queryParams,
@@ -44,7 +44,6 @@ setLoading(true);
       // Assuming the response contains the filtered data under `allList`
       setLoading(false);
       return response?.data?.allList;
-      
     } catch (error) {
       console.error("Error fetching filtered data:", error);
       setLoading(false);
@@ -100,7 +99,7 @@ setLoading(true);
   }, []);
 
   const handleFilter = async () => {
-    if(filterOptions){
+    if (filterOptions) {
       const data = await fetchFilteredData(filterOptions); // Pass the filterOptions state
       setFilteredData(data); // Update the frontend state with the filtered data
     }
@@ -179,7 +178,10 @@ setLoading(true);
         const entryDate = item.entryDate;
         let debitCompanyAmount = 0;
 
-        if (entryDate >= filterOptions.fromDate && entryDate <= filterOptions.toDate) {
+        if (
+          entryDate >= filterOptions.fromDate &&
+          entryDate <= filterOptions.toDate
+        ) {
           debitCompanyAmount = parseFloat(item.finalEntryFields) || 0;
         }
 
@@ -434,9 +436,11 @@ setLoading(true);
                 ))}{" "}
               </select>
               <button
-                className={`${!filterOptions && 'cursor-not-allowed'} text-white  mx-4 bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-300 font-medium rounded text-base px-3 py-1 text-center`}
+                className={`${
+                  !filterOptions && "cursor-not-allowed"
+                } text-white  mx-4 bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-300 font-medium rounded text-base px-3 py-1 text-center`}
                 onClick={handleFilter}
-                disabled = {!filterOptions}
+                disabled={!filterOptions}
               >
                 Filter
               </button>
@@ -495,104 +499,100 @@ setLoading(true);
                 <tbody className="px-2">
                   {filteredData.map((item) => {
                     let debitCompanyAmount;
-                      debitCompanyAmount = parseFloat(item.finalEntryFields);
-                      // Update the balance
-                      if (debitCompanyAmount === item.creditCompanyAmount) {
-                        balance -=
-                          item.finalEntryFields -
-                          (item.creditCompanyAmount || 0);
-                      } else {
-                        balance +=
-                          item.finalEntryFields -
-                          (item.creditCompanyAmount || 0);
-                      }
-                      return (
-                        <tr
-                          key={item._id}
-                          className="odd:bg-white text-sm overflow-x-auto even:bg-gray-100 border-b dark:border-gray-700 hover:bg-orange-200 "
-                        >
-                          <td className="whitespace-nowrap py-4 pl-2">
-                            {item.entryDate}
-                          </td>
-                          <td className="whitespace-wrap">{item.policyNo}</td>
-                          <td className="whitespace-wrap">
-                            {item.advisorName}
-                          </td>
-                          <td>{item.insuredName}</td>
-                          <td>{`₹ ${item.finalEntryFields}`}</td>
-                          {/* <td>{`₹ ${item.advisorPayoutAmount}`}</td> */}
-                          <td className="whitespace-wrap">{`₹ ${
-                            item.company === "GO-DIGIT"
-                              ? debitCompanyAmount.toFixed(2)
-                              : debitCompanyAmount.toFixed(0)
-                          }`}</td>
-                          <td className="">
-                            <input
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
-                              type="date"
-                              name="paymentCompanyDate"
-                              value={item.paymentCompanyDate}
-                              onChange={(e) =>
-                                handleDatesChange(item._id, e.target.value)
-                              }
-                            />
-                          </td>
-                          <td>
-                            <select
-                              className="bg-gray-50 mx-4 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-40 ps-2 p-1"
-                              type="text"
-                              value={item.paymentCompanyType}
-                              name="paymentCompanyType"
-                              onChange={(e) =>
-                                handlePayTypeChange(item._id, e.target.value)
-                              }
-                            >
-                              <option value="">
-                                ------ Select Payment Mode ------
+                    debitCompanyAmount = parseFloat(item.finalEntryFields);
+                    // Update the balance
+                    if (debitCompanyAmount === item.creditCompanyAmount) {
+                      balance -=
+                        item.finalEntryFields - (item.creditCompanyAmount || 0);
+                    } else {
+                      balance +=
+                        item.finalEntryFields - (item.creditCompanyAmount || 0);
+                    }
+                    return (
+                      <tr
+                        key={item._id}
+                        className="odd:bg-white text-sm overflow-x-auto even:bg-gray-100 border-b dark:border-gray-700 hover:bg-orange-200 "
+                      >
+                        <td className="whitespace-nowrap py-4 pl-2">
+                          {item.entryDate}
+                        </td>
+                        <td className="whitespace-wrap">{item.policyNo}</td>
+                        <td className="whitespace-wrap">{item.advisorName}</td>
+                        <td>{item.insuredName}</td>
+                        <td>{`₹ ${item.finalEntryFields}`}</td>
+                        {/* <td>{`₹ ${item.advisorPayoutAmount}`}</td> */}
+                        <td className="whitespace-wrap">{`₹ ${
+                          item.company === "GO-DIGIT"
+                            ? debitCompanyAmount.toFixed(2)
+                            : debitCompanyAmount.toFixed(0)
+                        }`}</td>
+                        <td className="">
+                          <input
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                            type="date"
+                            name="paymentCompanyDate"
+                            value={item.paymentCompanyDate}
+                            onChange={(e) =>
+                              handleDatesChange(item._id, e.target.value)
+                            }
+                          />
+                        </td>
+                        <td>
+                          <select
+                            className="bg-gray-50 mx-4 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-40 ps-2 p-1"
+                            type="text"
+                            value={item.paymentCompanyType}
+                            name="paymentCompanyType"
+                            onChange={(e) =>
+                              handlePayTypeChange(item._id, e.target.value)
+                            }
+                          >
+                            <option value="">
+                              ------ Select Payment Mode ------
+                            </option>
+                            {paymentMode.map((pm) => (
+                              <option key={pm._id} value={pm.paymentmode}>
+                                {pm.paymentmode}
                               </option>
-                              {paymentMode.map((pm) => (
-                                <option key={pm._id} value={pm.paymentmode}>
-                                  {pm.paymentmode}
-                                </option>
-                              ))}
-                            </select>
-                          </td>
-                          <td>
-                            <input
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
-                              type="text"
-                              value={item.paymentCompanyRefNo}
-                              onChange={(e) =>
-                                handlePayRefChange(item._id, e.target.value)
-                              }
-                            />
-                          </td>
-                          <td>
-                            <input
-                              className="bg-gray-50 border mx-4 border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
-                              type="number"
-                              min="0"
-                              value={item.creditCompanyAmount}
-                              onChange={(e) =>
-                                handleCreditChange(item._id, e.target.value)
-                              }
-                            />
-                          </td>
-                          <td
-                            className={`whitespace-nowrap pr-3 ${
-                              balance > 0
-                                ? "text-green-600 font-bold"
-                                : balance < 0
-                                ? "text-red-600 font-bold"
-                                : "text-black font-bold"
-                            }`}
-                          >{`₹ ${
-                            item.company === "GO-DIGIT"
-                              ? balance.toFixed(2)
-                              : balance.toFixed(0)
-                          }`}</td>
-                        </tr>
-                      );
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                            type="text"
+                            value={item.paymentCompanyRefNo}
+                            onChange={(e) =>
+                              handlePayRefChange(item._id, e.target.value)
+                            }
+                          />
+                        </td>
+                        <td>
+                          <input
+                            className="bg-gray-50 border mx-4 border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-32 ps-2 p-1"
+                            type="number"
+                            min="0"
+                            value={item.creditCompanyAmount}
+                            onChange={(e) =>
+                              handleCreditChange(item._id, e.target.value)
+                            }
+                          />
+                        </td>
+                        <td
+                          className={`whitespace-nowrap pr-3 ${
+                            balance > 0
+                              ? "text-green-600 font-bold"
+                              : balance < 0
+                              ? "text-red-600 font-bold"
+                              : "text-black font-bold"
+                          }`}
+                        >{`₹ ${
+                          item.company === "GO-DIGIT"
+                            ? balance.toFixed(2)
+                            : balance.toFixed(0)
+                        }`}</td>
+                      </tr>
+                    );
                   })}
                 </tbody>
               </table>

@@ -127,11 +127,12 @@ function MonthViewLeger() {
 
   return (
     <section className="container-fluid relative  p-0 sm:ml-48 bg-white">
-      <div className="container-fluid  p-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 bg-white">
+      <div className="container-fluid border-gray-200 border-dashed  dark:border-gray-700 bg-white">
+      
+        <div className="relative w-full lg:w-full p-0 lg:p-1 rounded shadow-xl text-2xl items-center bg-slate-200">
         <div className="flex justify-center">
-          <h1 className="font-semibold text-3xl my-2  text-blue-700">Monthly Leger</h1>
+          <h1 className="font-semibold text-3xl my-2 mb-5  text-blue-700">Monthly Leger</h1>
         </div>
-        <div className="relative w-full lg:w-full p-0 lg:p-1 rounded-xl shadow-xl text-2xl items-center bg-slate-200">
           <div className="flex justify-between flex-col">
             <div className="flex  justify-evenly my-4">
               <input
@@ -248,7 +249,7 @@ function MonthViewLeger() {
                         }
                         return (
                           <tr key={item._id} className="odd:bg-white text-sm even:bg-gray-100 border-b dark:border-gray-700 hover:bg-orange-100 ">
-                            <td className="whitespace-nowrap my-3">{item.entryDate}</td>
+                            <td className="whitespace-nowrap py-3">{item.entryDate}</td>
                             <td className="whitespace-wrap">{item.policyNo}</td>
                             <td className="whitespace-wrap">{item.company}</td>
                             <td>{item.insuredName}</td>

@@ -9,6 +9,7 @@ import VITE_DATA from "../../../config/config.jsx";
 
 function ViewJoining() {
   const [APIData, setAPIData] = useState([]);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [sendStaffId, setSendStaffId] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -168,52 +169,101 @@ function ViewJoining() {
     <section className="container-fluid relative p-0 sm:ml-64 bg-slate-200">
       <div className="container-fluid flex justify-center p-2  border-gray-200 border-dashed rounded-lg dark:border-gray-700  bg-blue-200">
         <div className="inline-block min-w-full w-full py-0 ">
+          <div className="overflow-x-none flex justify-between text-blue-700 pb-2">
+            <button
+              onClick={() => setIsFilterVisible(!isFilterVisible)}
+              className={`my-auto ${
+                isFilterVisible
+                  ? "bg-gradient-to-r from-red-500 via-red-600 to-red-700 focus:ring-red-300"
+                  : "focus:ring-blue-300 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+              } text-white  hover:bg-gradient-to-br focus:ring-1 focus:outline-none  shadow-lg font-medium rounded tracking-wider text-sm px-3 py-1.5 text-center`}
+            >
+              {isFilterVisible ? "Hide Filters" : "Show Filters"}
+            </button>
 
-          <div className="overflow-x-none w-xl flex mt-2 text-blue-700">
-            <h1></h1>
-            <h1 className="flex justify-center text-3xl w-full font-semibold">Joining Letter List&apos;s</h1>
-            <button className="" onClick={handleExportClick}><img src="/excel.png" alt="download" className="w-10" /></button>
-            <NavLink to="/hr/home/add/offer/letter" className="my-auto ml-2">
-              <button type="button" className="text-white whitespace-nowrap justify-end bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded text-sm px-3 py-1 text-center ">Go Back</button>
-            </NavLink>
-          </div>
-          <div className="flex-wrap  flex justify-between my-4 py-5   text-blue-500 max-w-auto mx-auto w-auto ">
-            {/* date range filter */}
-            <div className="flex my-auto justify-start p-0 text-start w-full lg:w-1/5">
-              <label className="my-1 text-base whitespace-nowrap font-medium text-gray-900">DATE:</label>
-              <input type="date" value={startDate} onChange={(e) => handleDateRangeChange(e, "start")} className="shadow input-style w-64 my-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 mb-2 ml-2" placeholder="From Date" />
-              <span className='text-justify mx-1 my-1 '>to</span>
-              <input type="date" value={endDate} onChange={(e) => handleDateRangeChange(e, "end")} className="shadow input-style w-64 my-0 py-0 ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none  px-0 mb-2 " placeholder="To Date" />
-            </div>
-            <div className="my-1 mr-0.5 text-start w-full lg:w-1/4">
-              <label className=" text-base whitespace-nowrap font-medium  text-gray-900">REFERENCE-ID:</label>
-              <input
-                type="search"
-                onChange={(e) => setSearchId(e.target.value)}
-                className="shadow  input-style w-52 my-auto ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0"
-                placeholder="EMPID"
-              />
-            </div>
-            <div className=" justify-start p-0 text-start  w-full lg:w-1/4">
-              <label className="my-1 text-base font-medium text-gray-900">EMP-NAME:</label>
-              <input
-                type="search"
-                onChange={(e) => setSearchBranch(e.target.value)}
-                className="shadow input-style w-52 my-auto ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0"
-                placeholder="Employee Name"
-              />
-            </div>
-            <div className=" text-start my-1 justify-start w-full lg:w-1/4">
-              <label className="my-1 text-base font-medium text-gray-900">DESIGNATION:</label>
-              <input
-                type="search"
-                onChange={(e) => setSearchInsuredName(e.target.value)}
-                className="shadow input-style w-52 my-auto ps-5 text-base text-blue-700 border border-gray-300 rounded-md bg-gray-100 focus:ring-gray-100 focus:border-gray-500 appearance-none py-1 px-0 "
-                placeholder="Designation"
-              />
-            </div>
+            <h1 className="text-3xl font-semibold">Joining Letter Lists</h1>
 
+            <div className="flex">
+              <button className="" onClick={handleExportClick}>
+                <img src="/excel.png" alt="download" className="w-10" />
+              </button>
+              <NavLink to="/hr/home/add/offer/letter" className="my-auto ml-2">
+                <button
+                  type="button"
+                  className="text-white whitespace-nowrap justify-end bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded text-sm px-3 py-1 text-center"
+                >
+                  Go Back
+                </button>
+              </NavLink>
+            </div>
           </div>
+
+          {isFilterVisible && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 py-4 p-2 bg-white shadow-md rounded text-blue-500">
+              <div className="flex flex-col relative">
+                <label className="text-base text-start font-medium text-blue-700">
+                  Date Range:
+                </label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => handleDateRangeChange(e, "start")}
+                    className="input-style w-full"
+                    placeholder="From Date"
+                  />
+                  <span className="text-sm">to</span>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => handleDateRangeChange(e, "end")}
+                    className="input-style w-full"
+                    placeholder="To Date"
+                  />
+                </div>
+              </div>
+
+              {[
+                {
+                  label: "ID",
+                  placeholder: "EMPID",
+                  onChange: setSearchId,
+                  value: searchId,
+                },
+                {
+                  label: "Emp Name",
+                  placeholder: "Emp Name",
+                  onChange: setSearchBranch,
+                  value: searchBranch,
+                },
+                {
+                  label: "Designation",
+                  placeholder: "Designation",
+                  onChange: setSearchInsuredName,
+                  value: searchInsuredName,
+                },
+              ].map((input, index) => (
+                <div className="flex flex-col" key={index}>
+                  <label className="text-base text-start font-medium text-blue-700">
+                    {input.label}:
+                  </label>
+                  <input
+                    type="search"
+                    value={input.value}
+                    onChange={(e) => input.onChange(e.target.value)}
+                    className="input-style w-full"
+                    placeholder={input.placeholder}
+                  />
+                </div>
+              ))}
+              <button
+                className="absolute top-14 right-2 bg-red-500 text-white px-4 hover:bg-red-700 rounded"
+                onClick={() => setIsFilterVisible(false)}
+              >
+                X
+              </button>
+            </div>
+          )}
           <table className="min-w-full text-center text-sm font-light table bg-blue-200 ">
           {filteredData.length === 0 ? (<TextLoader />) : (<>
             <thead className="border-b  font-medium bg-slate-200  sticky top-16">
